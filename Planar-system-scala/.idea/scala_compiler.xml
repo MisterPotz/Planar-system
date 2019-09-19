@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ScalaCompilerConfiguration">
-    <profile name="sbt 1" modules="Planar-system-scala">
+    <profile name="sbt 1" modules="planar-system-scala_9442" />
+    <profile name="sbt 2" modules="Planar-system-scala">
       <parameters>
         <parameter value="-Ymacro-annotations" />
       </parameters>

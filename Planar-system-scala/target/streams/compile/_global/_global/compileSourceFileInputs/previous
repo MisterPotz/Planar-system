@@ -1,1 +1,0 @@
-["sbt.Task[scala.collection.immutable.Map[java.lang.String, scala.collection.Seq[scala.Tuple2[java.nio.file.Path, sbt.nio.FileStamp]]]]",{"2.13.0":{"hashes":[["/home/alexander/Planar-system/Planar-system-scala/src/main/scala/planar_interface/PlanarApp.scala","20bd1e4f61855528c9e47bf8260a190b55b359f1"]],"lastModifiedTimes":[]}}]
