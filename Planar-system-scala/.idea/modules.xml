@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Planar-system-scala.iml" filepath="$PROJECT_DIR$/.idea/modules/Planar-system-scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Planar-system-scala.iml" filepath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Planar-system-scala-build.iml" filepath="$PROJECT_DIR$/.idea/modules/Planar-system-scala-build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/main/main.iml" filepath="$PROJECT_DIR$/src/main/main.iml" />
     </modules>
   </component>
 </project>
