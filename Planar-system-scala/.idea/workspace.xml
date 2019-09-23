@@ -2,40 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
-      <change afterPath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_base_12_0_2_linux_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_controls_12_0_2_linux_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_fxml_12_0_2_linux_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_graphics_12_0_2_linux_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_media_12_0_2_linux_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_swing_12_0_2_linux_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_web_12_0_2_linux_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/scala_sdk_2_13_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/scala_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_base_12_0_2_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_base_12_0_2_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_base_12_0_2_win_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_controls_12_0_2_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_controls_12_0_2_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_controls_12_0_2_win_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_fxml_12_0_2_win_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_graphics_12_0_2_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_graphics_12_0_2_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_graphics_12_0_2_win_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_media_12_0_2_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_media_12_0_2_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_media_12_0_2_win_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_swing_12_0_2_win_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_web_12_0_2_win_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_scala_library_2_13_0_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_scala_library_2_13_0_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_scala_reflect_2_13_0_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_scala_reflect_2_13_0_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scalafx_scalafx_2_13_12_0_2_R18_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scalafx_scalafx_2_13_12_0_2_R18_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scalafx_scalafxml_core_macros_sfx8_2_13_0_5_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scalafx_scalafxml_core_macros_sfx8_2_13_0_5_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scalafx_scalafxml_core_sfx8_2_13_0_5_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scalafx_scalafxml_core_sfx8_2_13_0_5_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/Planar-system-scala-build.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/Planar-system-scala-build.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/Planar-system-scala.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/Planar-system-scala.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sbt.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sbt.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/scala_compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/scala_compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/PlanarApp.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/PlanarApp.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/BaseLink.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/BaseLink.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/GearConnection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/GearConnection.scala" afterDir="false" />
     </list>
@@ -188,6 +155,7 @@
     </option>
     <option name="modificationStamps">
       <map>
+        <entry key="$PROJECT_DIR$" value="3137561591216" />
         <entry key="$PROJECT_DIR$/build.sbt" value="4290105877" />
         <entry key="$PROJECT_DIR$/project/build.properties" value="1156910148" />
       </map>

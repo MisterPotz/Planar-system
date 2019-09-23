@@ -42,6 +42,7 @@ with BaseGearConnection {
   override def toString: String = s"alpha_w: $alpha_w\nrw1: $rw1\nrw2: $rw2\naw: $aw"
 }
 
+object ExternalConnection
 class ExternalConnection(first : ExternalGearWheel, second: ExternalGearWheel) extends GearConnection(first, second){
   super.init
   override  def findRw(alpha : Double, m :Double, z: Double) : Double = m * z.toDouble / 2.0 * cos(alpha) / cos(alpha_w)
@@ -51,7 +52,7 @@ class ExternalConnection(first : ExternalGearWheel, second: ExternalGearWheel) e
 
   override def toString: String =  "\nexternal connection, params" +super.toString.split("\n").map(_ + "\n\t").foldLeft("\n\t")(_+_)
 }
-
+object InternalConnection
 class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends GearConnection(first, second){
   super.init
   override  def findRw(alpha : Double, m :Double, z: Double) : Double = m * z.toDouble / 2.0 * cos(alpha) / cos(alpha_w)
@@ -65,21 +66,18 @@ class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends G
 
 trait GearConnectionCreator{
   //для наявного создания упаковки под оба колеса соединения
-  implicit def twoGears2ExtGearConnection(first : BaseGearWheel, second : BaseGearWheel) : ExternalConnection ={
+  def isExternal(first : BaseGearWheel, second : BaseGearWheel) : Boolean = {
     val baseGearWheels = List(first, second)
     if (baseGearWheels.length > 2 & baseGearWheels == 0)
       throw new IllegalArgumentException("can't construct External Connection: invalid length")
-    for (baseWheel <- baseGearWheels){
-      baseWheel match {
-        case baseWheel : ExternalGearWheel => true
-        case _  => throw new ClassCastException("can't construct External Connection: illegal type")
-      }
-    }
-    new ExternalConnection(baseGearWheels(0).asInstanceOf[ExternalGearWheel], baseGearWheels(1).asInstanceOf[ExternalGearWheel])
+    if (baseGearWheels.count( (p : BaseGearWheel)=> {p match {
+        case p: ExternalGearWheel => true
+        case _ => false
+      }}
+     ) == 2) true
+    else false
   }
-  //checking that passed arguments have only one ExternalGear and one Internal and then passing them to
-  //constructor of Internal Connection
-  implicit def twoGears2IntGearConnection(first : BaseGearWheel, second : BaseGearWheel) : InternalConnection ={
+  def isInternal(first : BaseGearWheel, second : BaseGearWheel) : Boolean = {
     val baseGearWheels = List(first, second)
     if (baseGearWheels.length > 2 & baseGearWheels == 0)
       throw new IllegalArgumentException("can't construct Internal Connection: invalid length")
@@ -89,11 +87,23 @@ trait GearConnectionCreator{
     }) == 1 & baseGearWheels.count((p : BaseGearWheel) => p match {
       case p: ExternalGearWheel => true
       case _ => false
-    }) == 1 ) {
-      new InternalConnection(baseGearWheels(0),  baseGearWheels(1))
+    }) == 1 ) true
+    else false
+  }
+
+  def recognizeType(first : BaseGearWheel, second : BaseGearWheel) : Option[_] = {
+    if (isExternal(first, second)) Some(ExternalConnection)
+    else if (isInternal(first, second)) Some(InternalConnection)
+    else None
+  }
+  //сделать соединение
+  def makeGearConnection(first : BaseGearWheel, second : BaseGearWheel) : GearConnection[BaseGearWheel,BaseGearWheel] = {
+    val recognized_type = recognizeType(first, second)
+    recognized_type match {
+      case Some(ExternalConnection) => new ExternalConnection(first.asInstanceOf[ExternalGearWheel], second.asInstanceOf[ExternalGearWheel])
+      case Some(InternalConnection) => new InternalConnection(first, second)
+      case None => throw new IllegalArgumentException("Connection can't be created")
     }
-    else
-      throw new ClassCastException("can't construct External Connection: illegal type")
   }
 }
 //companion объект для соединений колёс
