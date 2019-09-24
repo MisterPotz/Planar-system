@@ -1,23 +1,31 @@
 package planar_structure
+import planar_structure.core_structure.{BaseGearConnection, BaseGearWheel, BaseLink, ExternalGearWheel, InternalGearWheel}
+import planar_structure.help_traits.Recognizable
+
 import scala.language.implicitConversions
 import scala.math.{Pi, cos, sin, toRadians}
 
 //helper trait (interface) to deal with involute finding problems
 trait GearObjectedConversions{
-  implicit class InvToRad(i : Double){self =>
-      //подключение к классу Double дополнительных полезных функций
+  implicit class InvToRad(i : Double) {
+    self =>
+    //подключение к классу Double дополнительных полезных функций
     //нахождение угла по инволюте обратной функцией инволюты по методу Ченга
     //TODO ограничить допустимый угол для использования функции ченга
-    def invToRad : Double = math.pow(3*i, 1/3.0) - (2*i)/5.0 + (9/175.0)*math.pow(3, 2/3.0)*
-      math.pow(i, 5/3.0) - (2/175.0)*math.pow(3, 1/3.0)*math.pow(i, 7/3.0)-(144/67375.0)*math.pow(i,3.0)+
-      (3258/3128125.0)*math.pow(3, 2/3.0)*math.pow(i, 11/3.0) - (49711/153278125.0)*math.pow(3,1/3.0)*
-      math.pow(i, 13/3.0)
+    def invToRad: Double = math.pow(3 * i, 1 / 3.0) - (2 * i) / 5.0 + (9 / 175.0) * math.pow(3, 2 / 3.0) *
+      math.pow(i, 5 / 3.0) - (2 / 175.0) * math.pow(3, 1 / 3.0) * math.pow(i, 7 / 3.0) - (144 / 67375.0) * math.pow(i, 3.0) +
+      (3258 / 3128125.0) * math.pow(3, 2 / 3.0) * math.pow(i, 11 / 3.0) - (49711 / 153278125.0) * math.pow(3, 1 / 3.0) *
+      math.pow(i, 13 / 3.0)
+
     //нахождение инволюты по углу
-    def radToInv : Double = math.tan(i) - i
+    def radToInv: Double = math.tan(i) - i
   }
-
 }
-
+object GearConnection extends RecognizableConnection with GearConnectionCreator{
+  def apply(first: BaseGearWheel, second: BaseGearWheel): GearConnection[BaseGearWheel, BaseGearWheel] ={
+    makeGearConnection(first, second)
+  }
+}
 abstract class GearConnection[+T <: BaseGearWheel, +T2 <: BaseGearWheel](first : T, second : T2) extends GearObjectedConversions
 with BaseGearConnection {
   //инициализация
@@ -41,7 +49,7 @@ with BaseGearConnection {
   def updateAw()
   override def toString: String = s"alpha_w: $alpha_w\nrw1: $rw1\nrw2: $rw2\naw: $aw"
 }
-
+object ExternalConnection
 class ExternalConnection(first : ExternalGearWheel, second: ExternalGearWheel) extends GearConnection(first, second){
   super.init
   override  def findRw(alpha : Double, m :Double, z: Double) : Double = m * z.toDouble / 2.0 * cos(alpha) / cos(alpha_w)
@@ -51,7 +59,7 @@ class ExternalConnection(first : ExternalGearWheel, second: ExternalGearWheel) e
 
   override def toString: String =  "\nexternal connection, params" +super.toString.split("\n").map(_ + "\n\t").foldLeft("\n\t")(_+_)
 }
-
+object InternalConnection
 class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends GearConnection(first, second){
   super.init
   override  def findRw(alpha : Double, m :Double, z: Double) : Double = m * z.toDouble / 2.0 * cos(alpha) / cos(alpha_w)
@@ -63,42 +71,41 @@ class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends G
   //TODO вбить правильные формулы для внутреннего зацепления
 }
 
-trait GearConnectionCreator{
-  //для наявного создания упаковки под оба колеса соединения
-  implicit def twoGears2ExtGearConnection(first : BaseGearWheel, second : BaseGearWheel) : ExternalConnection ={
-    val baseGearWheels = List(first, second)
-    if (baseGearWheels.length > 2 & baseGearWheels == 0)
-      throw new IllegalArgumentException("can't construct External Connection: invalid length")
-    for (baseWheel <- baseGearWheels){
-      baseWheel match {
-        case baseWheel : ExternalGearWheel => true
-        case _  => throw new ClassCastException("can't construct External Connection: illegal type")
-      }
+trait GearConnectionCreator {
+  def recognizeConnectionType(first: BaseGearWheel, second: BaseGearWheel): Option[GearConnection[BaseGearWheel, BaseGearWheel]] = {
+    (first, second) match {
+      case (first: ExternalGearWheel, second: ExternalGearWheel) => Some(new ExternalConnection(first, second))
+      case (first: ExternalGearWheel, second: InternalGearWheel) => Some(new InternalConnection(first, second))
+      case (first: InternalGearWheel, second: ExternalGearWheel) => Some(new InternalConnection(first, second))
+      case _ => None
     }
-    new ExternalConnection(baseGearWheels(0).asInstanceOf[ExternalGearWheel], baseGearWheels(1).asInstanceOf[ExternalGearWheel])
   }
-  //checking that passed arguments have only one ExternalGear and one Internal and then passing them to
-  //constructor of Internal Connection
-  implicit def twoGears2IntGearConnection(first : BaseGearWheel, second : BaseGearWheel) : InternalConnection ={
-    val baseGearWheels = List(first, second)
-    if (baseGearWheels.length > 2 & baseGearWheels == 0)
-      throw new IllegalArgumentException("can't construct Internal Connection: invalid length")
-    if (baseGearWheels.count( (p:BaseGearWheel) => p match {
-      case p: InternalGearWheel => true
-      case _ => false
-    }) == 1 & baseGearWheels.count((p : BaseGearWheel) => p match {
-      case p: ExternalGearWheel => true
-      case _ => false
-    }) == 1 ) {
-      new InternalConnection(baseGearWheels(0),  baseGearWheels(1))
+  //сделать соединение
+  def makeGearConnection(first: BaseGearWheel, second: BaseGearWheel): GearConnection[BaseGearWheel, BaseGearWheel] = {
+    val recognized_type = recognizeConnectionType(first, second)
+    recognized_type match {
+      //uses implicit case from basegearwheel to external gearwheel
+      case Some(kek: ExternalConnection) => kek
+      case Some(kek: InternalConnection) => kek
+      case None => throw new IllegalArgumentException("Connection can't be created")
     }
-    else
-      throw new ClassCastException("can't construct External Connection: illegal type")
   }
 }
-//companion объект для соединений колёс
-object GearConnection extends GearConnectionCreator {
 
-  //static функции для нахождения необходимых величин
 
+trait RecognizableConnection extends Recognizable[GearConnection[BaseGearWheel, BaseGearWheel]]{
+  override implicit def super2SubClass[ExternalConnection](t: GearConnection[BaseGearWheel, BaseGearWheel]): ExternalConnection = {
+    t match {
+      case t : ExternalConnection => t
+      case _ => throw new ClassCastException("Can't create Ext Connection from Connection")
+    }
+  }
+
+  override implicit def sub2Option(t: GearConnection[BaseGearWheel, BaseGearWheel]): Option[GearConnection[BaseGearWheel, BaseGearWheel]] = {
+    t match {
+      case t : ExternalConnection => Some(t)
+      case t : InternalConnection => Some(t)
+      case _ => None
+    }
+  }
 }

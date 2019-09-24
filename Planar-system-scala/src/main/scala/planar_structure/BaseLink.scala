@@ -1,133 +1,96 @@
 package planar_structure
+import planar_structure.help_traits._
+import planar_structure.core_structure._
 import scala.language.implicitConversions
-import scala.collection.mutable.ArrayBuffer
-import scala.reflect.ClassTag
-//struct для хранения координат точек звеньев механизма на плоскости
-case class Coordinates(var x : Double, var y: Double)
 
-//sealed для того, чтобы сгенерировалась enum из классов
-sealed  trait  BaseLink
 
-trait BaseGearConnection extends  BaseLink
-
-//базовая структура параметров колеса
-abstract class BaseGearWheel(val z : Int,val  m: Double,val x:Double,val ha: Double = 1.0,val ca: Double =0.25,val alpha:Double=scala.math.toRadians(20.0)
-                             ,val  axis_steady: Boolean = true,val rotates : Boolean = true) extends BaseLink {
-  final val r : Double = m * z /2
-  final val rb : Double = r * math.cos(alpha)
-
-  override def toString: String = s"z: $z\nm: $m\nx: $x\nha: $ha\nca: $ca\nalpha: $alpha\naxis_steady: $axis_steady\nrotates: $rotates"
-
+trait LinkManipulator {
+  def getLink(i: Int): BaseLink;
 }
-
-//базовая структура колеса и параметры с фиксированной осью и дозволенностью вращения
-case class ExternalGearWheel(override val z : Int = 30, override val m: Double = 1.25, override val x:Double = 0,
-                             override val ha: Double = 1.0,override val ca: Double =0.25,override val alpha:Double=scala.math.toRadians(20.0)
-                             ,override val axis_steady: Boolean = true,override val rotates : Boolean = true) extends BaseGearWheel(
-                                                                                     z, m,x,ha,ca,alpha, axis_steady, rotates){
-  override def toString: String = "\nExternal gear, parameters:"+ super.toString.split("\n").map(_ + "\n\t").foldLeft("\n\t")(_ + _)
-
+trait ConnectionManipulator{
+  def getConnection(i : Int) : GearConnection[BaseGearWheel,BaseGearWheel]
 }
-
-case class InternalGearWheel(override val z : Int = 30, override val m: Double = 1.25, override val x:Double = 0,
-                             override val ha: Double = 1.0,override val ca: Double =0.25,override val alpha:Double=scala.math.toRadians(20.0)
-                             ,override val axis_steady: Boolean = true,override val rotates : Boolean = true) extends BaseGearWheel(z,
-                                                                                        m,x,ha,ca,alpha, axis_steady, rotates){
-  override def toString: String = "\nInternal gear, parameters:"+ super.toString.split("\n").map(_ + "\n\t").foldLeft("\n\t")(_ + _)
-}
-class Satellite extends BaseLink
-class Carrier extends  BaseLink
-class Input extends BaseLink
-class Output extends  BaseLink
-
-
-sealed trait Addable[+A, U]{self =>
-  def add[A <: U](a : A) : self.type
-}
-sealed trait Updateable[+A]{self=>
-  def update() : self.type
-}
-sealed trait Conditionable[T]{self =>
-  //using classtag so T is not erased during compilations
-  def condition[U](elem : U)(implicit ct :  ClassTag[T]) : Boolean = {
-    elem match {
-      case elem: T => true
-      case _ => false
-    }
-  }
-}
-trait GearConditionable extends  Conditionable[GearConnection[BaseGearWheel, BaseGearWheel]] {}
-trait WheelConditionable extends  Conditionable[ BaseGearWheel] {}
-
-trait ConnectionConstructor[T]{
-  implicit class ArrayAddon(arr : ArrayBuffer[T]){self =>
-    //принимает индекс подследнего "изъятого" элемента и пополняемый массив
-    //разбивает на массив на группы по двое с общим элементом между группами
-    def split_by_2_with_common(a: Int, arrayBuffer: ArrayBuffer[( T, T)]): ArrayBuffer[(T,T )] ={
-      //если и так последний элемент - отставить и прекратить рекурсии
-      if (a == arr.length - 1){
-        arrayBuffer
-      }
-      else{
-        arrayBuffer.addOne((arr(a), arr(a+1)))
-        split_by_2_with_common(a+1, arrayBuffer)
-      }
-    }
-  }
-}
-
 //basic chain of connections and wheels
-class ChainLink extends Addable[BaseLink, BaseLink] with Updateable[BaseLink] {
+class ChainLink extends Addable[BaseLink] with Updateable[BaseLink] with LinkManipulator with ConnectionManipulator
+with RecognizableBaseLink {
 //initializing array of mechanisms
-  lazy protected val _mechanism_collection = new ArrayBuffer[BaseLink]()
-  lazy val gear_condition: GearConditionable = new GearConditionable {}
-  lazy val wheel_condition: WheelConditionable = new WheelConditionable {}
+  lazy val gear_storage: Storage[BaseLink] = new Storage[BaseLink] {}
+  lazy val connections_storage : Storage[GearConnection[BaseGearWheel, BaseGearWheel]] = new Storage[GearConnection[BaseGearWheel, BaseGearWheel]] {}
   //adding new element
-  override def add[A <: BaseLink](a: A): ChainLink.this.type = {
-    _mechanism_collection.addOne(a)
-    this
-  }
-  override def update(): ChainLink.this.type = {
-    this
-  }
-  def getAllGears: ArrayBuffer[BaseLink] = {
-    _mechanism_collection.filter(wheel_condition.condition)
-  }
-  def getAllConnections: ArrayBuffer[BaseLink] = {
-    _mechanism_collection.filter(gear_condition.condition)
-  }
-  def hasElement(a : Int) : Boolean = if (a >= 0 & a < _mechanism_collection.length) true else false
-  def apply(a : Int): BaseLink = {
-    if (hasElement(a))
-      _mechanism_collection(a)
-    else
-      throw new IllegalArgumentException("Out of bounds")
-  }
-
+  override def getLink(i : Int) : BaseLink = gear_storage(i)
+  override def getConnection(i : Int) : GearConnection[BaseGearWheel,BaseGearWheel] = connections_storage(i)
   //TODO create mechanism from file (JSON)
-  override def toString: String = "\nChain link, components: " concat _mechanism_collection.toString()
-}
-
-object SimpleTest extends ConnectionConstructor[Int]{
-  lazy val arr: ArrayBuffer[Int] = ArrayBuffer(1,2,3,4,5,6,7,8,9,10)
-  def test : ArrayBuffer[(Int, Int)] = {
-    val testing_set = new ArrayBuffer[(Int, Int)]
-    arr.split_by_2_with_common(0, testing_set)
-    testing_set
+  override def toString: String = "\nChain link, gears:" concat gear_storage.toString + "\n----------->gear connections:\n" concat connections_storage.toString
+  //appending unique element to storages
+  override def add[A <: BaseLink](a: A): ChainLink.this.type = {
+    a match {
+      case a : BaseGearWheel => gear_storage.addOne(a)
+      case a : GearConnection[BaseGearWheel, BaseGearWheel] => connections_storage.addOne(a)
+      case a : Satellite => gear_storage.addOne(a)
+      case _ => println("Element was declined, not appended")
+    }
+    this
+  }
+  override def addAll[A <: BaseLink](all: A*): ChainLink.this.type = {
+    for (a <- all) add(a)
+    this
+  }
+  //create or update connections
+  def installConnections() : ChainLink.this.type  = update()
+  //removes old ones if there are not enough connections and creates new ones
+  protected def installNewConnections() : ChainLink.this.type = {
+    val indeces_to_pick = for (i <- 0 until gear_storage.length-1 ) yield (i, i+1)
+    for (i <- 0 until connections_storage.length)
+      connections_storage.remove(0)
+    for ((i, k) <- indeces_to_pick){
+      //TODO  {BaseGear -> Ext and Int. : done} implicit function to create (and check internally) a gear from first satellites gear
+      val good : Boolean = (gear_storage(i), gear_storage(k)) match {
+        case (i: BaseGearWheel, k: BaseGearWheel) => true;
+        case (i : BaseGearWheel, k: Satellite) => true
+        case _ => false}
+      if (good) {
+        connections_storage.addOne(GearConnection(super2SubClass[BaseGearWheel](gear_storage(i)),super2SubClass[BaseGearWheel](gear_storage(k))))
+      }
+    }
+    this
+  }
+  //full re-init of current connections (in case wheels changes and we want to re-evaluate inner parameters of connections)
+  override def update(): ChainLink.this.type = {
+    val is_equipped = if (connections_storage.length < gear_storage.length - 1) false else true
+    //delete old connections if there are less of them than it should
+    if (!is_equipped) {
+      installNewConnections()
+    }
+    //or just reinit them if there are as much connections as it should
+    else for (i <-0 until connections_storage.length) connections_storage(i).init
+    this
   }
 }
 
-object Main extends App with GearConnectionCreator {
+object Main extends App with RecognizableBaseLink {
   println("Hi")
-  println(SimpleTest.test)
-  println(ExternalGearWheel().toString)
   implicit def kek(externalConnection: ExternalConnection) : ExternalConnection = externalConnection
 
-  val geared : ExternalConnection = new ExternalConnection(ExternalGearWheel(), ExternalGearWheel())
-  val links = new ChainLink; links.add(ExternalGearWheel()).add(geared).add(ExternalGearWheel())
+  val geared : ExternalConnection = new ExternalConnection(new ExternalGearWheel(), new ExternalGearWheel())
+  val links = new ChainLink; links.addAll(new ExternalGearWheel(), new ExternalGearWheel(), new ExternalGearWheel(z = 200))
+  //links.installConnections()
   println(links)
-  println(links.getAllConnections)
-  println(links.getAllGears)
+  val keksat : Satellite = new Satellite()
+
+  keksat(0).add(new InternalGearWheel(z=1000))
+  println(keksat)
+  links.add(keksat)
+  println(links)
+  links.installConnections()
+  println(links)
+  keksat(0).getLink(0).asInstanceOf[BaseGearWheel].z =2000
+  links.installConnections()
+  println(links)
+  /*  println(keksat.asInstanceOf[BaseLink] match {
+    case k : BaseGearWheel => false
+    case k : Satellite => true
+
+  })*/
   /*println(geared match {case geared : GearConnection[BaseGearWheel, BaseGearWheel] => true; case _ => false })
   println(geared match {case geared : BaseGearWheel => true; case _ => false})*/
 }
