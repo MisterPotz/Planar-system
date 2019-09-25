@@ -1,9 +1,9 @@
-package planar_structure
-import planar_structure.core_structure.{BaseGearConnection, BaseGearWheel, BaseLink, ExternalGearWheel, InternalGearWheel}
+package planar_structure.core_structure
+
 import planar_structure.help_traits.Recognizable
 
 import scala.language.implicitConversions
-import scala.math.{Pi, cos, sin, toRadians}
+import scala.math.cos
 
 //helper trait (interface) to deal with involute finding problems
 trait GearObjectedConversions{
@@ -26,7 +26,7 @@ object GearConnection extends RecognizableConnection with GearConnectionCreator{
     makeGearConnection(first, second)
   }
 }
-abstract class GearConnection[+T <: BaseGearWheel, +T2 <: BaseGearWheel](first : T, second : T2) extends GearObjectedConversions
+abstract class GearConnection[+T <: BaseGearWheel, +T2 <: BaseGearWheel](val first : T,val second : T2) extends GearObjectedConversions
 with BaseGearConnection {
   //инициализация
   init
@@ -50,7 +50,7 @@ with BaseGearConnection {
   override def toString: String = s"alpha_w: $alpha_w\nrw1: $rw1\nrw2: $rw2\naw: $aw"
 }
 object ExternalConnection
-class ExternalConnection(first : ExternalGearWheel, second: ExternalGearWheel) extends GearConnection(first, second){
+class ExternalConnection( first : ExternalGearWheel, second: ExternalGearWheel) extends GearConnection(first, second){
   super.init
   override  def findRw(alpha : Double, m :Double, z: Double) : Double = m * z.toDouble / 2.0 * cos(alpha) / cos(alpha_w)
   override def updateAlpha_w(): Unit = alpha_w = (first.alpha.radToInv + 2* (first.x + second.x) / (first.z + second.z).toDouble).invToRad

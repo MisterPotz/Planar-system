@@ -1,14 +1,18 @@
 package planar_structure.core_structure
 
-import planar_structure.help_traits.{Recognizable, Storage}
-import planar_structure.{ChainLink}
+import planar_structure.help_traits.{Recognizable, Storage, Updateable}
 
 
 //sealed для того, чтобы сгенерировалась enum из классов
-sealed  trait  BaseLink
+sealed  trait  BaseLink extends Updateable{self =>
+  //by default update does nothing
+  override def update(): BaseLink.this.type = {self}
+}
 
 trait BaseGearConnection extends  BaseLink
-
+//this line is done with intention to connect different types of mechanisms in future (output of one
+//to output of another
+trait BaseMechanism extends BaseLink
 //базовая структура параметров колеса
 abstract class BaseGearWheel(var z : Int,var  m: Double,var x:Double,var ha: Double = 1.0,var ca: Double =0.25,var alpha:Double=scala.math.toRadians(20.0)
                              ,var  axis_steady: Boolean = true,var rotates : Boolean = true) extends BaseLink {
@@ -34,7 +38,8 @@ class InternalGearWheel( z : Int = 30,  m: Double = 1.25,  x:Double = 0,
   m,x,ha,ca,alpha, axis_steady, rotates){
   override def toString: String = "\nInternal gear, parameters:"+ super.toString.split("\n").map(_ + "\n\t").foldLeft("\n\t")(_ + _)
 }
-//TODO satellite thing
+
+
 //assumption that satellites first element is always BaseGearWheel
 class Satellite extends BaseLink with RecognizableBaseLink {
   //хранит информацию о венцах и их продолджениях
@@ -50,6 +55,13 @@ class Satellite extends BaseLink with RecognizableBaseLink {
     }else {
       crown_storage(index)
   }
+  //installs connection for every link
+  override def update(): Satellite.this.type = {
+    for (i <- crown_storage.collection) {
+      i.installConnections()
+    }
+    this
+  }
 }
 class Carrier extends  BaseLink
 class Input extends BaseLink
@@ -60,8 +72,13 @@ trait RecognizableBaseLink extends Recognizable[BaseLink] {
     val debug_check = if (t.isInstanceOf[Satellite]) true else false
     t match {
       case t : Satellite => {
-        val gear : BaseGearWheel = if (t.inputIsSet) super2SubClass[BaseGearWheel](t.crown_storage(0).getLink(0))
+        val gear : BaseGearWheel = if (t.inputIsSet){
+          //if we need to cast Satellite into wheel, we give away the very first wheel of satellite
+          super2SubClass[BaseGearWheel](t.crown_storage(0).getLink(0))
+        }
         else throw new ClassCastException("Can't create BaseGearWheel from Satellite")
+        //then we install connections for every other mechanims in the chain
+        t.update()
         gear
       }
       case u : Carrier => {println("what"); new ExternalGearWheel().asInstanceOf[BaseGearWheel]}
