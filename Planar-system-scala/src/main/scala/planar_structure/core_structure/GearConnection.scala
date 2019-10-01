@@ -1,6 +1,6 @@
 package planar_structure.core_structure
 
-import planar_structure.help_traits.Recognizable
+import planar_structure.help_traits.{BeautifulDebugOutput, Recognizable}
 
 import scala.language.implicitConversions
 import scala.math.cos
@@ -27,7 +27,7 @@ object GearConnection extends RecognizableConnection with GearConnectionCreator{
   }
 }
 abstract class GearConnection[+T <: BaseGearWheel, +T2 <: BaseGearWheel](val first : T,val second : T2) extends GearObjectedConversions
-with BaseGearConnection {
+with BaseGearConnection with BeautifulDebugOutput {
   //инициализация
   init
   def init  = {
@@ -42,12 +42,12 @@ with BaseGearConnection {
   var rw1 : Double = 0.0
   var rw2 : Double = 0.0
   var aw : Double = 0.0
-  //TODO сделать шаблон для GearConnection (implicit или стандарт) чтобы при разных колесах разные алгоритмы брались
   def updateAlpha_w()
   def findRw(alpha : Double, m :Double, z: Double) : Double
   def updateAllRw()
   def updateAw()
   override def toString: String = s"alpha_w: $alpha_w\nrw1: $rw1\nrw2: $rw2\naw: $aw"
+  override def getBranchSize : Int = 1
 }
 object ExternalConnection
 class ExternalConnection( first : ExternalGearWheel, second: ExternalGearWheel) extends GearConnection(first, second){
@@ -57,7 +57,8 @@ class ExternalConnection( first : ExternalGearWheel, second: ExternalGearWheel) 
   override def updateAllRw(): Unit = {rw1 = findRw(first.alpha, first.m, first.z); rw2 =  findRw(second.alpha, second.m, second.z)}
   override def updateAw(): Unit = aw = rw1 + rw2
 
-  override def toString: String =  "\nexternal connection, params" +super.toString.split("\n").map(_ + "\n\t").foldLeft("\n\t")(_+_)
+  override def copy: BaseLink = new ExternalConnection(first, second)
+  override def toString: String =  print("External connection:\n" +super.toString)
 }
 object InternalConnection
 class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends GearConnection(first, second){
@@ -66,8 +67,9 @@ class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends G
   override def updateAlpha_w(): Unit = alpha_w = (first.alpha.radToInv + 2* (first.x + second.x) / (first.z + second.z).toDouble).invToRad
   override def updateAllRw(): Unit = {rw1 = findRw(first.alpha, first.m, first.z); rw2 =  findRw(second.alpha, second.m, second.z)}
   override def updateAw(): Unit = aw = rw1 + rw2
-  override def toString: String =  "\ninternal connection, params" +super.toString.split("\n").map(_ + "\n\t").foldLeft("\n\t")(_+_)
+  override def toString: String =  print("Internal connection:\n" +super.toString)
 
+  override def copy: BaseLink = new InternalConnection(first, second)
   //TODO вбить правильные формулы для внутреннего зацепления
 }
 
