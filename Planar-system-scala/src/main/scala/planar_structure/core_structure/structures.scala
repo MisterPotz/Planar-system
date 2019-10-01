@@ -114,7 +114,6 @@ class Satellite(val crown_storage : StorageHash[ChainLink] = new StorageHash[Cha
     Array(0) ++ some.sorted
   }
   override def getLink(index: Int): BaseLink = {
-    for (i <- availableIndeces) println(s"$i ")
     getLinkRec(index, availableIndeces.toIterable.iterator)
   }
 
