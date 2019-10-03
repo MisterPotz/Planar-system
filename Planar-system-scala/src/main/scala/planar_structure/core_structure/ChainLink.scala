@@ -2,7 +2,7 @@ package planar_structure.core_structure
 
 import planar_structure.help_traits._
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.language.implicitConversions
 
 
@@ -14,13 +14,14 @@ trait ConnectionManipulator{
 }
 
 trait ChainLinkInterface[T] extends Addable[T] with Updateable with LinkManipulator with ConnectionManipulator with
-RecognizableBaseLink with BeautifulDebugOutput
+RecognizableBaseLink with BeautifulDebugOutput with Storable
 {self =>
   override def getLink(i : Int) : BaseLink
   override def getConnection(i : Int) : GearConnection[BaseGearWheel,BaseGearWheel]
   //appending unique element to storages
   override def add[A <: T](a: A): ChainLinkInterface[T]
   override def addAll[A <: T](all: A*): ChainLinkInterface[T]
+  def getConnectionsAmount : Int
   //create or update connections
   def installConnections() : ChainLinkInterface[T]
   //removes old ones if there are ???not enough connections and creates new ones
@@ -29,25 +30,20 @@ RecognizableBaseLink with BeautifulDebugOutput
   override def update(): ChainLinkInterface[T]
   def getBranchSize : Int
   def copy : ChainLinkInterface[T]
+  def toStringShort : String
+  def getConnectionStorage : StorageHashDConnection
 }
 //basic chain of connections and wheels
-class ChainLink(baseLink: BaseLink*) extends ChainLinkInterface[BaseLink] {
+class ChainLink(val connections_storage : StorageHashDConnection,baseLink: BaseLink*) extends ChainLinkInterface[BaseLink] {
   init
 //initializing array of mechanisms
   def init : Unit = {
     baseLink.foreach((f:BaseLink )=> gear_storage.addOne(f))
   }
+
+  override def getConnectionStorage: StorageHashDConnection = connections_storage
   lazy val gear_storage: Storage[BaseLink] = new Storage[BaseLink] {}
-  lazy val connections_storage : StorageHashD[(BaseGearWheel, BaseGearWheel), GearConnection[BaseGearWheel,BaseGearWheel]]
-    = new StorageHashD[(BaseGearWheel, BaseGearWheel), GearConnection[BaseGearWheel,BaseGearWheel]] {}
-  protected def getNextTo(link: BaseLink) : BaseLink = {
-    var baseLink : BaseLink = null
-    for (i <- 0 until gear_storage.collection.length-1)
-      if (gear_storage.collection(i) eq link) {
-        baseLink =  gear_storage.collection(i+1)
-      }
-    baseLink
-  }
+  //reference to common storage of connections
   //get link i
   protected def getLinkRec(i : Int, current : Int) : BaseLink = {
    if (gear_storage.collection(current).getBranchSize - 1 >= i){
@@ -72,46 +68,35 @@ class ChainLink(baseLink: BaseLink*) extends ChainLinkInterface[BaseLink] {
       case _ => false
     }
   }
-  def getAllLinksAllowedForConnection : Array[BaseLink] = {
-    gear_storage.collection.foldLeft[ArrayBuffer[BaseLink]](new ArrayBuffer())(
-      (left : ArrayBuffer[BaseLink], right :BaseLink) => {
-        if (left.nonEmpty && allowedForConnection(left.last, right)) {
-          left.addOne(right)
-          left
-        }else  if(left.isEmpty && allowedForConnection(right)){
-          left.addOne(right)
-        } else{
-          left
-        }
-      }
-    ).toArray
-  }
-  //TODO counter for connections - for each chainlink scrape allowed connections - so no additional checks needed
-  // and then search through them each connection, with counter in mind, so needed connection will be found
-  override def getConnection(i: Int): GearConnection[BaseGearWheel, BaseGearWheel] = {
-    val allowed_links = getAllLinksAllowedForConnection
-    if (connections_storage.length -1 <= i)
-      //assumption that the last allowed for connection element is satellite
-      //TODO add to satellite the way to find connections
-      allowed_links.last.getConnection(i - connections_storage.length)
-    else
-      connections_storage.collection((allowed_links(i),allowed_links(i+1)))
-      //go to next chainlinks
-  }
-
-  def getConnectionsAmount : Int ={
-    var all_connections : IndexedSeq[GearConnection[BaseGearWheel, BaseGearWheel]] = null
-    try {
-       all_connections  = {
-        for (i <- 0 until getBranchSize-3) yield getConnection(i)
-      }
-    } catch{
-      case _ => println("Something happened")
+  def getAllLinksAllowedForConnectionFull : ListBuffer[(BaseLink, BaseLink)] = {
+    val all_allowed_in_this : Array[(BaseLink, BaseLink)]= getAllLinksAllowedForConnection
+    if (all_allowed_in_this.isEmpty)
+      return new ListBuffer[(BaseLink, BaseLink)]
+    all_allowed_in_this(all_allowed_in_this.length-1)._2 match {
+        // если последний элемент  - сателлит, то тыкаем его, извлекаем оттуда все что нужно и отдаем выше
+      case a : Satellite =>  new ListBuffer[(BaseLink, BaseLink)].appendAll(all_allowed_in_this).appendAll(a.getAllLinksAllowedForConnectionFull)
+      //ListBuffer[(BaseLink,BaseLink)](all_allowed_in_this.toList).appendAll(a.getAllLinksAllowedForConnectionFull)
+          //если что-то другое, возвращаем что нашли на этом уровне
+      case _ => new ListBuffer[(BaseLink,BaseLink)].appendAll(all_allowed_in_this)
     }
-    all_connections.length
+  }
+  def availableIndeces : Seq[(Int, Int)] = for (i <- 0 until gear_storage.length - 1) yield (i, i+1)
+  def getAllLinksAllowedForConnection : Array[(BaseLink,BaseLink)] = {
+    val indeces = availableIndeces
+    val array = new ArrayBuffer[(BaseLink, BaseLink)]()
+    for (i <- indeces){
+      if (allowedForConnection(gear_storage(i._1), gear_storage(i._2))){
+        array.addOne((gear_storage(i._1), gear_storage(i._2)))
+      }
+    }
+    //creating available connections only in this chainlink
+    array.toArray
+  }
+  override def getConnectionsAmount : Int ={
+    connections_storage.length
   }
   //TODO create mechanism from file (JSON)
-  override def toString: String = "\nChain link:" + print("\ngears:\n" +gear_storage.toString + "\n" + "connections:\n"+ connections_storage.toString)
+  override def toString: String = "\nChain link:" + print("\ngears:\n" +gear_storage.toString) //+ "\n" + "connections:\n" + connections_storage.toString)
   //appending unique element to storages
   def add[A <: BaseLink](a: A): ChainLink = {
     a match {
@@ -125,35 +110,24 @@ class ChainLink(baseLink: BaseLink*) extends ChainLinkInterface[BaseLink] {
     for (a <- all) add(a)
     this
   }
+  def fullConnectionsClean() : ChainLink = {
+    connections_storage.collection.clear()
+    this
+  }
   //create or update connections
   def installConnections() : ChainLink  = update()
   //removes old ones if there are not enough connections and creates new ones
   protected def installNewConnections() : ChainLink= {
-    connections_storage.collection.clear()
     //just creating new array with certified baselinks to be sure that no bad things will happen
-    val gears_to_connect = getAllLinksAllowedForConnection
-    for (i <- 0 until gears_to_connect.length - 1)
-    connections_storage.addOne(((gear_storage(i), gear_storage(i+1)), GearConnection((gear_storage(i)),(gear_storage(i+1)))))
+    val gears_to_connect = getAllLinksAllowedForConnectionFull
+    for (i <- gears_to_connect) {
+      connections_storage.addOne((i.asInstanceOf[(BaseGearWheel,BaseGearWheel)], GearConnection(i._1,i._2)))
+    }
     this
   }
   //full re-init of current connections (in case wheels changes and we want to re-evaluate inner parameters of connections)
   override def update(): ChainLink = {
-    val is_equipped = if (connections_storage.length < gear_storage.length - 1) false else true
-    //delete old connections if there are less of them than it should
-    if (!is_equipped) {
-      installNewConnections()
-    }
-    //or just reinit them if there are as much connections as it should
-    else {
-      for ( i <- 0 until connections_storage.length) {
-        connections_storage((gear_storage(i), gear_storage(i+1)))._2.init
-        //basically this does nothing but in case of satellite - then it updates satellites connections
-        //so a command from one point re-initializes connections all over the rest mechanism
-      }
-    }
-    for (i <- gear_storage.collection){
-      i.update()
-    }
+    installNewConnections()
     this
   }
 
@@ -161,11 +135,25 @@ class ChainLink(baseLink: BaseLink*) extends ChainLinkInterface[BaseLink] {
     gear_storage.collection.foldLeft(0)((left : Int, right: BaseLink) => left + right.getBranchSize)
   }
   override def copy : ChainLink  ={
-    val chainLink : ChainLink = new ChainLink()
+    val chainLink : ChainLink = new ChainLink(this.connections_storage)
     for (i <- 0 until gear_storage.length)
       chainLink.add(gear_storage(i).copy)
     chainLink
   }
+
+  override def getConnection(i: Int): GearConnection[BaseGearWheel, BaseGearWheel] = {
+    val units = getAllLinksAllowedForConnectionFull
+    connections_storage(units(i).asInstanceOf[(BaseGearWheel,BaseGearWheel)])._2
+  }
+  def connectionsSorter: Array[GearConnection[BaseGearWheel, BaseGearWheel]] = {
+    val arr_b = new ArrayBuffer[GearConnection[BaseGearWheel,BaseGearWheel]]()
+    for (i <- 0 until getConnectionsAmount){
+      arr_b.addOne(getConnection(i))
+    }
+    arr_b.toArray
+  }
+
+  override def toStringShort: String = "ChainLink, contains:" + print(gear_storage.toStringShort)
 }
 
 

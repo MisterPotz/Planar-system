@@ -1,10 +1,13 @@
 package planar_structure.core_structure
 
-import planar_structure.help_traits.{BeautifulDebugOutput, Recognizable, Storage, StorageHash, Updateable}
+import planar_structure.help_traits.{BeautifulDebugOutput, Recognizable, Storage, StorageHash, StorageHashDConnection, Updateable}
 
-
+import scala.collection.mutable.ListBuffer
+trait Storable{
+  def toStringShort : String
+}
 //sealed для того, чтобы сгенерировалась enum из классов
-sealed  trait  BaseLink extends Updateable{self =>
+sealed  trait  BaseLink extends Updateable with Storable{self =>
   //by default update does nothing
   override def update(): BaseLink.this.type = {self}
   def getBranchSize : Int = 1
@@ -23,7 +26,7 @@ abstract class BaseGearWheel(var z : Int,var  m: Double,var x:Double,var ha: Dou
   final def rb : Double = r * math.cos(alpha)
 
   override def toString: String = s"z: $z\nm: $m\nx: $x\nha: $ha\nca: $ca\nalpha: $alpha\naxis_steady: $axis_steady\nrotates: $rotates"
-
+  override def toStringShort : String = "gear wheel"
   override def getBranchSize: Int = 1
 }
 
@@ -33,7 +36,7 @@ class ExternalGearWheel(z : Int = 30, m: Double = 1.25,x:Double = 0,
                         , axis_steady: Boolean = true, rotates : Boolean = true) extends BaseGearWheel(
   z, m,x,ha,ca,alpha, axis_steady, rotates){
   override def toString: String = print("External gear, parameters:\n"+ super.toString)
-
+  override def toStringShort : String = "External " + super.toStringShort
   override def copy: ExternalGearWheel = new ExternalGearWheel(z,m,x,ha,ca,alpha,axis_steady,rotates)
 
 }
@@ -44,18 +47,19 @@ class InternalGearWheel( z : Int = 30,  m: Double = 1.25,  x:Double = 0,
   m,x,ha,ca,alpha, axis_steady, rotates){
   override def toString: String = print("Internal gear, parameters:\n"+ super.toString)
   override def copy: InternalGearWheel = new InternalGearWheel(z,m,x,ha,ca,alpha,axis_steady,rotates)
+  override def toStringShort : String = "Internal " + super.toStringShort
 
 }
 
-
 //assumption that satellites first element is always BaseGearWheel
-class Satellite(val crown_storage : StorageHash[ChainLink] = new StorageHash[ChainLink] {}) extends BaseLink with RecognizableBaseLink with BeautifulDebugOutput {
+class Satellite(protected val connections_storage :StorageHashDConnection, val crown_storage : StorageHash[ChainLink] = new StorageHash[ChainLink] {}) extends BaseLink with RecognizableBaseLink with BeautifulDebugOutput {
+  val carrierChainLink : ChainLink = new ChainLink(connections_storage)
   override def copy: Satellite = {
     val new_storage = new StorageHash[ChainLink]{}
     for (i <- crown_storage.collection){
       new_storage.addOne((i._1, i._2.copy))
     }
-    new Satellite(new_storage)
+    new Satellite(connections_storage,new_storage)
   }
 
   //хранит информацию о венцах и их продолджениях
@@ -69,8 +73,9 @@ class Satellite(val crown_storage : StorageHash[ChainLink] = new StorageHash[Cha
   override def toString: String = {
     "Satellite, contains:" + print(crown_storage.toString)
   }
+  def toStringShort : String = s"Satellite, ${crown_storage.length} crown(s): " + print(crown_storage.toStringShort)
   def addChainLink(index : Int,t :  BaseLink*): Satellite = {
-    val chainLink : ChainLink = new ChainLink
+    val chainLink : ChainLink = new ChainLink(connections_storage)
     for (tx <- t){
       chainLink.add(tx)
     }
@@ -110,25 +115,45 @@ class Satellite(val crown_storage : StorageHash[ChainLink] = new StorageHash[Cha
         getLinkRec(index-crown_storage.collection(current_index).getBranchSize, current)
   }
   protected def availableIndeces : Array[Int] = {
-    val some : Array[Int] = crown_storage.collection.keys.toArray.filter(_ != 0)
-    Array(0) ++ some.sorted
+    val sorted_indeces : Array[Int] = crown_storage.collection.keys.toArray.filter(_ != 0)
+    Array(0) ++ sorted_indeces.sorted
   }
   override def getLink(index: Int): BaseLink = {
     getLinkRec(index, availableIndeces.toIterable.iterator)
+  }
+  def getConnection(index: Int) : GearConnection[BaseGearWheel, BaseGearWheel] = ???
+  def getConnectionStorage : StorageHashDConnection = connections_storage
+  def getAllLinksAllowedForConnectionFull : ListBuffer[(BaseLink,BaseLink)] = {
+    val indeces = availableIndeces
+    val returning_list = new ListBuffer[(BaseLink,BaseLink)]
+    for (i <- indeces) {
+      returning_list.appendAll(crown_storage.collection(i).getAllLinksAllowedForConnectionFull)
+    }
+    returning_list
+  }
+  def addCarrierChainLink(baseLink: BaseLink*) : Satellite = {
+    baseLink.foreach(carrierChainLink.add(_))
+    this
   }
 
 }
 class Carrier extends  BaseLink{
   override def copy: Carrier = new Carrier
   override def getBranchSize: Int = 1
+
+  override def toStringShort: String = "Carrier"
 }
 class Input extends BaseLink{
   override def copy: Input = new Input
   override def getBranchSize: Int = 1
+
+  override def toStringShort: String = "Input"
 }
 class Output extends  BaseLink{
   override def copy: Output= new Output
   override def getBranchSize: Int = 1
+
+  override def toStringShort: String = "Output"
 }
 
 trait RecognizableBaseLink extends Recognizable[BaseLink] {

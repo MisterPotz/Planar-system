@@ -1,10 +1,10 @@
 package planar_structure.core_structure
 
-import planar_structure.help_traits.{BeautifulDebugOutput, Recognizable}
+import planar_structure.help_traits.{BeautifulDebugOutput, Recognizable, StorageHashD, StorageHashDConnection}
 
 import scala.language.implicitConversions
 import scala.math.cos
-
+//TODO внедрить владовские наработки
 //helper trait (interface) to deal with involute finding problems
 trait GearObjectedConversions{
   implicit class InvToRad(i : Double) {
@@ -25,6 +25,9 @@ object GearConnection extends RecognizableConnection with GearConnectionCreator{
   def apply(first: BaseGearWheel, second: BaseGearWheel): GearConnection[BaseGearWheel, BaseGearWheel] ={
     makeGearConnection(first, second)
   }
+  val connection_storage : StorageHashDConnection =
+    new StorageHashDConnection {}
+
 }
 abstract class GearConnection[+T <: BaseGearWheel, +T2 <: BaseGearWheel](val first : T,val second : T2) extends GearObjectedConversions
 with BaseGearConnection with BeautifulDebugOutput {
@@ -47,6 +50,7 @@ with BaseGearConnection with BeautifulDebugOutput {
   def updateAllRw()
   def updateAw()
   override def toString: String = s"alpha_w: $alpha_w\nrw1: $rw1\nrw2: $rw2\naw: $aw"
+  def toStringShort : String = ""
   override def getBranchSize : Int = 1
 }
 object ExternalConnection
@@ -59,6 +63,8 @@ class ExternalConnection( first : ExternalGearWheel, second: ExternalGearWheel) 
 
   override def copy: BaseLink = new ExternalConnection(first, second)
   override def toString: String =  print("External connection:\n" +super.toString)
+
+  override def toStringShort: String = "External connection" concat super.toStringShort
 }
 object InternalConnection
 class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends GearConnection(first, second){
@@ -68,6 +74,7 @@ class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends G
   override def updateAllRw(): Unit = {rw1 = findRw(first.alpha, first.m, first.z); rw2 =  findRw(second.alpha, second.m, second.z)}
   override def updateAw(): Unit = aw = rw1 + rw2
   override def toString: String =  print("Internal connection:\n" +super.toString)
+  override def toStringShort: String = "Internal connection" concat super.toStringShort
 
   override def copy: BaseLink = new InternalConnection(first, second)
   //TODO вбить правильные формулы для внутреннего зацепления
