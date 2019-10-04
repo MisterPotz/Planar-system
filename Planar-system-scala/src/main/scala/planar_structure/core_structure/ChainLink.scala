@@ -40,7 +40,6 @@ class ChainLink(val connections_storage : StorageHashDConnection,baseLink: BaseL
   def init : Unit = {
     baseLink.foreach((f:BaseLink )=> gear_storage.addOne(f))
   }
-
   override def getConnectionStorage: StorageHashDConnection = connections_storage
   lazy val gear_storage: Storage[BaseLink] = new Storage[BaseLink] {}
   //reference to common storage of connections
@@ -61,25 +60,19 @@ class ChainLink(val connections_storage : StorageHashDConnection,baseLink: BaseL
       case (i : BaseGearWheel, k: Satellite) => true
       case _ => false}
   }
-  def allowedForConnection(baseLink: BaseLink) : Boolean = {
-    baseLink match {
-      case i : BaseGearWheel => true
-      case i : Satellite => true
-      case _ => false
-    }
-  }
   def getAllLinksAllowedForConnectionFull : ListBuffer[(BaseLink, BaseLink)] = {
-    val all_allowed_in_this : Array[(BaseLink, BaseLink)]= getAllLinksAllowedForConnection
+    val all_allowed_in_this: Array[(BaseLink, BaseLink)] = getAllLinksAllowedForConnection
     if (all_allowed_in_this.isEmpty)
       return new ListBuffer[(BaseLink, BaseLink)]
-    all_allowed_in_this(all_allowed_in_this.length-1)._2 match {
-        // если последний элемент  - сателлит, то тыкаем его, извлекаем оттуда все что нужно и отдаем выше
-      case a : Satellite =>  new ListBuffer[(BaseLink, BaseLink)].appendAll(all_allowed_in_this).appendAll(a.getAllLinksAllowedForConnectionFull)
+    all_allowed_in_this(all_allowed_in_this.length - 1)._2 match {
+      // если последний элемент  - сателлит, то тыкаем его, извлекаем оттуда все что нужно и отдаем выше
+      case a: Satellite => new ListBuffer[(BaseLink, BaseLink)].appendAll(all_allowed_in_this).appendAll(a.getAllLinksAllowedForConnectionFull)
       //ListBuffer[(BaseLink,BaseLink)](all_allowed_in_this.toList).appendAll(a.getAllLinksAllowedForConnectionFull)
-          //если что-то другое, возвращаем что нашли на этом уровне
-      case _ => new ListBuffer[(BaseLink,BaseLink)].appendAll(all_allowed_in_this)
+      //если что-то другое, возвращаем что нашли на этом уровне
+      case _ => new ListBuffer[(BaseLink, BaseLink)].appendAll(all_allowed_in_this)
     }
   }
+  //is used to scrape pairs of indexes of gear_storage objects for creation of connections
   def availableIndeces : Seq[(Int, Int)] = for (i <- 0 until gear_storage.length - 1) yield (i, i+1)
   def getAllLinksAllowedForConnection : Array[(BaseLink,BaseLink)] = {
     val indeces = availableIndeces

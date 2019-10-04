@@ -2,10 +2,13 @@ package planar_structure.mechanisms
 
 import planar_structure.core_structure.{BaseGearWheel, BaseLink, BaseMechanism, Carrier, ChainLink, ChainLinkInterface, ExternalConnection, ExternalGearWheel, GearConnection, Input, InternalGearWheel, Output, Satellite}
 import planar_structure.help_traits.{BeautifulDebugOutput, StorageHashDConnection, Updateable}
-//TODO хранить всю карту в объекте-одиночке - это, конечно, круто, но надо сделать именно класс таких объектов хранителей
-//TODO объявить четыре главных типа механизмов и заложить туда типовую структуру
+
+import scala.collection.mutable
+//TODO объявить четыре главных типа механизмов и заложить туда типовую структуру - оформить в виде карты наверное будет лучше
+//тогда можно будет пополнять эту карту из файла, доступ по стринг-названию
 //basic type of mechanism, additional mechanism can be addded to existing one
-class Mechanism(val input_layer : ChainLink = new ChainLink(new StorageHashDConnection {})) extends BaseMechanism with Updateable with ChainLinkInterface[Mechanism] with BeautifulDebugOutput {
+class Mechanism(val input_layer : ChainLink = new ChainLink(new StorageHashDConnection {})) extends BaseMechanism with Updateable
+  with ChainLinkInterface[Mechanism] with BeautifulDebugOutput {
   //initial sequence of mechanism elements
   //получить итый механизм
   override def getLink(i: Int): BaseLink = {
@@ -31,28 +34,30 @@ class Mechanism(val input_layer : ChainLink = new ChainLink(new StorageHashDConn
   override def getConnectionsAmount: Int = input_layer.getConnectionsAmount
 
   override def getConnectionStorage: StorageHashDConnection = input_layer.getConnectionStorage
-}
-
-sealed trait MechanismTypes extends Mechanism
-/*
-class SingleRowSimple extends MechanismTypes{
-    //реализовать закладку структуры в конструкторе
-}*/
-
-trait TOneRowClassic extends MechanismTypes
-trait TTwoRowEI extends MechanismTypes //external - internal two-row structure
-trait TTwoRowIE extends MechanismTypes //internal - external two-row structure
-trait TTwoRowEE extends MechanismTypes //external - external two-row structure
-
-class OneRowClassic extends TOneRowClassic{
-  override val input_layer: ChainLink = {
-    val storageHashDConnection = new StorageHashDConnection {}
-    new ChainLink(storageHashDConnection,new Input,
-      new ExternalGearWheel(),
-      //TODO addCarrierChainLink
-      new Satellite(storageHashDConnection).addChainLink(0, new ExternalGearWheel(),new InternalGearWheel()),
-      new Carrier, new Output
-    )
+  def debugPrint : String = {
+    new String(s"Total chain branch size: ${input_layer.getBranchSize}") concat
+    input_layer.toStringShort + "\n" concat
+    new String(s"Installed connections: ${input_layer.getAllLinksAllowedForConnectionFull.length}") + "\n" concat
+    {for (i <- 0 until input_layer.getConnectionsAmount)
+      yield (input_layer.getConnection(i).toString + "\n")}.foldLeft("")(_+_)
   }
+}
+
+object MechanismClassStorage{
+  def initMechanisms : Unit ={
+    storage.addOne(("One Row", () => {
+      val storage_ = new StorageHashDConnection {}
+      val mech = new Mechanism(new ChainLink(storage_,new Input,
+        new ExternalGearWheel(z = 40),
+        new Satellite(storage_).addChainLink(0, new ExternalGearWheel(),new InternalGearWheel(230)),
+        new Carrier, new Output
+      ))
+      mech.installConnections()
+      mech
+    }))
+  }
+  //storage with access to mechanism creators by string
+  val storage : mutable.HashMap[String, () => Mechanism] = new mutable.HashMap[String,() => Mechanism]()
 
 }
+

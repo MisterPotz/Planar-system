@@ -110,11 +110,11 @@ trait RecognizableConnection extends Recognizable[GearConnection[BaseGearWheel, 
     }
   }
 
-  override implicit def sub2Option(t: GearConnection[BaseGearWheel, BaseGearWheel]): Option[GearConnection[BaseGearWheel, BaseGearWheel]] = {
+ /* implicit def sub2Option(t: GearConnection[BaseGearWheel, BaseGearWheel]): Option[GearConnection[BaseGearWheel, BaseGearWheel]] = {
     t match {
       case t : ExternalConnection => Some(t)
       case t : InternalConnection => Some(t)
       case _ => None
     }
-  }
+  }*/
 }

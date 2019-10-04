@@ -175,26 +175,11 @@ trait RecognizableBaseLink extends Recognizable[BaseLink] {
       case _ => throw new ClassCastException("Can't create BaseGearWheel from BaseLink")
     }
   }
-  override implicit def sub2Option(t: BaseLink): Option[BaseLink] = {
-    t match {
-      case t : BaseGearWheel => Some(t)
-      case t : Satellite => Some(t)
-      case t : Input => Some(t)
-      case t : Output => Some(t)
-      case t : Carrier => Some(t)
-      case _ => None
-    }
-  }
+
 }
 trait RecognizableBaseGearWheel extends Recognizable[BaseGearWheel]{
   override implicit def super2SubClass[ExternalGearWheel](t: BaseGearWheel): ExternalGearWheel = {
     t match {case t : ExternalGearWheel => t; case _ => throw new ClassCastException("Can't create External gear from BaseGearWheel")}
   }
-  override implicit def sub2Option(t: BaseGearWheel): Option[BaseGearWheel] = {
-    t match {
-      case t : ExternalGearWheel => Some(t)
-      case t : InternalGearWheel => Some(t)
-      case _ => None
-    }
-  }
+
 }
