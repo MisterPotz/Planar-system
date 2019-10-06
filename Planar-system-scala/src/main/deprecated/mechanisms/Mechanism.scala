@@ -1,6 +1,8 @@
-package planar_structure.mechanisms
+package deprecated.mechanisms
 
-import planar_structure.core_structure.{BaseGearWheel, BaseLink, BaseMechanism, Carrier, ChainLink, ChainLinkInterface, ExternalConnection, ExternalGearWheel, GearConnection, Input, InternalGearWheel, Output, Satellite}
+import planar_structure.core_structure.connections.GearConnection
+import planar_structure.core_structure.links.LinkHolderImplicits
+import planar_structure.core_structure.{BaseMechanism, Carrier, ChainLinkInterface, ExternalGearWheel, Input, InternalGearWheel, Output, Satellite}
 import planar_structure.help_traits.{BeautifulDebugOutput, StorageHashDConnection, Updateable}
 
 import scala.collection.mutable
@@ -47,10 +49,10 @@ object MechanismClassStorage{
   def initMechanisms : Unit ={
     storage.addOne(("One Row", () => {
       val storage_ = new StorageHashDConnection {}
-      val mech = new Mechanism(new ChainLink(storage_,new Input,
+      val mech = new Mechanism(new ChainLink(storage_,new deprecated.Input,
         new ExternalGearWheel(z = 40),
-        new Satellite(storage_).addChainLink(0, new ExternalGearWheel(),new InternalGearWheel(230)),
-        new Carrier, new Output
+        new deprecated.Satellite(storage_).addChainLink(0, new ExternalGearWheel(),new InternalGearWheel(230)),
+        new deprecated.Carrier, new deprecated.Output
       ))
       mech.installConnections()
       mech

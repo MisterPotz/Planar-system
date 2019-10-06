@@ -1,8 +1,10 @@
+/*
 package planar_structure.analysis
 
 import scala.language.implicitConversions
-import planar_structure.core_structure.{BaseGearWheel, BaseLink, GearConnection, RecognizableBaseLink}
-import planar_structure.mechanisms.Mechanism
+import planar_structure.core_structure.{BaseGearWheel, RecognizableBaseLink}
+import deprecated.{BaseGearWheel, BaseLink, RecognizableBaseLink}
+import deprecated.mechanisms.Mechanism
 
 import scala.collection.mutable.ListBuffer
 
@@ -19,4 +21,5 @@ object StructureAnalyser extends  RecognizableBaseLink {
   }
 
 }
+*/
 

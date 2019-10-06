@@ -1,6 +1,7 @@
-package planar_structure.core_structure
+package deprecated
 
-import planar_structure.help_traits.{BeautifulDebugOutput, Recognizable, StorageHashD, StorageHashDConnection}
+import planar_structure.core_structure.{connections, _}
+import planar_structure.help_traits.{BeautifulDebugOutput, Recognizable, StorageHashDConnection}
 
 import scala.language.implicitConversions
 import scala.math.cos
@@ -54,20 +55,20 @@ with BaseGearConnection with BeautifulDebugOutput {
   override def getBranchSize : Int = 1
 }
 object ExternalConnection
-class ExternalConnection( first : ExternalGearWheel, second: ExternalGearWheel) extends GearConnection(first, second){
+class ExternalConnection( first : ExternalGearWheel, second: ExternalGearWheel) extends connections.GearConnection(first, second){
   super.init
   override  def findRw(alpha : Double, m :Double, z: Double) : Double = m * z.toDouble / 2.0 * cos(alpha) / cos(alpha_w)
   override def updateAlpha_w(): Unit = alpha_w = (first.alpha.radToInv + 2* (first.x + second.x) / (first.z + second.z).toDouble).invToRad
   override def updateAllRw(): Unit = {rw1 = findRw(first.alpha, first.m, first.z); rw2 =  findRw(second.alpha, second.m, second.z)}
   override def updateAw(): Unit = aw = rw1 + rw2
 
-  override def copy: BaseLink = new ExternalConnection(first, second)
+  override def copy: BaseLink = new connections.ExternalConnection(first, second)
   override def toString: String =  print("External connection:\n" +super.toString)
 
   override def toStringShort: String = "External connection" concat super.toStringShort
 }
 object InternalConnection
-class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends GearConnection(first, second){
+class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends connections.GearConnection(first, second){
   super.init
   override  def findRw(alpha : Double, m :Double, z: Double) : Double = m * z.toDouble / 2.0 * cos(alpha) / cos(alpha_w)
   override def updateAlpha_w(): Unit = alpha_w = (first.alpha.radToInv + 2* (first.x + second.x) / (first.z + second.z).toDouble).invToRad
@@ -81,29 +82,29 @@ class InternalConnection(first : BaseGearWheel, second: BaseGearWheel) extends G
 }
 
 trait GearConnectionCreator {
-  def recognizeConnectionType(first: BaseGearWheel, second: BaseGearWheel): Option[GearConnection[BaseGearWheel, BaseGearWheel]] = {
+  def recognizeConnectionType(first: BaseGearWheel, second: BaseGearWheel): Option[connections.GearConnection[BaseGearWheel, BaseGearWheel]] = {
     (first, second) match {
-      case (first: ExternalGearWheel, second: ExternalGearWheel) => Some(new ExternalConnection(first, second))
-      case (first: ExternalGearWheel, second: InternalGearWheel) => Some(new InternalConnection(first, second))
-      case (first: InternalGearWheel, second: ExternalGearWheel) => Some(new InternalConnection(first, second))
+      case (first: ExternalGearWheel, second: ExternalGearWheel) => Some(new connections.ExternalConnection(first, second))
+      case (first: ExternalGearWheel, second: InternalGearWheel) => Some(new connections.InternalConnection(first, second))
+      case (first: InternalGearWheel, second: ExternalGearWheel) => Some(new connections.InternalConnection(first, second))
       case _ => None
     }
   }
   //сделать соединение
-  def makeGearConnection(first: BaseGearWheel, second: BaseGearWheel): GearConnection[BaseGearWheel, BaseGearWheel] = {
+  def makeGearConnection(first: BaseGearWheel, second: BaseGearWheel): connections.GearConnection[BaseGearWheel, BaseGearWheel] = {
     val recognized_type = recognizeConnectionType(first, second)
     recognized_type match {
       //uses implicit case from basegearwheel to external gearwheel
-      case Some(kek: ExternalConnection) => kek
-      case Some(kek: InternalConnection) => kek
+      case Some(kek: connections.ExternalConnection) => kek
+      case Some(kek: connections.InternalConnection) => kek
       case None => throw new IllegalArgumentException("Connection can't be created")
     }
   }
 }
 
 
-trait RecognizableConnection extends Recognizable[GearConnection[BaseGearWheel, BaseGearWheel]]{
-  override implicit def super2SubClass[ExternalConnection](t: GearConnection[BaseGearWheel, BaseGearWheel]): ExternalConnection = {
+trait RecognizableConnection extends Recognizable[connections.GearConnection[BaseGearWheel, BaseGearWheel]]{
+  override implicit def super2SubClass[ExternalConnection](t: connections.GearConnection[BaseGearWheel, BaseGearWheel]): ExternalConnection = {
     t match {
       case t : ExternalConnection => t
       case _ => throw new ClassCastException("Can't create Ext Connection from Connection")

@@ -1,6 +1,7 @@
-package planar_structure.core_structure
+package deprecated
 
-import planar_structure.help_traits.{BeautifulDebugOutput, Recognizable, Storage, StorageHash, StorageHashDConnection, Updateable}
+import planar_structure.core_structure.connections.GearConnection
+import planar_structure.help_traits._
 
 import scala.collection.mutable.ListBuffer
 trait Storable{
@@ -73,7 +74,7 @@ class Satellite(protected val connections_storage :StorageHashDConnection, val c
   override def toString: String = {
     "Satellite, contains:" + print(crown_storage.toString)
   }
-  def toStringShort : String = s"Satellite, ${crown_storage.length} crown(s): " + print(crown_storage.toStringShort)
+  override def toStringShort : String = s"Satellite, ${crown_storage.length} crown(s): " + print(crown_storage.toStringShort)
   def addChainLink(index : Int,t :  BaseLink*): Satellite = {
     val chainLink : ChainLink = new ChainLink(connections_storage)
     for (tx <- t){

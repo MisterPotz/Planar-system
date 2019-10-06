@@ -1,5 +1,7 @@
-package planar_structure.core_structure
+package deprecated
 
+import planar_structure.core_structure.connections.GearConnection
+import planar_structure.core_structure.links
 import planar_structure.help_traits._
 
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
@@ -57,7 +59,7 @@ class ChainLink(val connections_storage : StorageHashDConnection,baseLink: BaseL
   def allowedForConnection(baseLink: BaseLink, baseLink2: BaseLink) : Boolean = {
     (baseLink, baseLink2) match {
       case (i: BaseGearWheel, k: BaseGearWheel) => true;
-      case (i : BaseGearWheel, k: Satellite) => true
+      case (i : BaseGearWheel, k: deprecated.Satellite) => true
       case _ => false}
   }
   def getAllLinksAllowedForConnectionFull : ListBuffer[(BaseLink, BaseLink)] = {
@@ -66,7 +68,7 @@ class ChainLink(val connections_storage : StorageHashDConnection,baseLink: BaseL
       return new ListBuffer[(BaseLink, BaseLink)]
     all_allowed_in_this(all_allowed_in_this.length - 1)._2 match {
       // если последний элемент  - сателлит, то тыкаем его, извлекаем оттуда все что нужно и отдаем выше
-      case a: Satellite => new ListBuffer[(BaseLink, BaseLink)].appendAll(all_allowed_in_this).appendAll(a.getAllLinksAllowedForConnectionFull)
+      case a: deprecated.Satellite => new ListBuffer[(BaseLink, BaseLink)].appendAll(all_allowed_in_this).appendAll(a.getAllLinksAllowedForConnectionFull)
       //ListBuffer[(BaseLink,BaseLink)](all_allowed_in_this.toList).appendAll(a.getAllLinksAllowedForConnectionFull)
       //если что-то другое, возвращаем что нашли на этом уровне
       case _ => new ListBuffer[(BaseLink, BaseLink)].appendAll(all_allowed_in_this)
@@ -94,7 +96,7 @@ class ChainLink(val connections_storage : StorageHashDConnection,baseLink: BaseL
   def add[A <: BaseLink](a: A): ChainLink = {
     a match {
       case a : BaseGearWheel => gear_storage.addOne(a)
-      case a : Satellite => gear_storage.addOne(a)
+      case a : deprecated.Satellite => gear_storage.addOne(a)
       case _ => println("Element was declined, not appended")
     }
     this

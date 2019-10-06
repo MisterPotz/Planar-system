@@ -1,6 +1,7 @@
 package planar_structure.help_traits
 
-import planar_structure.core_structure.{BaseGearWheel, BaseLink, ChainLink, ChainLinkInterface, GearConnection, Storable}
+import planar_structure.core_structure.connections.GearConnection
+import planar_structure.core_structure.{BaseGearWheel, BaseLink}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer

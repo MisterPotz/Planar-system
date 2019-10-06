@@ -2,14 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/StructureAnalyser.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/MechanismHolder.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/Connection.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/ConnectionHolder.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkElem.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/WheelHolder.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/ChainLink.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/ChainLink.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/GearConnection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/GearConnection.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/structures.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/structures.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/Recognizable.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/Recognizable.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanisms/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanisms/Mechanism.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/StructureAnalyser.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/StructureAnalyser.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/ChainLink.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deprecated/ChainLink.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/GearConnection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deprecated/GearConnection.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/structures.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deprecated/structures.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/BeautifulDebugOutput.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/BeautifulDebugOutput.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/Storage.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deprecated/Storage.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanisms/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deprecated/mechanisms/Mechanism.scala" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -74,6 +81,17 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="Errors" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/deprecated" />
+      <recent name="$PROJECT_DIR$/src/main" />
+      <recent name="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/holders" />
+      <recent name="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -114,7 +132,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Unnamed" type="ScalaScriptConsoleRunConfiguration" factoryName="Scala Console" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
+    <configuration name="Unnamed" type="ScalaScriptConsoleRunConfiguration" factoryName="Scala Console" temporary="true" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
       <module name="Planar-system-scala" />
       <option name="allowRunningInParallel" value="false" />
       <option name="javaOptions" value="-Djline.terminal=NONE" />
@@ -139,6 +157,11 @@
       <item itemvalue="sbt Task.Build" />
       <item itemvalue="Scala Console.Unnamed" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Scala Console.Unnamed" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SbtLocalSettings">
     <option name="availableProjects">
@@ -214,11 +237,14 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="scala-line">
-          <url>file://$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/structures.scala</url>
-          <line>110</line>
+          <url>file://$PROJECT_DIR$/src/main/deprecated/structures.scala</url>
+          <line>111</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Planar_system_scala$Planar_Test.ic" NAME="Planar Test Coverage Results" MODIFIED="1570350379205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>
