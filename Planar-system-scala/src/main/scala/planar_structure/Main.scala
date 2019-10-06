@@ -10,4 +10,7 @@ object Main extends App with Implicits with ConnectionImplicits with MechanismIm
   val mech = Mechanism(MechanismHolder.creator_funcs("One Row")())
   mech.installConnections()
   println(mech.toStringBrief)
+  val mech2 = Mechanism(MechanismHolder.creator_funcs("Two Row EI")())
+  mech2.installConnections()
+  println(mech2.toStringBrief)
   }

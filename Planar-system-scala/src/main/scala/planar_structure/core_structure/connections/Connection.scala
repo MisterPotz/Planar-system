@@ -14,7 +14,9 @@ sealed abstract class Connection(holder : ConnectionHolder) extends BeautifulDeb
   override def toStringShort: String = holder.toStringShort
 }
 case class ConnectionMap(holder : mutable.HashMap[(LinkElem, LinkElem), Connection])
-
+object ConnectionMap{
+  def empty :ConnectionMap = ConnectionMap(mutable.HashMap.empty[(LinkElem, LinkElem), Connection])
+}
 
 sealed abstract class GearConnection(holder : GearConnectionHolder) extends Connection(holder)
 case class InternalConnection(holder : InternalConnectionHolder) extends GearConnection(holder)

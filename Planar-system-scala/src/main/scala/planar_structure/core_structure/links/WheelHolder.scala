@@ -8,7 +8,6 @@ import scala.collection.mutable
 //used to create more advanced storages of case structures
 abstract class LinkElemHolder
 
-
 //these classes are used to hold info about the wheels. classes are used by higher structure
 sealed abstract class WheelHolder(var z : Int,var  m: Double,var x:Double,var ha: Double = 1.0,var ca: Double =0.25,var alpha:Double=scala.math.toRadians(20.0)
 ,var  axis_steady: Boolean = true,var rotates : Boolean = true) extends LinkElemHolder with BeautifulDebugOutput {
