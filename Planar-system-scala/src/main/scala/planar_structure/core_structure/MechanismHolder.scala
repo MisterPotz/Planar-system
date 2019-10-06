@@ -35,7 +35,50 @@ object MechanismHolder extends LinkHolderImplicits{
         )
       })
     }
-  }
+    creator_funcs.addOne{
+      ("Two Row IE", () => {
+        new MechanismHolder(
+          linkSeq = LinkSeq(Input() :: InternalWheel(WheelHolder.internal) ::
+            Satellite(mutable.HashMap(
+              (0 -> LinkSeq(ExternalWheel(WheelHolder.external) :: Nil)),
+              (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: ExternalWheel(WheelHolder.external) :: Nil))
+            )) ::
+            Carrier() ::
+            Output() :: Nil
+          ),
+          controlMap = ConnectionMap.empty
+        )
+      })}
+    creator_funcs.addOne{
+      ("Two Row II", () => {
+        new MechanismHolder(
+          linkSeq = LinkSeq(Input() :: InternalWheel(WheelHolder.internal) ::
+            Satellite(mutable.HashMap(
+              (0 -> LinkSeq(ExternalWheel(WheelHolder.external) :: Nil)),
+              (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: InternalWheel(WheelHolder.internal) :: Nil))
+            )) ::
+            Carrier() ::
+            Output() :: Nil
+          ),
+          controlMap = ConnectionMap.empty
+        )
+      })}
+    creator_funcs.addOne{
+      ("Two Row Test", () => {
+        new MechanismHolder(
+          linkSeq = LinkSeq(Input() :: InternalWheel(WheelHolder.internal) ::
+            Satellite(mutable.HashMap(
+              (0 -> LinkSeq(InternalWheel(WheelHolder.internal) :: Nil)),
+              (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: InternalWheel(WheelHolder.internal) :: Nil))
+            )) ::
+            Carrier() ::
+            Output() :: Nil
+          ),
+          controlMap = ConnectionMap.empty
+        )
+      })}
+    }
+
   //storage with access to mechanism creators by string
   lazy val creator_funcs : mutable.HashMap[String, () => MechanismHolder] = mutable.HashMap.empty[String, () => MechanismHolder]
 }

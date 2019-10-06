@@ -4,8 +4,15 @@
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/StructureAnalyser.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/StructureAnalyser.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/MechanismHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/MechanismHolder.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/Connection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/Connection.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkElem.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkElem.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/Addable.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/FuncContainer.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/Recognizable.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/Updateable.scala" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -221,17 +228,6 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="planar-structure heavy construction started" />
     <option name="LAST_COMMIT_MESSAGE" value="planar-structure heavy construction started" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="scala-line">
-          <url>file://$PROJECT_DIR$/src/main/deprecated/structures.scala</url>
-          <line>111</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Planar_system_scala$Planar_Test.ic" NAME="Planar Test Coverage Results" MODIFIED="1570350379205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />

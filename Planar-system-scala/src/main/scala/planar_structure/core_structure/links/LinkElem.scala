@@ -135,40 +135,6 @@ trait Implicits {
       }
       prepareAllPairsRec(list, ListBuffer.empty[(LinkElem, LinkElem)])
     }
-    //TODO а нафига я сделал такую специализированную функцию? надо чтобы брала все абсолютно пары, потом бы уже решали что то
-    //а что не то
-    def prepareConnectablePairs : List[(GearWheel, GearWheel)] = {
-      @scala.annotation.tailrec
-      def prepareConnectablePairsRec(list : List[LinkElem], list_to_append_to : ListBuffer[(GearWheel, GearWheel)]): List[(GearWheel,GearWheel)] ={
-        def isWheel(a : LinkElem) : Boolean = a.isInstanceOf[GearWheel]
-        def makeWheel(a : LinkElem) : GearWheel = a.asInstanceOf[GearWheel]
-        if ( (list == Nil) || (list.isEmpty || list.tail.isEmpty)){
-          list_to_append_to.toList
-        }
-        else {
-          //сначала смотрим что справа
-          //если сателлит - то берем сначала его нуль-колесо и сравниваем с нашим текущим колесом
-          //если соединяемы - то все добавляем их кортеж в общую последовательность
-          //возвращаем ее и последовательность, полученную от дальнейшего prepareConnectablePairs
-          //если ранее был сателлит то на предыдущем этапе сначала линиаризируем цепочки сателлита и пускаем процесс по каждой из них
-          val right = list.tail.head
-          right match {
-            case a : Satellite =>
-              val lists = a.linearizeLists //getting linearized lists
-              if (isWheel(list.head) && GearConnection.areConnectable((makeWheel(list.head), makeWheel(a.crowns(0).elems(0))))) {
-                list_to_append_to.addOne((makeWheel(list.head), makeWheel(a.crowns(0).elems(0))))
-                lists.foldLeft(list_to_append_to)((left, right) => left addAll right.prepareConnectablePairs)
-              }
-            case _ =>
-              if (isWheel(list.head) && (isWheel(right)) && GearConnection.areConnectable((makeWheel(list.head), makeWheel(right)))){
-                list_to_append_to.addOne((makeWheel(list.head), makeWheel(right)))
-              }
-          }
-          prepareConnectablePairsRec(list.tail, list_to_append_to)
-        }
-      }
-      prepareConnectablePairsRec(list, ListBuffer.empty[(GearWheel, GearWheel)])
-    }
     def linearize : List[LinkElem] = {
       @scala.annotation.tailrec
       def linearizeRec(xs : List[LinkElem], list_to_append_to : ListBuffer[LinkElem]) : List[LinkElem] = {

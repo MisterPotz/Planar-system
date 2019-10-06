@@ -3,7 +3,7 @@ package planar_structure.core_structure.connections
 import planar_structure.core_structure.links.WheelHolder
 import planar_structure.core_structure.{ExternalWheel, GearWheel, Implicits, InternalWheel, LinkElem, LinkSeq}
 import planar_structure.help_traits.BeautifulDebugOutput
-
+import scala.reflect.ClassTag
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
@@ -22,10 +22,36 @@ sealed abstract class GearConnection(holder : GearConnectionHolder) extends Conn
 case class InternalConnection(holder : InternalConnectionHolder) extends GearConnection(holder)
 case class ExternalConnection(holder : ExternalConnectionHolder) extends GearConnection(holder)
 
+//this trait is useful to preserve functions to understand if elements are fit to that connection type
+trait ConnectionChecker[S <: LinkElem]{
+  def canBeInstancedAndConnected(checked : (LinkElem, LinkElem))(implicit tag : ClassTag[S]) : Boolean = {
+    if (canBeInstancedTo(checked)){
+      val pair = reinstanceTo(checked)
+      if (areConnectable(pair))
+        true
+      else
+        false
+    }else
+      false
+  }
+  def apply(first : S, second : S) : Connection
+  //type S <: LinkElem
+  def areConnectable(checked : (S, S)) : Boolean
+  def canBeInstancedTo(checked : (LinkElem, LinkElem))(implicit tag : ClassTag[S]) : Boolean = {
+    checked match {
+      case (f : S, s : S) => true
+      case _ => false
+    }
+  }
+  def reinstanceTo(checked : (LinkElem, LinkElem)) : (S, S) = {
+    checked.asInstanceOf[(S, S)]
+  }
+}
 
-object GearConnection{
+object GearConnection extends ConnectionChecker[GearWheel]{
+  //override type S = GearWheel
   //creates the nessecary connections from input GearWheels which incapsulATE wheel holders
-  def apply(first_ : GearWheel, second_ : GearWheel) : GearConnection = {
+  override def apply(first_ : GearWheel, second_ : GearWheel) : GearConnection = {
     (first_, second_) match {
       case (ExternalWheel(holder1), ExternalWheel(holder2)) => ExternalConnection(new ExternalConnectionHolder(holder1, holder2))
       case (InternalWheel(holder1),ExternalWheel(holder2)) => InternalConnection(new InternalConnectionHolder(holder1, holder2))
@@ -33,7 +59,7 @@ object GearConnection{
       case _ => throw new IllegalArgumentException("Can't create connection with given wheels")
     }
   }
-  def areConnectable(checked : (GearWheel, GearWheel)) : Boolean = {
+  override def areConnectable(checked : (GearWheel, GearWheel)) : Boolean = {
     checked match {
       case (ExternalWheel(_), ExternalWheel(_)) => true
       case (InternalWheel(_),ExternalWheel(_)) => true
@@ -49,12 +75,14 @@ trait ConnectionImplicits extends Implicits{
     override def toStringFull: String = (list.foldLeft("")(_ + "\n" + _.toStringFull).drop(1))
   }
   implicit class ConnectionMapOps(map : mutable.HashMap[(LinkElem, LinkElem), Connection]){
-    def installConnections(seq : LinkSeq) : mutable.HashMap[(LinkElem, LinkElem), Connection] = {
-      seq.prepareAllPairs.foreach {
-        //create new connection if we see gearwheels in a pair
-        case ( first : GearWheel, second : GearWheel) => map.addOne( (first, second) -> GearConnection.apply(first, second))
-        case _ => map
-      }
+    //default installation is for gear wheels
+    def installGearConnections(seq : LinkSeq) : mutable.HashMap[(LinkElem, LinkElem), Connection] = {
+      installConnectionsWith(seq, GearConnection)
+    }
+    def installConnectionsWith[T<:LinkElem](seq : LinkSeq, installer : ConnectionChecker[T])
+                                           (implicit tag : ClassTag[T]) : mutable.HashMap[(LinkElem, LinkElem), Connection] = {
+      seq.prepareAllPairs.filter(installer.canBeInstancedAndConnected).map(installer.reinstanceTo)
+        .foreach(pair => map.addOne(pair -> installer(pair._1, pair._2)))
       map
     }
     //linearize connections in right order with givern initial LinkSeq object
