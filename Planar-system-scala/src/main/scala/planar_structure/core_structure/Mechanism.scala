@@ -28,6 +28,8 @@ trait MechanismImplicits{
     def clearConnections() : S
   }
   trait MechanismCommonOps extends Implicits with ConnectionImplicits{
+    def updateConnections() : Unit
+    def getLinkOfType[T <: LinkElem](i : Int)(implicit tag : ClassTag[T]) : Option[T]
     def linearizeConnections : List[Connection]
     def linearizeElems : List[LinkElem]
     def getLink(i : Int) : LinkElem
@@ -36,6 +38,7 @@ trait MechanismImplicits{
     def getConnectionsAmount : Int
     def linearizePairs : List[(LinkElem, LinkElem)]
     def linearizePairsWith[T <: LinkElem](checker : ConnectionChecker[T])(implicit tag : ClassTag[T]) : List[(T,T)]
+    def getLinksOfType[T <: LinkElem](implicit tag : ClassTag[T]) : List[T]
   }
   implicit class MechanismHolderOps(mechanismHolder: MechanismHolder)
     extends MechanismHolderOpsSubtype[MechanismHolder] with MechanismCommonOps {
@@ -62,6 +65,25 @@ trait MechanismImplicits{
       mechanismHolder.controlMap.installConnectionsWith(mechanismHolder.linkSeq, installer)
       mechanismHolder
     }
+    override def getLinkOfType[T <: LinkElem](i: Int)(implicit tag : ClassTag[T]): Option[T] = {
+      val links = linearizeElems
+      val filterized = links.filter { (elem: LinkElem) =>
+        elem match {
+          case a: T => true
+          case _ => false
+        }
+      }
+      if (i < filterized.length & i >= 0) Some(filterized(i).asInstanceOf[T]) else None
+    }
+
+    override def updateConnections(): Unit = mechanismHolder.controlMap.updateConnections()
+
+    override def getLinksOfType[T <: LinkElem](implicit tag: ClassTag[T]): List[T] = {
+      linearizeElems.filter{
+        case a : T => true
+        case _ => false
+      }.map(_.asInstanceOf[T])
+    }
   }
   implicit class MechanismOps(mechanism: Mechanism) extends MechanismHolderOpsSubtype[Mechanism] with MechanismCommonOps {
     type S = Mechanism
@@ -82,6 +104,11 @@ trait MechanismImplicits{
       mechanism.mech_holder.installConnectionsWith(installer)
       mechanism
     }
+    override def getLinkOfType[T <: LinkElem](i: Int)(implicit tag: ClassTag[T]): Option[T] = mechanism.mech_holder.getLinkOfType[T](i)
+
+    override def updateConnections(): Unit = mechanism.mech_holder.updateConnections()
+
+    override def getLinksOfType[T <: LinkElem](implicit tag: ClassTag[T]): List[T] = mechanism.mech_holder.getLinksOfType[T]
   }
 }
 

@@ -24,6 +24,8 @@ trait GearObjectedConversions{
 sealed abstract class ConnectionHolder(first_ : LinkElemHolder, second_ : LinkElemHolder) extends BeautifulDebugOutput {
   def first : LinkElemHolder = first_
   def second : LinkElemHolder = second_
+  //initialize connection based on input
+  def init() : Unit = {}
 }
 
 trait WheelConnectionCalculator extends GearObjectedConversions {
@@ -43,8 +45,8 @@ sealed abstract class GearConnectionHolder(first_ : WheelHolder, second_ : Wheel
   override def first: WheelHolder = first_
   override def second: WheelHolder = second_
   //инициализация
-  init
-  def init  = {
+  init()
+  override def init(): Unit = {
     //перерасчет alpha_w
     updateAlpha_w()
     //перерасчет всех Rw
@@ -61,7 +63,7 @@ sealed abstract class GearConnectionHolder(first_ : WheelHolder, second_ : Wheel
 class InternalConnectionHolder(first_ : WheelHolder, second_ : WheelHolder)
   extends GearConnectionHolder(first_, second_){
 
-  super.init
+  super.init()
   override  def findRw(alpha : Double, m :Double, z: Double) : Double = m * z.toDouble / 2.0 * cos(alpha) / cos(alpha_w)
   override def updateAlpha_w(): Unit = alpha_w ={
     (first.alpha.radToInv + 2* (first.x + second.x) / (first.z + second.z).toDouble).invToRad
@@ -78,7 +80,7 @@ class InternalConnectionHolder(first_ : WheelHolder, second_ : WheelHolder)
 
 class ExternalConnectionHolder(first : ExternalWheelHolder, second : ExternalWheelHolder)
   extends GearConnectionHolder(first, second){
-  super.init
+  super.init()
   override  def findRw(alpha : Double, m :Double, z: Double) : Double = m * z.toDouble / 2.0 * cos(alpha) / cos(alpha_w)
   override def updateAlpha_w(): Unit = alpha_w ={
     (first.alpha.radToInv + 2* (first.x + second.x) / (first.z + second.z).toDouble).invToRad

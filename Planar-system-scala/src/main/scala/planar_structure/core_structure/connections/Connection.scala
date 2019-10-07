@@ -12,6 +12,7 @@ sealed abstract class Connection(holder : ConnectionHolder) extends BeautifulDeb
   override def toStringFull: String = holder.toStringFull
   override def toString: String = holder.toString
   override def toStringShort: String = holder.toStringShort
+  def init(): Unit = {holder.init()}
 }
 case class ConnectionMap(holder : mutable.HashMap[(LinkElem, LinkElem), Connection])
 object ConnectionMap{
@@ -67,6 +68,17 @@ object GearConnection extends ConnectionChecker[GearWheel]{
       case _ => false
     }
   }
+  def makeConnection(first_ : GearWheel, second_ : GearWheel) : Option[GearConnection] = {
+    try{
+      apply(first_, second_) match {
+        case a : ExternalConnection =>  Some(a)
+        case a : InternalConnection => Some(a)
+      }
+    }
+    catch {
+      case e : IllegalArgumentException => None
+    }
+  }
 }
 trait ConnectionImplicits extends Implicits{
   implicit class ConnectionListOps(list : List[Connection]) extends  BeautifulDebugOutput {
@@ -98,6 +110,7 @@ trait ConnectionImplicits extends Implicits{
     def getConnection(i : Int)(implicit seq : LinkSeq) : Connection = {
       linearize(seq)(i)
     }
+    def updateConnections() : Unit = map.foreach(bundle => bundle._2.init())
   }
   implicit class ConnectionOps(conn : ConnectionMap) extends ConnectionMapOps(conn.holder)
 }

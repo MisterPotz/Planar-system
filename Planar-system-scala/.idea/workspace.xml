@@ -8,11 +8,7 @@
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/MechanismHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/MechanismHolder.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/Connection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/Connection.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkElem.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkElem.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/Addable.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/FuncContainer.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/Recognizable.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/help_traits/Updateable.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/ConnectionHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/ConnectionHolder.scala" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

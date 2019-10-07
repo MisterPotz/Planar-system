@@ -77,6 +77,20 @@ object MechanismHolder extends LinkHolderImplicits{
           controlMap = ConnectionMap.empty
         )
       })}
+    creator_funcs.addOne{
+      ("Two Row EE", () => {
+        new MechanismHolder(
+          linkSeq = LinkSeq(Input() :: ExternalWheel(WheelHolder.external)  ::
+            Satellite(mutable.HashMap(
+              (0 -> LinkSeq(ExternalWheel(WheelHolder.external)  :: Nil)),
+              (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: ExternalWheel(WheelHolder.external)  :: Nil))
+            )) ::
+            Carrier() ::
+            Output() :: Nil
+          ),
+          controlMap = ConnectionMap.empty
+        )
+      })}
     }
 
   //storage with access to mechanism creators by string
