@@ -1,12 +1,13 @@
 package planar_structure.core_structure
 
 import planar_structure.core_structure.connections.{Connection, ConnectionImplicits, ConnectionMap}
-import planar_structure.core_structure.links.{LinkHolderImplicits, WheelHolder}
+import planar_structure.core_structure.links.{LinkHolderImplicits, WheelHolder, WheelPositionHolder}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-class MechanismHolder(val linkSeq: LinkSeq, val controlMap : ConnectionMap)
+//reverse - if true than the input is a carrier, otherwise the carrier is an output
+class MechanismHolder(val linkSeq: LinkSeq, val controlMap : ConnectionMap, val satellite_amount : Int = 3, val reversed : Boolean = false)
 
 
 object MechanismHolder extends LinkHolderImplicits{
@@ -14,21 +15,20 @@ object MechanismHolder extends LinkHolderImplicits{
   def initMechanisms : Unit ={
     creator_funcs.addOne(("One Row", () => {
       new MechanismHolder(
-        linkSeq = LinkSeq(Input() :: ExternalWheel(WheelHolder.external) :: Satellite(mutable.HashMap(
-          (0 -> LinkSeq(ExternalWheel(WheelHolder.external) :: InternalWheel(WheelHolder.internal) :: Nil))))
-          :: Carrier() :: Output() :: Nil),
+        linkSeq = LinkSeq(Input() :: ExternalWheel(WheelHolder.external, WheelPositionHolder.lower) :: Satellite(mutable.HashMap(
+          (0 -> LinkSeq(ExternalWheel(WheelHolder.external, WheelPositionHolder.higher) :: InternalWheel(WheelHolder.internal, WheelPositionHolder.higher) :: Nil))))
+          :: Output() :: Nil),
         controlMap = ConnectionMap.empty
       )
     }))
     creator_funcs.addOne{
       ("Two Row EI", () => {
         new MechanismHolder(
-          linkSeq = LinkSeq(Input() :: ExternalWheel(WheelHolder.external) ::
+          linkSeq = LinkSeq(Input() :: ExternalWheel(WheelHolder.external, WheelPositionHolder.default) ::
           Satellite(mutable.HashMap(
-            (0 -> LinkSeq(ExternalWheel(WheelHolder.external) :: Nil)),
-            (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: InternalWheel(WheelHolder.internal) :: Nil))
+            (0 -> LinkSeq(ExternalWheel(WheelHolder.external, WheelPositionHolder.higher) :: Nil)),
+            (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: InternalWheel(WheelHolder.internal, WheelPositionHolder.lower) :: Nil))
           )) ::
-          Carrier() ::
           Output() :: Nil
           ),
           controlMap = ConnectionMap.empty
@@ -43,10 +43,23 @@ object MechanismHolder extends LinkHolderImplicits{
               (0 -> LinkSeq(ExternalWheel(WheelHolder.external) :: Nil)),
               (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: ExternalWheel(WheelHolder.external) :: Nil))
             )) ::
-            Carrier() ::
             Output() :: Nil
           ),
           controlMap = ConnectionMap.empty
+        )
+      })}
+    creator_funcs.addOne{
+      ("Two Row IECI", () => {
+        new MechanismHolder(
+          linkSeq = LinkSeq(Input() :: InternalWheel(WheelHolder.internal) ::
+            Satellite(mutable.HashMap(
+              (0 -> LinkSeq(ExternalWheel(WheelHolder.external) :: Nil)),
+              (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: ExternalWheel(WheelHolder.external) :: Nil))
+            )) ::
+            Output() :: Nil
+          ),
+          controlMap = ConnectionMap.empty,
+          reversed = true
         )
       })}
     creator_funcs.addOne{
@@ -54,13 +67,27 @@ object MechanismHolder extends LinkHolderImplicits{
         new MechanismHolder(
           linkSeq = LinkSeq(Input() :: InternalWheel(WheelHolder.internal) ::
             Satellite(mutable.HashMap(
-              (0 -> LinkSeq(ExternalWheel(WheelHolder.external) :: Nil)),
-              (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: InternalWheel(WheelHolder.internal) :: Nil))
+              (0 -> LinkSeq(ExternalWheel(WheelHolder.external, WheelPositionHolder.higher) :: Nil)),
+              (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: InternalWheel(WheelHolder.internal, WheelPositionHolder.lower) :: Nil))
             )) ::
-            Carrier() ::
             Output() :: Nil
           ),
           controlMap = ConnectionMap.empty
+        )
+      })}
+    //TODO  унаследовать от айнганга и аусганга нужные элементы
+    creator_funcs.addOne{
+      ("Two Row IICI", () => {
+        new MechanismHolder(
+          linkSeq = LinkSeq(Input() :: InternalWheel(WheelHolder.internal) ::
+            Satellite(mutable.HashMap(
+              (0 -> LinkSeq(ExternalWheel(WheelHolder.external, WheelPositionHolder.higher) :: Nil)),
+              (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: InternalWheel(WheelHolder.internal, WheelPositionHolder.lower) :: Nil))
+            )) ::
+            Output() :: Nil
+          ),
+          controlMap = ConnectionMap.empty,
+          reversed = true
         )
       })}
     creator_funcs.addOne{
@@ -71,7 +98,6 @@ object MechanismHolder extends LinkHolderImplicits{
               (0 -> LinkSeq(InternalWheel(WheelHolder.internal) :: Nil)),
               (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: InternalWheel(WheelHolder.internal) :: Nil))
             )) ::
-            Carrier() ::
             Output() :: Nil
           ),
           controlMap = ConnectionMap.empty
@@ -82,10 +108,9 @@ object MechanismHolder extends LinkHolderImplicits{
         new MechanismHolder(
           linkSeq = LinkSeq(Input() :: ExternalWheel(WheelHolder.external)  ::
             Satellite(mutable.HashMap(
-              (0 -> LinkSeq(ExternalWheel(WheelHolder.external)  :: Nil)),
-              (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: ExternalWheel(WheelHolder.external)  :: Nil))
+              (0 -> LinkSeq(ExternalWheel(WheelHolder.external, WheelPositionHolder.higher)  :: Nil)),
+              (1 -> LinkSeq(ExternalWheel(WheelHolder.external) :: ExternalWheel(WheelHolder.external, WheelPositionHolder.lower)  :: Nil))
             )) ::
-            Carrier() ::
             Output() :: Nil
           ),
           controlMap = ConnectionMap.empty

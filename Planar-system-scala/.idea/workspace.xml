@@ -2,13 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/MechanismType.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/AssemblyCondition.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/CoaxialityManager.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/NeighborhoodConditionManager.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/RatioManager.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/StructureAnalyser.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/TeethAmountManager.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/StructureAnalyser.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/StructureAnalyser.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/CoaxialityManager.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/NeighborhoodConditionManager.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/RatioManager.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/StructureAnalyser.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/TeethAmountManager.scala" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/MechanismHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/MechanismHolder.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/Connection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/Connection.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/ConnectionHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/ConnectionHolder.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkElem.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkElem.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkPositionHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkPositionHolder.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/WheelHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/WheelHolder.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Planear Transmission.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Planear Transmission.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -45,6 +60,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Scala Trait" />
+        <option value="Package Object" />
       </list>
     </option>
   </component>
@@ -71,7 +87,7 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -124,7 +140,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Unnamed" type="ScalaScriptConsoleRunConfiguration" factoryName="Scala Console" temporary="true" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
+    <configuration name="Unnamed" type="ScalaScriptConsoleRunConfiguration" factoryName="Scala Console" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
       <module name="Planar-system-scala" />
       <option name="allowRunningInParallel" value="false" />
       <option name="javaOptions" value="-Djline.terminal=NONE" />
@@ -149,11 +165,6 @@
       <item itemvalue="sbt Task.Build" />
       <item itemvalue="Scala Console.Unnamed" />
     </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Scala Console.Unnamed" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SbtLocalSettings">
     <option name="availableProjects">

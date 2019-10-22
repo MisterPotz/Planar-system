@@ -1,14 +1,15 @@
 package planar_structure.core_structure.connections
 
 import planar_structure.core_structure.links.WheelHolder
-import planar_structure.core_structure.{ExternalWheel, GearWheel, Implicits, InternalWheel, LinkElem, LinkSeq}
+import planar_structure.core_structure.{Checker, ExternalWheel, GearWheel, Implicits, InternalWheel, LinkElem, LinkSeq}
 import planar_structure.help_traits.BeautifulDebugOutput
+
 import scala.reflect.ClassTag
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 //соединение.
-sealed abstract class Connection(holder : ConnectionHolder) extends BeautifulDebugOutput{
+sealed abstract class Connection(val holder : ConnectionHolder) extends BeautifulDebugOutput{
   override def toStringFull: String = holder.toStringFull
   override def toString: String = holder.toString
   override def toStringShort: String = holder.toStringShort
@@ -16,12 +17,12 @@ sealed abstract class Connection(holder : ConnectionHolder) extends BeautifulDeb
 }
 case class ConnectionMap(holder : mutable.HashMap[(LinkElem, LinkElem), Connection])
 object ConnectionMap{
-  def empty :ConnectionMap = ConnectionMap(mutable.HashMap.empty[(LinkElem, LinkElem), Connection])
+  def empty : ConnectionMap = ConnectionMap(mutable.HashMap.empty[(LinkElem, LinkElem), Connection])
 }
 
-sealed abstract class GearConnection(holder : GearConnectionHolder) extends Connection(holder)
-case class InternalConnection(holder : InternalConnectionHolder) extends GearConnection(holder)
-case class ExternalConnection(holder : ExternalConnectionHolder) extends GearConnection(holder)
+sealed abstract class GearConnection(override val holder : GearConnectionHolder) extends Connection(holder)
+case class InternalConnection(override val holder : InternalConnectionHolder) extends GearConnection(holder)
+case class ExternalConnection(override val holder : ExternalConnectionHolder) extends GearConnection(holder)
 
 //this trait is useful to preserve functions to understand if elements are fit to that connection type
 trait ConnectionChecker[S <: LinkElem]{
@@ -54,17 +55,17 @@ object GearConnection extends ConnectionChecker[GearWheel]{
   //creates the nessecary connections from input GearWheels which incapsulATE wheel holders
   override def apply(first_ : GearWheel, second_ : GearWheel) : GearConnection = {
     (first_, second_) match {
-      case (ExternalWheel(holder1), ExternalWheel(holder2)) => ExternalConnection(new ExternalConnectionHolder(holder1, holder2))
-      case (InternalWheel(holder1),ExternalWheel(holder2)) => InternalConnection(new InternalConnectionHolder(holder1, holder2))
-      case (ExternalWheel(holder1), InternalWheel(holder2)) => InternalConnection(new InternalConnectionHolder(holder1, holder2))
+      case (ExternalWheel(holder1, _), ExternalWheel(holder2, _)) => ExternalConnection(new ExternalConnectionHolder(holder1, holder2))
+      case (InternalWheel(holder1, _),ExternalWheel(holder2, _)) => InternalConnection(new InternalConnectionHolder(holder1, holder2))
+      case (ExternalWheel(holder1, _), InternalWheel(holder2, _ )) => InternalConnection(new InternalConnectionHolder(holder1, holder2))
       case _ => throw new IllegalArgumentException("Can't create connection with given wheels")
     }
   }
   override def areConnectable(checked : (GearWheel, GearWheel)) : Boolean = {
     checked match {
-      case (ExternalWheel(_), ExternalWheel(_)) => true
-      case (InternalWheel(_),ExternalWheel(_)) => true
-      case  (ExternalWheel(_), InternalWheel(_)) => true
+      case (ExternalWheel(_, _), ExternalWheel(_, _)) => true
+      case (InternalWheel(_, _),ExternalWheel(_, _)) => true
+      case  (ExternalWheel(_, _), InternalWheel(_, _)) => true
       case _ => false
     }
   }

@@ -1,4 +1,4 @@
-package planar_structure.analysis
+package planar_structure.analysis.analyzers
 
 import planar_structure.core_structure.connections.{ExternalConnection, GearConnection, InternalConnection}
 import planar_structure.core_structure.links.WheelHolder
@@ -40,6 +40,7 @@ object FunctionScraperGearRatio extends FunctionScraper[(GearWheel,GearWheel), I
   override def checkInputAndConfirm(arguments_list: Int*): Boolean = ???
 }
 
+//by default calculates the ratio for 2K-H mechanisms with carrier as an output, so U^(b)_ah
 class StructureAnalyzerRatio(override val mechanism: Mechanism) extends StructureAnalyser[(GearWheel,GearWheel),Int, Double](mechanism){
   override val function_scraper : FunctionScraper[(GearWheel,GearWheel), Int, Double] = FunctionScraperGearRatio
   //выстроенные по порядку пару зацеплений
@@ -48,7 +49,34 @@ class StructureAnalyzerRatio(override val mechanism: Mechanism) extends Structur
   override val prepared_arg_holders_for_func: List[WheelHolder] = mechanism.linearizePairsWith(GearConnection).map(pair => (pair._1.holder, pair._2.holder))
     .foldLeft(ListBuffer.empty[WheelHolder])((left, right) => left.addOne(right._1).addOne(right._2)).toList
   override protected def extract_args : List[Int] = prepared_arg_holders_for_func.map(holder => holder.z)
-  override lazy val calculatedFunc: collection.Seq[Int] => Double = getFunc
+  val ratioHead : Ratio = new Ratio(mechanism)
+  override lazy val calculatedFunc: collection.Seq[Int] => Double = getFunc andThen ratioHead.getRatioFunc
 
   override def getMinimizedStructureAnalyzers: List[MiniStructureAnalyzer[Int, Double]] = ???
+}
+
+
+import planar_structure.{CarrierInput, CarrierOutput, MechanismType}
+import planar_structure.core_structure.{ Mechanism, MechanismImplicits}
+
+
+//set the guy who can take ratio
+class Ratio(val mechanism: Mechanism) extends MechanismImplicits {
+  lazy val mechanismType: Option[MechanismType] = getMechanismType
+  def getMechanismType : Option[MechanismType] = {
+    val index = mechanism.isReversed
+    if (index) {
+      Some(new CarrierInput{})
+    }
+    else{
+      Some(new CarrierOutput{})
+    }
+  }
+  def getRatioFunc : Double => Double = {
+    val mechanismType = getMechanismType;
+    mechanismType match {
+      case Some(a : CarrierOutput) => (a : Double) => a
+      case Some(a : CarrierInput) => (a : Double) =>  1 / a
+    }
+  }
 }

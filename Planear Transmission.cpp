@@ -537,7 +537,7 @@ bool gearratio(const planetary_transmission& PlTr, double U_theoretic, double er
 int pruning_zmin(double x, double ha = 1, double alpha = 20)		// определяет минимальное число z без подрезания. x - смещение, h*a - коэффициент высоты зуба, alpha - угол профиля
 {
 	double radiansalpha = alpha * double(M_PI) / 180.0;
-	double z_temp = 2 * (ha - x) / pow(sin(radiansalpha), 2.0);
+	double z_temp = 2 * (hta - xt) / pow(sin(radiansalphat), 2.0);
 	return ceil(z_temp);		//ceil() округляет в сторону большего
 }
 int pruning_zmin(const gear& g)		// определяет минимальное число z без подрезания. x - смещение, h*a - коэффициент высоты зуба, alpha - угол профиля

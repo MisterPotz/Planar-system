@@ -1,5 +1,5 @@
 
-package planar_structure.analysis
+package planar_structure.analysis.analyzers
 
 import planar_structure.core_structure.links.WheelHolder
 import planar_structure.core_structure.{GearWheel, GearWheelChecker, Mechanism}

@@ -1,4 +1,4 @@
-package planar_structure.analysis
+package planar_structure.analysis.analyzers
 
 import planar_structure.core_structure.connections.GearConnection
 import planar_structure.core_structure.links.SatelliteHolder

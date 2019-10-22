@@ -1,4 +1,4 @@
-package planar_structure.analysis
+package planar_structure.analysis.analyzers
 
 import planar_structure.core_structure.connections.{GearConnection, GearConnectionHolder}
 import planar_structure.core_structure.{GearWheel, Mechanism}
@@ -41,5 +41,4 @@ class StructureAnalyzerCoaxiality(override val mechanism: Mechanism) extends Str
   override protected def extract_args : List[Double] = prepared_arg_holders_for_func.map(holder => holder.aw)
   override lazy val calculatedFunc: collection.Seq[Double] => Double = getFunc
   def getMinimizedStructureAnalyzers: List[MiniStructureAnalyzer[Double, Double]] = ???
-
 }
