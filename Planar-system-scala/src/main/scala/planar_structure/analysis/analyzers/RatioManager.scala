@@ -5,10 +5,8 @@ import planar_structure.core_structure.links.WheelHolder
 import planar_structure.core_structure.{GearWheel, Mechanism}
 
 import scala.collection.mutable.ListBuffer
-//TODO сделать вариации передаточного соотношения
 //TODO коэффициент торцового перекрытия
 //TODO условие отсутствия интерференции
-//TODO условие сборки
 object FuncManagerGearRatio extends FuncManager[(GearWheel,GearWheel), Int, Double] {
   object FuncProducerGearRatio extends FuncProducer{
     override def produceFunc(pair: (GearWheel, GearWheel)): (scala.collection.Seq[Int]) => Double = {

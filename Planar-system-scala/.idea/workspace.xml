@@ -2,27 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/MechanismType.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/AssemblyCondition.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/CoaxialityManager.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/NeighborhoodConditionManager.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/RatioManager.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/StructureAnalyser.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/TeethAmountManager.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/InterferenceManager.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/CoaxialityManager.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/NeighborhoodConditionManager.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/RatioManager.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/StructureAnalyser.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/TeethAmountManager.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/MechanismHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/MechanismHolder.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/Connection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/Connection.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/ConnectionHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/ConnectionHolder.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkElem.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkElem.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkPositionHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkPositionHolder.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/WheelHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/WheelHolder.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/AssemblyCondition.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/AssemblyCondition.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/RatioManager.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/RatioManager.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Planear Transmission.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Planear Transmission.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,6 +18,9 @@
   </component>
   <component name="CodeStyleSettingsInfer">
     <option name="done" value="true" />
+  </component>
+  <component name="CoverageViewManager">
+    <option name="myElementSize" value="184" />
   </component>
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
@@ -198,6 +186,11 @@
         <entry key="$PROJECT_DIR$/project/build.properties" value="1156910148" />
       </map>
     </option>
+    <option name="projectSyncType">
+      <map>
+        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
+      </map>
+    </option>
   </component>
   <component name="ScalaProjectSettings">
     <option name="intInjectionMapping">
@@ -237,6 +230,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="planar-structure heavy construction started" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Planar_system_scala$Planar_Test.ic" NAME="Planar Test Coverage Results" MODIFIED="1570350379205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/Planar_system_scala$Planar_Test.ic" NAME="Planar Test Coverage Results" MODIFIED="1571767587661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

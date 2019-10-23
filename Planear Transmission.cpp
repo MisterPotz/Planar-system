@@ -4,7 +4,7 @@ using namespace std;
 
 #define M_PI 3.141592653589793238462643
 
-bool gearratio(double U12, double U12_theoretic, double error);
+bool gearratio(double U, double U_theoretic, double error);
 int pruning_zmin(double x, double ha, double alpha);
 double inv_to_rad(double Inv);
 double rad_to_inv(double angle);
@@ -23,7 +23,13 @@ public:
 private:
 	double r;
 	double rb;
-
+	// для общего случая (включая коэффициент бэта (косозубые передачи)) :
+	double beta; // в радианах
+	double mt;			
+	double hta;
+	double ct;
+	double alpha_t; // в радианах
+	double xt;
 public:
 	gear()
 	{
@@ -33,11 +39,37 @@ public:
 		x = 0;
 		ha = 1;
 		alpha = 20; 
+		beta = 0;
 		c = 0.25;
-		r = m * z / 2.0;
-		rb = r * cos(alpha*M_PI / 180.0);
+		
+		mt = m / cos(beta);
+		hta = ha * cos(beta);
+		ct = c * cos(beta);
+		alpha_t = atan( tan(alpha * M_PI / 180) / cos(beta) );
+		xt = x * cos(beta);
+		r = m * z / 2.0 / cos(beta);
+		rb = r * cos(alpha_t);
 	}
-	gear(int gsign_in, int z_in, double m_in, double x_in = 0, double ha_in = 1, double alpha_in = 20, double c_in = 0.25)
+	gear(int gsign_in, int z_in, double m_in, double x_in = 0, double alpha_in = 20, double beta_in = 0, double ha_in = 1, double c_in = 0.25)
+	{
+		gsign = gsign_in;
+		z = z_in;
+		m = m_in;
+		x = x_in;
+		alpha = alpha_in;
+		beta = beta_in * M_PI / 180;
+		ha = ha_in;
+		c = c_in;
+
+		mt = m / cos(beta);
+		hta = ha * cos(beta);
+		ct = c * cos(beta);
+		alpha_t = atan(tan(alpha * M_PI / 180) / cos(beta));
+		xt = x * cos(beta);
+		r = m * z / 2.0 / cos(beta);
+		rb = r * cos(alpha_t);
+	}
+	void Init(int gsign_in, int z_in, double m_in, double x_in = 0, double alpha_in = 20, double beta_in = 0, double ha_in = 1, double c_in = 0.25)
 	{
 		gsign = gsign_in;
 		z = z_in;
@@ -45,21 +77,16 @@ public:
 		x = x_in;
 		ha = ha_in;
 		alpha = alpha_in;
+		beta = beta_in * M_PI / 180;
 		c = c_in;
-		r = m * z / 2.0;
-		rb = r * cos(alpha*M_PI / 180.0);
-	}
-	void Init(int gsign_in, int z_in, double m_in, double x_in = 0, double ha_in = 1, double alpha_in = 20, double c_in = 0.25)
-	{
-		gsign = gsign_in;
-		z = z_in;
-		m = m_in;
-		x = x_in;
-		ha = ha_in;
-		alpha = alpha_in;
-		c = c_in;
-		r = m * z / 2.0;
-		rb = r * cos(alpha*M_PI / 180.0);
+		
+		mt = m / cos(beta);
+		hta = ha * cos(beta);
+		ct = c * cos(beta);
+		alpha_t = atan(tan(alpha * M_PI / 180) / cos(beta));
+		xt = x * cos(beta);
+		r = m * z / 2.0 / cos(beta);
+		rb = r * cos(alpha_t);
 	}
 	int getGsign() const
 	{
@@ -85,6 +112,10 @@ public:
 	{
 		return alpha;
 	}
+	double getBeta() const
+	{
+		return beta;
+	}
 	double getC() const
 	{
 		return c;
@@ -97,6 +128,27 @@ public:
 	{
 		return rb;
 	}
+	double getMt() const
+	{
+		return mt;
+	}
+	double getHta() const
+	{
+		return hta;
+	}
+	double getCt() const
+	{
+		return ct;
+	}
+	double getAlpha_t() const
+	{
+		return alpha_t;
+	}
+	double getXt() const
+	{
+		return xt;
+	}
+	
 	void print() const
 	{
 		cout << "Число gsign =			" << getGsign() << endl;
@@ -108,6 +160,7 @@ public:
 		cout << "Число r =			" << getR()		<< endl;
 		cout << "Число rb =			" << getRb()	<< endl;
 		cout << "Число c* =			" << getC()		<< endl;
+		cout << "Число beta =			" << getBeta() << endl;
 	}
 
 	void operator=(const gear& g_in)
@@ -118,17 +171,24 @@ public:
 		x = g_in.getX();
 		ha = g_in.getHa();
 		alpha = g_in.getAlpha();
+		beta = g_in.getBeta();
 		c = g_in.getC();
-		r = m * z / 2.0;
-		rb = r * cos(alpha * M_PI / 180.0);
+
+		mt = m / cos(beta);
+		hta = ha * cos(beta);
+		ct = c * cos(beta);
+		alpha_t = atan(tan(alpha * M_PI / 180) / cos(beta));
+		xt = x * cos(beta);
+		r = m * z / 2.0 / cos(beta);
+		rb = r * cos(alpha_t);
 	}
 	gear& operator+=(const int i)
 	{
 		if (gsign != 0)
 		{
 			z += i;
-			r = m * z / 2.0;
-			rb = r * cos(alpha * M_PI / 180.0);
+			r = m * z / 2.0 / cos(beta);
+			rb = r * cos(alpha_t);
 		}
 		return *this;
 	}
@@ -146,11 +206,11 @@ class gear_connection
 private:
 	int sign;		// +1 - внутреннее зацепление -1 - внешнее зацепление
 	double U;		// передаточное отношение
-	double alpha_w; // радианы
 	double rw1;
 	double rw2;
 	double aw;		// межосевое расстояние
 
+	double alpha_tw; // радианы
 public:
 	gear g1;
 	gear g2;
@@ -167,11 +227,13 @@ public:
 			cout << endl << "Ошибка! (недопустимые колеса в зацеплении)" << endl;
 		}
 		sign = (-1) * g1sign * g2sign;
-		if ((g1.getAlpha() == g2.getAlpha()) && (g1.getM() == g2.getM()))
+		if ((g1.getAlpha() == g2.getAlpha()) && (g1.getM() == g2.getM()) && (g1.getBeta() == g2.getBeta()))
 		{
 			double alpha = g1.getAlpha();
+			double alpha_t = g1.getAlpha_t();
 			double m = g1.getM();
-			double inv_alpha = rad_to_inv(alpha * M_PI / 180);
+			double beta = g1.getBeta();
+			double inv_alpha_t = rad_to_inv(alpha_t);
 			double x1 = g1.getX();
 			double x2 = g2.getX();
 			double z1 = g1.getZ();
@@ -179,25 +241,25 @@ public:
 
 			if (sign == -1)		// -1 - это внешнее зацепление
 			{
-				alpha_w = inv_to_rad(inv_alpha + 2 * (x1 + x2) / (z1 + z2) * tan(alpha * M_PI / 180));
-				rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-				rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+				alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x1 + x2) / (z1 + z2) * tan(alpha * M_PI / 180));
+				rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+				rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 				aw = rw1 + rw2;
 			}
 			else	// внутреннее зацепление
 			{
 				if (g1.getGsign() == 1)		// первое колесо - внешнее
 				{
-					alpha_w = inv_to_rad(inv_alpha + 2 * (x2 - x1) / (z2 - z1) * tan(alpha * M_PI / 180));
-					rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-					rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+					alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x2 - x1) / (z2 - z1) * tan(alpha * M_PI / 180));
+					rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+					rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 					aw = rw2 - rw1;
 				}
 				else	// первое колесо - внутреннее
 				{
-					alpha_w = inv_to_rad(inv_alpha + 2 * (x1 - x2) / (z1 - z2) * tan(alpha * M_PI / 180));
-					rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-					rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+					alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x1 - x2) / (z1 - z2) * tan(alpha * M_PI / 180));
+					rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+					rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 					aw = rw1 - rw2;
 				}
 			}
@@ -205,7 +267,7 @@ public:
 		}
 		else
 		{
-			cout << endl << "Ошибка (соединение с различными alpha или m!)" << endl;
+			cout << endl << "Ошибка (соединение с различными alpha, beta или m!)" << endl;
 		}
 	}
 
@@ -220,36 +282,39 @@ public:
 			cout << endl << "Ошибка! (недопустимые колеса в зацеплении)" << endl;
 		}
 		sign = (-1) * g1sign * g2sign;
-		if ((g1.getAlpha() == g2.getAlpha()) && (g1.getM() == g2.getM()))
+		if ((g1.getAlpha() == g2.getAlpha()) && (g1.getM() == g2.getM()) && (g1.getBeta() == g2.getBeta()))
 		{
 			double alpha = g1.getAlpha();
+			double alpha_t = g1.getAlpha_t();
 			double m = g1.getM();
-			double inv_alpha = rad_to_inv(alpha * M_PI / 180);
+			double beta = g1.getBeta();
+			double inv_alpha_t = rad_to_inv(alpha_t);
 			double x1 = g1.getX();
 			double x2 = g2.getX();
 			double z1 = g1.getZ();
 			double z2 = g2.getZ();
+
 			if (sign == -1)		// -1 - это внешнее зацепление
 			{
-				alpha_w = inv_to_rad(inv_alpha + 2 * (x1 + x2) / (z1 + z2) * tan(alpha * M_PI / 180));
-				rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-				rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+				alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x1 + x2) / (z1 + z2) * tan(alpha * M_PI / 180));
+				rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+				rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 				aw = rw1 + rw2;
 			}
 			else	// внутреннее зацепление
 			{
 				if (g1.getGsign() == 1)		// первое колесо - внешнее
 				{
-					alpha_w = inv_to_rad(inv_alpha + 2 * (x2 - x1) / (z2 - z1) * tan(alpha * M_PI / 180));
-					rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-					rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+					alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x2 - x1) / (z2 - z1) * tan(alpha * M_PI / 180));
+					rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+					rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 					aw = rw2 - rw1;
 				}
 				else	// первое колесо - внутреннее
 				{
-					alpha_w = inv_to_rad(inv_alpha + 2 * (x1 - x2) / (z1 - z2) * tan(alpha * M_PI / 180));
-					rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-					rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+					alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x1 - x2) / (z1 - z2) * tan(alpha * M_PI / 180));
+					rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+					rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 					aw = rw1 - rw2;
 				}
 			}
@@ -263,36 +328,39 @@ public:
 
 	void recountGC()	   // всегда использовать, после изменения параметров зубьев в передаче
 	{
-		if ((g1.getAlpha() == g2.getAlpha()) && (g1.getM() == g2.getM()))
+		if ((g1.getAlpha() == g2.getAlpha()) && (g1.getM() == g2.getM()) && (g1.getBeta() == g2.getBeta()))
 		{
 			double alpha = g1.getAlpha();
+			double alpha_t = g1.getAlpha_t();
 			double m = g1.getM();
-			double inv_alpha = rad_to_inv(alpha * M_PI / 180);
+			double beta = g1.getBeta();
+			double inv_alpha_t = rad_to_inv(alpha_t);
 			double x1 = g1.getX();
 			double x2 = g2.getX();
 			double z1 = g1.getZ();
 			double z2 = g2.getZ();
+
 			if (sign == -1)		// -1 - это внешнее зацепление
 			{
-				alpha_w = inv_to_rad(inv_alpha + 2 * (x1 + x2) / (z1 + z2) * tan(alpha * M_PI / 180));
-				rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-				rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+				alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x1 + x2) / (z1 + z2) * tan(alpha * M_PI / 180));
+				rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+				rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 				aw = rw1 + rw2;
 			}
 			else	// внутреннее зацепление
 			{
 				if (g1.getGsign() == 1)		// первое колесо - внешнее
 				{
-					alpha_w = inv_to_rad(inv_alpha + 2 * (x2 - x1) / (z2 - z1) * tan(alpha * M_PI / 180));
-					rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-					rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+					alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x2 - x1) / (z2 - z1) * tan(alpha * M_PI / 180));
+					rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+					rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 					aw = rw2 - rw1;
 				}
 				else	// первое колесо - внутреннее
 				{
-					alpha_w = inv_to_rad(inv_alpha + 2 * (x1 - x2) / (z1 - z2) * tan(alpha * M_PI / 180));
-					rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-					rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+					alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x1 - x2) / (z1 - z2) * tan(alpha * M_PI / 180));
+					rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+					rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 					aw = rw1 - rw2;
 				}
 			}
@@ -315,9 +383,9 @@ public:
 	{
 		return pow(U,-1.0);
 	}
-	double getAlpha_w() const
+	double getAlpha_tw() const
 	{
-		return alpha_w;
+		return alpha_tw;
 	}
 	double getRw1() const
 	{
@@ -351,36 +419,39 @@ public:
 			cout << endl << "Ошибка! (недопустимые колеса в зацеплении)" << endl;
 		}
 		sign = (-1) * g1sign * g2sign;
-		if ((g1.getAlpha() == g2.getAlpha()) && (g1.getM() == g2.getM()))
+		if ((g1.getAlpha() == g2.getAlpha()) && (g1.getM() == g2.getM()) && (g1.getBeta() == g2.getBeta()))
 		{
 			double alpha = g1.getAlpha();
+			double alpha_t = g1.getAlpha_t();
 			double m = g1.getM();
-			double inv_alpha = rad_to_inv(alpha * M_PI / 180);
+			double beta = g1.getBeta();
+			double inv_alpha_t = rad_to_inv(alpha_t);
 			double x1 = g1.getX();
 			double x2 = g2.getX();
 			double z1 = g1.getZ();
 			double z2 = g2.getZ();
+
 			if (sign == -1)		// -1 - это внешнее зацепление
 			{
-				alpha_w = inv_to_rad(inv_alpha + 2 * (x1 + x2) / (z1 + z2) * tan(alpha * M_PI / 180));
-				rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-				rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+				alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x1 + x2) / (z1 + z2) * tan(alpha * M_PI / 180));
+				rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+				rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 				aw = rw1 + rw2;
 			}
 			else	// внутреннее зацепление
 			{
 				if (g1.getGsign() == 1)		// первое колесо - внешнее
 				{
-					alpha_w = inv_to_rad(inv_alpha + 2 * (x2 - x1) / (z2 - z1) * tan(alpha * M_PI / 180));
-					rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-					rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+					alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x2 - x1) / (z2 - z1) * tan(alpha * M_PI / 180));
+					rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+					rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 					aw = rw2 - rw1;
 				}
 				else	// первое колесо - внутреннее
 				{
-					alpha_w = inv_to_rad(inv_alpha + 2 * (x1 - x2) / (z1 - z2) * tan(alpha * M_PI / 180));
-					rw1 = m * z1 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
-					rw2 = m * z2 / 2 * cos(alpha * M_PI / 180) / cos(alpha_w);
+					alpha_tw = inv_to_rad(inv_alpha_t + 2 * (x1 - x2) / (z1 - z2) * tan(alpha * M_PI / 180));
+					rw1 = m * z1 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
+					rw2 = m * z2 / 2 / cos(beta) * cos(alpha_t) / cos(alpha_tw);
 					aw = rw1 - rw2;
 				}
 			}
@@ -406,24 +477,44 @@ public:
 	gear_connection gc1;
 	gear_connection gc2;
 
-	planetary_transmission(int type_in, int k_in, gear g1_in, gear g2_in, gear g3_in, gear g4_in)
+	planetary_transmission(int type_in, int k_in, gear_connection gc1_in, gear_connection gc2_in)
 	{
 			type = type_in;
 			k = k_in;
-			gc1.Init(g1_in, g2_in);
-			gc2.Init(g3_in, g4_in);
+			gc1 = gc1_in;
+			gc2 = gc2_in;
 			U1k_h = gc1.getU() * gc2.getU();
 	}
 
-	gear_connection& getGc1() 
+	planetary_transmission()
+	{
+		type = 0;	// тип 0 - это пустая передача
+	}
+
+	void InitPT(int type_in, int k_in, gear_connection gc1_in, gear_connection gc2_in)
+	{
+		type = type_in;
+		k = k_in;
+		gc1 = gc1_in;
+		gc2 = gc2_in;
+		U1k_h = gc1.getU() * gc2.getU();
+	}
+
+	const gear_connection& getGc1() const 
 	{
 		return gc1;
 	}
-	gear_connection& getGc2()
+	const gear_connection& getGc2() const
 	{
 		return gc2;
 	}
 
+	void recountPT() 
+	{
+		gc1.recountGC();
+		gc2.recountGC();
+		U1k_h = gc1.getU() * gc2.getU();
+	}
 	int getType() const
 	{
 		return type;
@@ -461,6 +552,15 @@ public:
 		return gc2.getZ1();
 	}
 
+	void operator=(const planetary_transmission& PT_in) 
+	{
+		type = PT_in.getType();
+		k = PT_in.getK();
+		gc1 = PT_in.getGc1();
+		gc2 = PT_in.getGc2();
+		U1k_h = PT_in.gc1.getU() * PT_in.gc2.getU();
+	}
+
 	~planetary_transmission() {}
 };
 
@@ -479,34 +579,7 @@ double inv_to_rad(double Inv)
 	return temp;
 }
 
-
 // 1 Условие (Передаточное отношение)
-bool gearratio(double U12, double U12_theoretic, double error = 5)      // error - погрешность. сравниваем первое передаточное отношение со вторым (должно выполняться U1 = U2*(1-погрешность) .... U2*(1+погрешность))
-{
-	bool temp;
-	if ((U12 >= ((1 - error / 100) * U12_theoretic)) && (U12 <= ((1 + error / 100) * U12_theoretic)))
-	{
-		temp = true;
-	}
-	else
-	{
-		temp = false;
-	}
-	return temp;
-}
-bool gearratio(const gear_connection& gConnection, double U12_theoretic, double error = 5)      // error - погрешность. сравниваем первое передаточное отношение со вторым (должно выполняться U1 = U2*(1-погрешность) .... U2*(1+погрешность))
-{
-	bool temp;
-	if ((gConnection.getU() >= ((1 - error / 100) * U12_theoretic)) && (gConnection.getU() <= ((1 + error / 100) * U12_theoretic)))
-	{
-		temp = true;
-	}
-	else
-	{
-		temp = false;
-	}
-	return temp;
-}
 bool gearratio(const planetary_transmission& PlTr, double U_theoretic, double error = 5)      // error - погрешность. сравниваем первое передаточное отношение со вторым (должно выполняться U1 = U2*(1-погрешность) .... U2*(1+погрешность))
 {
 	double U;
@@ -530,21 +603,149 @@ bool gearratio(const planetary_transmission& PlTr, double U_theoretic, double er
 			}
 		}
 	}
-	return false;
+	return false;		// 0, если не выполнено
 }
 
 // 2 Условие (Подрезание)
-int pruning_zmin(double x, double ha = 1, double alpha = 20)		// определяет минимальное число z без подрезания. x - смещение, h*a - коэффициент высоты зуба, alpha - угол профиля
-{
-	double radiansalpha = alpha * double(M_PI) / 180.0;
-	double z_temp = 2 * (hta - xt) / pow(sin(radiansalphat), 2.0);
-	return ceil(z_temp);		//ceil() округляет в сторону большего
-}
 int pruning_zmin(const gear& g)		// определяет минимальное число z без подрезания. x - смещение, h*a - коэффициент высоты зуба, alpha - угол профиля
 {
-	double radiansalpha = g.getAlpha() * double(M_PI) / 180.0;
-	double z_temp = 2 * (g.getHa() - g.getX()) / pow(sin(radiansalpha), 2.0);
+	double radiansalpha_t = g.getAlpha_t() * double(M_PI) / 180.0;
+	double z_temp = 2 * (g.getHta() - g.getXt()) / pow(sin(radiansalpha_t), 2.0);
 	return ceil(z_temp);		//ceil() округляет в сторону большего
+}
+bool pruning(const planetary_transmission& PlTr)		// совсем по уму, для гибкого кода, это должен быть цикл, который находит внешние колёса и чекает их Z c Zmin
+{
+	bool flag = true;
+	if (PlTr.gc1.g1.getGsign() == 1)				// на подрезание проверяются только внешние колёса (1 колесо)
+	{
+		if (PlTr.gc1.g1.getZ() <= pruning_zmin(PlTr.gc1.g1))			// если z < zmin срубаем флаг
+		{
+			flag = false;
+		}
+	}
+	if (PlTr.gc1.g2.getGsign() == 1)				// на подрезание проверяются только внешние колёса	(2 колесо)
+	{
+		if (PlTr.gc1.g2.getZ() <= pruning_zmin(PlTr.gc1.g2))			// если z < zmin срубаем флаг
+		{
+			flag = false;
+		}
+	}
+	if (PlTr.gc2.g1.getGsign() == 1)				// на подрезание проверяются только внешние колёса	(3 колесо)
+	{
+		if (PlTr.gc2.g1.getZ() <= pruning_zmin(PlTr.gc2.g1))			// если z < zmin срубаем флаг
+		{
+			flag = false;
+		}
+	}
+	if (PlTr.gc2.g2.getGsign() == 1)				// на подрезание проверяются только внешние колёса	(4 колесо)
+	{
+		if (PlTr.gc2.g2.getZ() <= pruning_zmin(PlTr.gc2.g2))			// если z < zmin срубаем флаг
+		{
+			flag = false;
+		}
+	}
+	return flag;	// возвращает 0, если не выполняется условие!!!
+}
+
+// 3 Условие правильности внутреннего зацепления
+bool checkIN(gear_connection& gc)		// принимает заведомо внутреннюю передачу 
+{
+	bool flag = true;
+
+	// ПУНКТ А) условие отсутствия интерференции вершин зубьев
+
+	double m = gc.g1.getM();		//одинаковый для обоих
+	double r1;
+	double ha1;
+	double x1;
+	double rb1;
+	int z1;
+
+	double r2;
+	double ha2;
+	double x2;
+	double rb2;
+	int z2;
+
+	if (gc.g1.getGsign() == 1)									// 1 вариант - g1 = внешнее
+	{
+		r1 = gc.g1.getR();
+		ha1 = gc.g1.getHa();
+		x1 = gc.g1.getX();
+		rb1 = gc.g1.getRb();
+		z1 = gc.g1.getZ();
+
+		r2 = gc.g2.getR();
+		ha2 = gc.g2.getHa();
+		x2 = gc.g2.getX();
+		rb2 = gc.g2.getRb();
+		z2 = gc.g2.getZ();
+	}
+	if (gc.g2.getGsign() == 1)									// 2 вариант - g2 = внешнее	(индексы g1 и g2 меняются местами)
+	{
+		r1 = gc.g2.getR();
+		ha1 = gc.g2.getHa();
+		x1 = gc.g2.getX();
+		rb1 = gc.g2.getRb();
+		z1 = gc.g2.getZ();
+
+		r2 = gc.g1.getR();
+		ha2 = gc.g1.getHa();
+		x2 = gc.g1.getX();
+		rb1 = gc.g1.getRb();
+		z1 = gc.g1.getZ();
+	}
+
+	double alpha_tw = gc.getAlpha_tw();
+	double aw = gc.getAw();
+
+	// индекс 1 - для внешнего(шестерни), 2 - для внутреннего(колеса)
+	double da1 = 2 * r1 + 2 * (ha1 + x1) * m;
+	double da2 = 2 * r2 - 2 * (ha2 - x2 - 0.2) * m;
+	double alpha_a1 = acos(2 * rb1 / da1);
+	double alpha_a2 = acos(2 * rb2 / da2);
+	double gamma12 = (double)z1 / z2 * rad_to_inv(alpha_a1) - rad_to_inv(alpha_a2) + (1 - ((double)z1 / z2)) * rad_to_inv(alpha_tw);
+	double mu_max = acos((pow(da2, 2.0)) - (pow(da1, 2.0)) - 4 * (pow(aw, 2.0)) / (4 * aw * da1));
+	double delta = (double)z1/z2 * mu_max - asin(da1/da2 * sin(mu_max)) + gamma12;
+
+	if (delta < 0)				//delta должна быть больше или равна 0
+	{
+		flag = false;
+	}
+
+	// ПУНКТ Б) проверка коэффициента перекрытия
+	
+	double eps_alpha = (z1 * tan(alpha_a1) - z2 * tan(alpha_a2) + (z2 - z1) * tan(alpha_tw)) / (2 * M_PI);
+
+	double tmp;
+	if (gc.g1.getBeta() == 0)		
+	{
+		tmp = 1.2;		// для прямозубой передачи
+	}
+	else 
+	{
+		tmp = 1;		// для косозубой передачи
+	}
+	if (eps_alpha < tmp)		
+	{
+		flag = false;
+	}
+
+	return flag;		// возвращает 0, если не выполняется условие!!!
+}
+bool in_connection(planetary_transmission& PlTr)		// находим внутренние зацепы, проверяем (в идеале, в твоём коде - это цикл по внутренним зацплениям)  
+{
+	bool flag = true;
+	if (PlTr.gc1.getSign() == 1)	// проверяем первую передачу (если она внутренняя) 
+	{
+		flag = checkIN(PlTr.gc1);
+	}
+	if (PlTr.gc2.getSign() == 1)		// проверяем вторую передачу (если она внутренняя)
+	{
+		if (flag != 0)
+		flag = checkIN(PlTr.gc2);
+	}
+	return flag;		// возвращает 0, если не выполняется условие!!!
 }
 
 // 4 Условие (Соосность)
@@ -554,7 +755,7 @@ bool alignment(planetary_transmission& PlTr)	// соосность aw1 = aw2 +- 
 	gear_connection gConnection2 = PlTr.getGc2();
 	double aw1 = gConnection1.getAw();
 	double aw2 = gConnection2.getAw();
-	if ((aw1 > aw2 - 0.05) && (aw1 < aw2 + 0.05))
+	if ((aw1 >= aw2 - 0.05) && (aw1 <= aw2 + 0.05))
 	{
 		return 1;
 	}
@@ -571,29 +772,31 @@ bool neighbourhood(const planetary_transmission& PlTr)
 	int z1 = PlTr.getZ1();
 	int z2 = PlTr.getZ2();
 	int z3 = PlTr.getZ3();
-	double alpha = PlTr.gc1.g1.getAlpha();
-	double alpha_w = PlTr.gc1.getAlpha_w();
+	double alpha_t = PlTr.gc1.g1.getAlpha_t();
+	double alpha_tw = PlTr.gc1.getAlpha_tw();
 	double k = PlTr.getK();
-	A = (z1 + z2) * cos(alpha * M_PI / 180) / cos(alpha_w) * sin(M_PI / k);
+	if (k == 1)
+		return true;
+	A = (z1 + z2) * cos(alpha_t * M_PI / 180) / cos(alpha_tw) * sin(M_PI / k);
 
-	double m2 = PlTr.gc1.g2.getM();		// 1й ряд
-	double x2 = PlTr.gc1.g2.getX();
-	double ha2 = PlTr.gc1.g2.getHa();
-	double alpha2 = PlTr.gc1.g2.getAlpha();
-	double alpha_w2 = PlTr.gc1.getAlpha_w();
-	double y2 = z2 * (cos(alpha2 * M_PI / 180) / cos(alpha_w2) - 1);
-	double dy2 = 2 * x2 - y2;
+	double mt2 = PlTr.gc1.g2.getMt();		// 1й ряд
+	double xt2 = PlTr.gc1.g2.getXt();
+	double hta2 = PlTr.gc1.g2.getHta();
+	double alpha_t2 = PlTr.gc1.g2.getAlpha_t();
+	double alpha_tw2 = PlTr.gc1.getAlpha_tw();
+	double y2 = z2 * (cos(alpha_t2 * M_PI / 180) / cos(alpha_tw2) - 1);
+	double dy2 = 2 * xt2 - y2;
 	
-	double m3 = PlTr.gc2.g1.getM();		// 2й ряд
-	double x3 = PlTr.gc2.g1.getX();
-	double ha3 = PlTr.gc2.g1.getHa();
-	double alpha3 = PlTr.gc1.g2.getAlpha();
-	double alpha_w3 = PlTr.gc1.getAlpha_w();
-	double y3 = z3 * (cos(alpha3 * M_PI / 180) / cos(alpha_w3) - 1);
-	double dy3 = 2 * x3 - y3;
+	double mt3 = PlTr.gc2.g1.getMt();		// 2й ряд
+	double xt3 = PlTr.gc2.g1.getXt();
+	double hta3 = PlTr.gc2.g1.getHta();
+	double alpha_t3 = PlTr.gc1.g2.getAlpha_t();
+	double alpha_tw3 = PlTr.gc1.getAlpha_tw();
+	double y3 = z3 * (cos(alpha_t3 * M_PI / 180) / cos(alpha_tw3) - 1);
+	double dy3 = 2 * xt3 - y3;
 	
-	double B2 = (z2 / 2 + x2 + ha2 - dy2);
-	double B3 = (z3 / 2 + x3 + ha3 - dy3);
+	double B2 = (z2 / 2 + xt2 + hta2 - dy2);
+	double B3 = (z3 / 2 + xt3 + hta3 - dy3);
 	if (B2 >= B3) 
 	{
 		return (A > B2);
@@ -604,13 +807,15 @@ bool neighbourhood(const planetary_transmission& PlTr)
 	}
 }
 
+#define PMAX 6		//количество максимальных проворотов при сборке (Сащ сказал до 6-8)
 // 6 Условие (Сборка)
 bool assembly(const planetary_transmission& PlTr) 
 {
 	double U1H = PlTr.getU1h_k();
 	int z1 = PlTr.getZ1();
 	int k = PlTr.getK();
-	for (int p = 1; p < 50; p++) 
+	int p = 1;
+	for (	;p < PMAX; p++)			// цикл по числу p
 	{
 		double res = U1H * z1 / k * (1 + p * k);
 		if ((res - (int)res) == 0)
@@ -618,7 +823,7 @@ bool assembly(const planetary_transmission& PlTr)
 			return true;
 		}
 	}
-	return false;
+	return false;	// возвращает 0, если не выполнено!!!
 }
 
 double maxRw(const planetary_transmission PlTr)
@@ -674,18 +879,16 @@ const planetary_transmission& minimal(const planetary_transmission* Array, int n
 void main()
 {
 	setlocale(LC_ALL, "Russian");
-	double U1 = 98.9;
-	double U2 = 100;
-	cout << "True? : " << gearratio(U1, U2) << endl;
-	cout << pruning_zmin(0.5) << endl;
+
+	/*
 	cout << inv_to_rad(1) << " - " << rad_to_inv(inv_to_rad(1)) << endl;
 	cout << inv_to_rad(0.8) << " - " << rad_to_inv(inv_to_rad(0.8)) << endl;
 	cout << inv_to_rad(0.6) << " - " << rad_to_inv(inv_to_rad(0.6)) << endl;
 	cout << inv_to_rad(0.4) << " - " << rad_to_inv(inv_to_rad(0.4)) << endl;
 	cout << inv_to_rad(0.2) << " - " << rad_to_inv(inv_to_rad(0.2)) << endl;
 	cout << inv_to_rad(0) << endl << endl;
-	
-	/*
+
+
 	double U1H = 111.20;
 	int z1 = 24;
 	int k = 3;
@@ -704,7 +907,7 @@ void main()
 	}
 	*/
 
-
+	/*
 	int type = 2;
 	int k = 1;
 	int z1 = 20;
@@ -764,7 +967,201 @@ void main()
 	cout << maxRw(PT) << endl;
 	cout << "rw1 + 2 * rw2 = " << PT.gc1.getRw1() << " + " << "2 * " << PT.gc1.getRw2() << " = " << PT.gc1.getRw1() + 2 * PT.gc1.getRw2() << endl;
 	cout << "rw4 = " << PT.gc2.getRw2() << endl << endl;
+	*/
 
+	
+	// алгоритм программы 
+	double modules[20] = { 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 16, 20, 25, 32, 40, 50, 60, 80, 100 };	// модули первого ряда (из ГОСТа)
+
+	int Z1MIN = 20;
+	int Z1MAX =	60;
+	double X1MIN = 0;
+	double X1MAX = 0;
+	double dx = 0.005;	// шаг 
+	int M1MIN = 0;		 // минимальный индекс в массиве модулей
+	int M1MAX = 20;		 // максимальный индекс в массиве модулей
+	int Z2MIN = 20;
+	int Z2MAX = 100;
+	double X2MIN = 0;
+	double X2MAX = 0;
+	int Z3MIN = 20;
+	int Z3MAX = 100;
+	double X3MIN = 0;
+	double X3MAX = 0;
+	int M2MIN = 0;		// минимальный индекс в массиве модулей
+	int M2MAX = 20;		 // максимальный индекс в массиве модулей
+	int Z4MIN = 50;
+	int Z4MAX = 200;
+	double X4MIN = 0;
+	double X4MAX = 0;
+
+	double ALPHA1 = 20;			// alpha зацепления одинаково
+	double ALPHA2 = 20;
+	double BETA1 = 0;			// beta зацепления одинаково
+	double BETA2 = 0;
+
+	double Ha1 = 1;		//h*a = 1 или 0.8
+	double Ha2 = 1;		//h*a = 1 или 0.8
+	double Ha3 = 1;		//h*a = 1 или 0.8
+	double Ha4 = 1;		//h*a = 1 или 0.8
+
+	double C1 = 0.25;	// стандартный c = 0.25, но можно ввести свой	
+	double C2 = 0.25;		
+	double C3 = 0.25;		
+	double C4 = 0.25;
+
+	double U_theoretic = 2; // теореьтическое передаточное отношение
+	double Error = 5;	// погрешность в % передаточного отношения
+
+	int K = 2;			// число сателлитов
+
+	int type = 2;		// тип схемы
+
+	gear gear1;
+	gear gear2;
+	gear gear3;
+	gear gear4;
+	gear_connection gc1;
+	gear_connection gc2;
+	planetary_transmission PlTr;
+
+	//массивы и переменные для сохранения правильных планетарок
+	planetary_transmission* Arr;		//масссив из правильных планетарок
+	planetary_transmission* temp;		//масссив для сохранения элементов
+	int num = 0;						//количество планетарок в массиве
+	temp = new planetary_transmission[num + 1];
+	Arr = new planetary_transmission[num + 1];
+
+	int l = 0;
+	cout << l << endl;
+
+	
+	for (int z1 = Z1MIN; z1 <= Z1MAX; z1++)														//цикл для z1 
+	{
+		l += 1;
+		cout << l << endl;
+
+		for (double x1 = X1MIN; x1 <= X1MAX; x1 = x1 + dx)										//цикл для x1 с шагом dx
+		{
+			for (int tmp1 = M1MIN; tmp1 < M1MAX; tmp1++)										//цикл для индекса в массиве модулей
+			{
+				double m1 = modules[tmp1];
+				for (int z2 = Z2MIN; z2 <= Z2MAX; z2++)											//цикл для z2 
+				{
+					for (double x2 = X2MIN; x2 <= X2MAX; x2 = x2 + dx)							//цикл для x2 с шагом dx 
+					{
+
+						for (int z3 = Z3MIN; z3 <= Z3MAX; z3++)									//цикл для z3 
+						{
+							for (double x3 = X3MIN; x3 <= X3MAX; x3 = x3 + dx)					//цикл для x3 с шагом dx 
+							{
+								for (int tmp2 = M2MIN; tmp2 < M2MAX; tmp2++)					//цикл для индекса в массиве модулей
+								{
+									double m2 = modules[tmp2];			//выбирается модуль из массива модулей
+
+									for (int z4 = Z4MIN; z4 <= Z4MAX; z4++)									//цикл для z4 
+									{
+										for (double x4 = X4MIN; x4 <= X4MAX; x4 = x4 + dx)					//цикл для x4 с шагом dx 
+										{
+											if (type == 1)
+											{
+												gear1.Init(1, z1, m1, x1, ALPHA1, BETA1, Ha1, C1);
+												gear2.Init(1, z2, m1, x2, ALPHA1, BETA1, Ha2, C2);
+												gear3.Init(-1, z3, m1, x3, ALPHA1, BETA1, Ha3, C3);
+												gc1.Init(gear1, gear2);
+												gc2.Init(gear2, gear3);
+												PlTr.InitPT(type, K, gc1, gc2);
+											}
+											if (type == 2)
+											{
+												gear1.Init(1, z1, m1, x1, ALPHA1, BETA1, Ha1, C1);
+												gear2.Init(1, z2, m1, x2, ALPHA1, BETA1, Ha2, C2);
+												gear3.Init(1, z3, m2, x3, ALPHA2, BETA2, Ha3, C3);
+												gear4.Init(-1, z4, m2, x4, ALPHA2, BETA2, Ha4, C4);
+												gc1.Init(gear1, gear2);
+												gc2.Init(gear3, gear4);
+												PlTr.InitPT(type, K, gc1, gc2);
+											}
+											if (type == 3)
+											{
+												gear1.Init(-1, z1, m1, x1, ALPHA1, BETA1, Ha1, C1);
+												gear2.Init(1, z2, m1, x2, ALPHA1, BETA1, Ha2, C2);
+												gear3.Init(1, z3, m2, x3, ALPHA2, BETA2, Ha3, C3);
+												gear4.Init(-1, z4, m2, x4, ALPHA2, BETA2, Ha4, C4);
+												gc1.Init(gear1, gear2);
+												gc2.Init(gear3, gear4);
+												PlTr.InitPT(type, K, gc1, gc2);
+											}
+											if (type == 4)
+											{
+												gear1.Init(1, z1, m1, x1, ALPHA1, BETA1, Ha1, C1);
+												gear2.Init(1, z2, m1, x2, ALPHA1, BETA1, Ha2, C2);
+												gear3.Init(1, z3, m2, x3, ALPHA2, BETA2, Ha3, C3);
+												gear4.Init(1, z4, m2, x4, ALPHA2, BETA2, Ha4, C4);
+												gc1.Init(gear1, gear2);
+												gc2.Init(gear3, gear4);
+												PlTr.InitPT(type, K, gc1, gc2);
+											}
+
+											if (gearratio(PlTr, U_theoretic, Error) == 0)		//проверка 1 условия (передаточное отношение)
+											{
+												continue;
+											}
+
+											if (pruning(PlTr) == 0)								//проверка 2 условия (внешнее колесо)
+											{
+												continue;
+											}
+
+											l += 1;
+											cout << l << endl;
+
+											if (in_connection(PlTr) == 0)						//проверка 3 условия (внутреннее зацепление)
+											{
+												continue;
+											}
+
+											if (alignment(PlTr) == 0)							//проверка 4 условия (соосность)
+											{
+												continue;
+											}
+											
+											if (neighbourhood(PlTr) == 0)						//проверка 5 условия (соседство)
+											{
+												continue;
+											}
+
+											if (assembly(PlTr) == 0)							//проверка 6 условия (сборка)
+											{
+												continue;
+											}
+
+											for (int i = 0; i < num; i++) 
+											{
+												temp[i] = Arr[i];
+											}
+											num += 1;
+											Arr = new planetary_transmission[num + 1];
+											for (int i = 0; i < num; i++)
+											{
+												Arr[i] = temp[i];
+											}
+											Arr[num] = PlTr;
+											delete[] temp;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	minimal(Arr, num);	// нахождение минимального планетарного механизма
+
+	delete[] Arr;
 
 	system("PAUSE");
 }

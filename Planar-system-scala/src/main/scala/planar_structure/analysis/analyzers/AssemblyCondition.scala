@@ -4,10 +4,29 @@ import planar_structure.core_structure.connections.GearConnection
 import planar_structure.core_structure.links.SatelliteHolder
 import planar_structure.core_structure.{GearWheel, Mechanism, Satellite}
 
-object FuncManagerAssemblyCondition extends FuncManager[Satellite, (Double,Double), Boolean]{
+//все необходимое берем из сателлита (число зубьев первого колеса)
+//передаем только передаточное соотношение и число сателлитов
+object FuncManagerAssemblyCondition extends FuncManager[Satellite, (Double, Double), Boolean]{
   object FuncProducerAssemblyCondition extends FuncProducer{
     override def produceFunc(pair: Satellite): (scala.collection.Seq[(Double,Double)]) => Boolean = {
-      (seq: scala.collection.Seq[(Double, Double)]) => seq(0)._1 < 2 * seq(0)._2 * math.sin(math.Pi / pair.holder.satellitesAmount)
+      val crown_holder = pair.crown_wheels(0).holder
+      (seq: scala.collection.Seq[(Double, Double)]) => {
+          val u1h = seq(0)._1
+          val k = seq(0)._2
+          var flag : Boolean = true
+          for (i <- Range(1,7)){
+            // TODO здесь возможна оптимизация через брейк
+            //TODO сравнить то что эта штука выводит с нормальными результатами (по кудрявцеву пример не прошел, по методе прошел
+
+            val res = u1h * crown_holder.z / k * (1 + i * k)
+            //проверить это условие сборки
+            if (math.abs(res - res.round) > 0.001){
+              val res_ = res.round
+              flag = false
+            }
+          }
+          flag
+      }
     }
   }
   object FuncUniterAssemblyCondition extends FuncUniter{
@@ -28,20 +47,13 @@ object FunctionScraperAssemblyCondition extends FunctionScraper[Satellite, (Doub
 
 class StructureAnalyzerAssemblyCondition(override val mechanism: Mechanism) extends StructureAnalyser[Satellite, (Double, Double), Boolean](mechanism){
   override val function_scraper : FunctionScraper[Satellite, (Double, Double), Boolean] = FunctionScraperAssemblyCondition
-  //выстроенные по порядку пару зацеплений
+  //что мы будем передавать в построение дополнительно
   override val linearizedPairs: List[Satellite] = mechanism.getLinksRawOfType[Satellite]
   //полученные держатели значений элемента (холдеры), инкапсулирующие параметры звена (например, число зубьев)
-  override val prepared_arg_holders_for_func: List[SatelliteHolder] = new SatelliteHolder() :: Nil
-  def maxWheel : GearWheel = {
-    val found = prep_wheels_list.maxBy(wheel => mechanism.findConnectionWith(wheel).asInstanceOf[GearConnection].holder.get_da_by(wheel.holder))
-    // println(s"Found max wheel: ${found}; z: ${found.holder.z}")
-    found
-  }
-  val prep_wheels_list : List[GearWheel] = mechanism.mech_holder.linkSeq.elems.find(b=> b match {case a : Satellite => true; case _ => false}).get.asInstanceOf[Satellite].crown_wheels //mechanism.getLinkOfType[Satellite](0).get.crown_wheels
-  var prep_connection : GearConnection = mechanism.findConnectionWith(maxWheel).asInstanceOf[GearConnection] //TODO здесь не идет обновление
+  override val prepared_arg_holders_for_func: List[SatelliteHolder] = linearizedPairs(0).holder :: Nil
+  val ratio : StructureAnalyzerRatio = new StructureAnalyzerRatio(mechanism)
   override protected def extract_args : List[(Double, Double)] = {
-    val max_wheel = maxWheel
-    List((prep_connection.holder.get_da_by(max_wheel.holder), prep_connection.holder.aw))
+    List((ratio.calcFunc, mechanism.mech_holder.satellite_amount))
   }
   override lazy val calculatedFunc: collection.Seq[(Double, Double)] => Boolean = getFunc
   def getMinimizedStructureAnalyzers: List[MiniStructureAnalyzer[(Double,Double), Boolean]] = ???
