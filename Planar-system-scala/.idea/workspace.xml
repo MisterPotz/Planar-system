@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/InterferenceManager.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/AssemblyCondition.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/AssemblyCondition.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/RatioManager.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/RatioManager.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Planear Transmission.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Planear Transmission.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -184,11 +180,6 @@
         <entry key="$PROJECT_DIR$" value="3137561591216" />
         <entry key="$PROJECT_DIR$/build.sbt" value="4290105877" />
         <entry key="$PROJECT_DIR$/project/build.properties" value="1156910148" />
-      </map>
-    </option>
-    <option name="projectSyncType">
-      <map>
-        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
       </map>
     </option>
   </component>

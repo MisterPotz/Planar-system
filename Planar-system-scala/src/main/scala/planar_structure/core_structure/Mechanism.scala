@@ -7,7 +7,7 @@ import planar_structure.help_traits.BeautifulDebugOutput
 
 import scala.reflect.ClassTag
 
-case class Mechanism(mech_holder : MechanismHolder) extends ConnectionImplicits with BeautifulDebugOutput with MechanismImplicits {
+sealed class Mechanism(val mech_holder : MechanismHolder) extends ConnectionImplicits with BeautifulDebugOutput with MechanismImplicits {
   override def toStringShort: String ={
     "Mechanism:\n" +
       BeautifulDebugOutput.print(mech_holder.linkSeq.toStringShort + "\n----\nConnections of mechanism:\n"
@@ -21,6 +21,9 @@ case class Mechanism(mech_holder : MechanismHolder) extends ConnectionImplicits 
   }
   override def toString: String = toStringShort
 }
+
+
+
 
 trait MechanismImplicits{
   trait MechanismHolderOpsSubtype[+T]{

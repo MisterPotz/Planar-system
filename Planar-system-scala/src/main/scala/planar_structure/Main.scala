@@ -16,7 +16,7 @@ object Main extends App with Implicits with ConnectionImplicits with MechanismIm
   mech.getLinkOfType[GearWheel](2).get.holder.z = 160
   mech.updateConnections()
   println(analyzer.ratio_calculator.calcFunc)*/
-  val mech2rowee = Mechanism(MechanismHolder.creator_funcs("Two Row EI")())
+  val mech2rowee = new Mechanism(MechanismHolder.creator_funcs("Two Row EI")())
   val elems_of_mech2rowee = mech2rowee.getLinksOfType[GearWheel]
   elems_of_mech2rowee(0).holder.z = 24
   elems_of_mech2rowee(1).holder.z = 48 //27
