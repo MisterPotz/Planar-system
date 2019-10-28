@@ -1,4 +1,4 @@
-package planar_structure.core_structure.links
+package planar_structure.old.core_structure.links
 
 //contains some info about relative position of this link with respect to the previous link
 abstract class LinkPositionHolder

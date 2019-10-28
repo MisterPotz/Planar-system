@@ -1,8 +1,8 @@
 
-package planar_structure.analysis.analyzers
+package planar_structure.old.analysis.analyzers
 
-import planar_structure.core_structure.links.WheelHolder
-import planar_structure.core_structure.{GearWheel, GearWheelChecker, Mechanism}
+import planar_structure.old.core_structure.links.WheelHolder
+import planar_structure.old.core_structure.{GearWheel, GearWheelChecker, Mechanism}
 
 object FuncManagerTeethAmount extends FuncManager[GearWheel, Int, Boolean] {
   object FuncProducerTeethAmount extends FuncProducer{

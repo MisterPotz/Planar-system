@@ -1,7 +1,7 @@
-package planar_structure.core_structure
+package planar_structure.old.core_structure
 
-import planar_structure.core_structure.connections.{Connection, ConnectionImplicits, ConnectionMap}
-import planar_structure.core_structure.links.{LinkHolderImplicits, WheelHolder, WheelPositionHolder}
+import planar_structure.old.core_structure.connections.{Connection, ConnectionImplicits, ConnectionMap}
+import planar_structure.old.core_structure.links.{LinkHolderImplicits, WheelHolder, WheelPositionHolder}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

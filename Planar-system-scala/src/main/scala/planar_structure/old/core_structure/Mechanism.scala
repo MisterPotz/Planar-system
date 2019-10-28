@@ -1,8 +1,8 @@
-package planar_structure.core_structure
+package planar_structure.old.core_structure
 
 import planar_structure.{CarrierInput, CarrierOutput}
-import planar_structure.core_structure.connections.{Connection, ConnectionChecker, ConnectionImplicits, GearConnection}
-import planar_structure.core_structure.links.LinkHolderImplicits
+import planar_structure.old.core_structure.connections.{Connection, ConnectionChecker, ConnectionImplicits, GearConnection}
+import planar_structure.old.core_structure.links.LinkHolderImplicits
 import planar_structure.help_traits.BeautifulDebugOutput
 
 import scala.reflect.ClassTag

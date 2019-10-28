@@ -1,8 +1,8 @@
 package planar_structure
 
-import planar_structure.analysis.analyzers.{StructureAnalyzerAssemblyCondition, StructureAnalyzerCoaxiality, StructureAnalyzerNeighborhoodCondition, StructureAnalyzerRatio, StructureAnalyzerTeethAmount}
-import planar_structure.core_structure.connections.{ConnectionImplicits, GearConnection}
-import planar_structure.core_structure.{GearWheel, Implicits, Mechanism, MechanismHolder, MechanismImplicits}
+import planar_structure.old.analysis.analyzers.{StructureAnalyzerAssemblyCondition, StructureAnalyzerCoaxiality, StructureAnalyzerNeighborhoodCondition, StructureAnalyzerRatio, StructureAnalyzerTeethAmount}
+import planar_structure.old.core_structure.connections.{ConnectionImplicits, GearConnection}
+import planar_structure.old.core_structure.{GearWheel, Implicits, Mechanism, MechanismHolder, MechanismImplicits}
 
 import scala.collection.mutable
 

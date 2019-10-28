@@ -1,8 +1,8 @@
-package planar_structure.analysis.analyzers
+package planar_structure.old.analysis.analyzers
 
-import planar_structure.core_structure.connections.GearConnection
-import planar_structure.core_structure.links.SatelliteHolder
-import planar_structure.core_structure.{GearWheel, Mechanism, Satellite}
+import planar_structure.old.core_structure.connections.GearConnection
+import planar_structure.old.core_structure.links.SatelliteHolder
+import planar_structure.old.core_structure.{GearWheel, Mechanism, Satellite}
 
 //все необходимое берем из сателлита (число зубьев первого колеса)
 //передаем только передаточное соотношение и число сателлитов

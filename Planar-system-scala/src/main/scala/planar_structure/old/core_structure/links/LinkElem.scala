@@ -1,7 +1,7 @@
-package planar_structure.core_structure
+package planar_structure.old.core_structure
 
-import planar_structure.core_structure.connections.{ConnectionMap, GearConnection, GearConnectionHolder}
-import planar_structure.core_structure.links.{ExternalWheelHolder, InternalWheelHolder, SatelliteHolder, WheelHolder, WheelPositionHolder}
+import planar_structure.old.core_structure.connections.{ConnectionMap, GearConnection, GearConnectionHolder}
+import planar_structure.old.core_structure.links.{ExternalWheelHolder, InternalWheelHolder, SatelliteHolder, WheelHolder, WheelPositionHolder}
 import planar_structure.help_traits.BeautifulDebugOutput
 
 import scala.collection.mutable.{HashMap, ListBuffer}

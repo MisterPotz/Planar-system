@@ -1,7 +1,7 @@
-package planar_structure.core_structure.connections
+package planar_structure.old.core_structure.connections
 
-import planar_structure.core_structure.links.WheelHolder
-import planar_structure.core_structure.{Checker, ExternalWheel, GearWheel, Implicits, InternalWheel, LinkElem, LinkSeq}
+import planar_structure.old.core_structure.links.WheelHolder
+import planar_structure.old.core_structure.{Checker, ExternalWheel, GearWheel, Implicits, InternalWheel, LinkElem, LinkSeq}
 import planar_structure.help_traits.BeautifulDebugOutput
 
 import scala.reflect.ClassTag

@@ -1,8 +1,8 @@
-package planar_structure.analysis.analyzers
+package planar_structure.old.analysis.analyzers
 
-import planar_structure.core_structure.connections.{ExternalConnection, GearConnection, InternalConnection}
-import planar_structure.core_structure.links.WheelHolder
-import planar_structure.core_structure.{GearWheel, Mechanism}
+import planar_structure.old.core_structure.connections.{ExternalConnection, GearConnection, InternalConnection}
+import planar_structure.old.core_structure.links.WheelHolder
+import planar_structure.old.core_structure.{GearWheel, Mechanism}
 /*
 
 import scala.collection.mutable.ListBuffer

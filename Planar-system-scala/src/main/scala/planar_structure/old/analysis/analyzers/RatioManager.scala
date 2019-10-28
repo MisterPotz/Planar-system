@@ -1,8 +1,8 @@
-package planar_structure.analysis.analyzers
+package planar_structure.old.analysis.analyzers
 
-import planar_structure.core_structure.connections.{ExternalConnection, GearConnection, InternalConnection}
-import planar_structure.core_structure.links.WheelHolder
-import planar_structure.core_structure.{GearWheel, Mechanism}
+import planar_structure.old.core_structure.connections.{ExternalConnection, GearConnection, InternalConnection}
+import planar_structure.old.core_structure.links.WheelHolder
+import planar_structure.old.core_structure.{GearWheel, Mechanism}
 
 import scala.collection.mutable.ListBuffer
 //TODO коэффициент торцового перекрытия
@@ -55,7 +55,7 @@ class StructureAnalyzerRatio(override val mechanism: Mechanism) extends Structur
 
 
 import planar_structure.{CarrierInput, CarrierOutput, MechanismType}
-import planar_structure.core_structure.{ Mechanism, MechanismImplicits}
+import planar_structure.old.core_structure.{ Mechanism, MechanismImplicits}
 
 
 //set the guy who can take ratio

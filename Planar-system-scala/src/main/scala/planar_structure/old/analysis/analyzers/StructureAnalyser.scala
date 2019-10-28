@@ -1,7 +1,7 @@
-package planar_structure.analysis.analyzers
+package planar_structure.old.analysis.analyzers
 
-import planar_structure.core_structure.links.{AbstractHolder, LinkElemHolder}
-import planar_structure.core_structure.{Mechanism, MechanismImplicits}
+import planar_structure.old.core_structure.links.{AbstractHolder, LinkElemHolder}
+import planar_structure.old.core_structure.{Mechanism, MechanismImplicits}
 
 import scala.language.implicitConversions
 import scala.reflect.ClassTag

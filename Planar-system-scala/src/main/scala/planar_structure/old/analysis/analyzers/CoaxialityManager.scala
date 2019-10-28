@@ -1,7 +1,7 @@
-package planar_structure.analysis.analyzers
+package planar_structure.old.analysis.analyzers
 
-import planar_structure.core_structure.connections.{GearConnection, GearConnectionHolder}
-import planar_structure.core_structure.{GearWheel, Mechanism}
+import planar_structure.old.core_structure.connections.{GearConnection, GearConnectionHolder}
+import planar_structure.old.core_structure.{GearWheel, Mechanism}
 
 object FuncManagerCoaxiality extends FuncManager[(GearWheel, GearWheel), Double, Double]{
   object FuncProducerCoaxiality extends FuncProducer{

@@ -1,6 +1,6 @@
-package planar_structure.core_structure.links
+package planar_structure.old.core_structure.links
 
-import planar_structure.core_structure.LinkSeq
+import planar_structure.old.core_structure.LinkSeq
 import planar_structure.help_traits.BeautifulDebugOutput
 
 import scala.collection.mutable
