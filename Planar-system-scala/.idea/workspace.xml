@@ -2,30 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Gear.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/GearConnection.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Mechanism.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Method.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/MechanismType.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/analysis/MechanismType.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/AssemblyCondition.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/analysis/analyzers/AssemblyCondition.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/CoaxialityManager.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/analysis/analyzers/CoaxialityManager.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/InterferenceManager.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/analysis/analyzers/InterferenceManager.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/NeighborhoodConditionManager.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/analysis/analyzers/NeighborhoodConditionManager.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/RatioManager.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/analysis/analyzers/RatioManager.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/StructureAnalyser.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/analysis/analyzers/StructureAnalyser.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/analysis/analyzers/TeethAmountManager.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/analysis/analyzers/TeethAmountManager.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/core_structure/Mechanism.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/MechanismHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/core_structure/MechanismHolder.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/Connection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/core_structure/connections/Connection.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/connections/ConnectionHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/core_structure/connections/ConnectionHolder.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkElem.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/core_structure/links/LinkElem.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/LinkPositionHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/core_structure/links/LinkPositionHolder.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/WheelHolder.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/old/core_structure/links/WheelHolder.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Gear.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Gear.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Method.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Method.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

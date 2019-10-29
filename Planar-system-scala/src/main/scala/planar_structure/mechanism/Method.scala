@@ -8,20 +8,31 @@ abstract class Method{
   }
   def getMethodable : Methodable = methodable
 }
-class GeometricMethod extends Method{
-  override var methodable: Methodable = _
+abstract class GeometricMethod extends Method{
+  override var methodable: Methodable
+  def getGearRatio : Double
+  def alignmentCondition : Boolean
+  def assemblyCondition : Boolean
+  def interferenceCondition : Boolean
+  def neighborhoodCondition : Boolean
+  def noPruningOnGear(i : Int) : Boolean
+  def noPruningOnAll : Boolean
+  def overlapFactorOk : Boolean
+  def minimalSizeComparingTo(a : List[Methodable]) //условие минимальных габаритов, сюда передается массив с другими страктами
+                                                  //и текущий набор сравнивается с другим. True - если текущий стракт самый малый
 }
-class KinematicMethod extends Method {
-  override var methodable: Methodable = _
+abstract class KinematicMethod extends Method {
+  override var methodable: Methodable
 }
-class MaterialStrengthMethod extends Method {
+abstract class MaterialStrengthMethod extends Method {
   override var methodable: Methodable = _
 }
 
 
 //used be Method obbject as an argument
 trait Methodable
-trait GeometricMethodable extends Methodable
+trait GeometricMethodable extends Methodable{
+}
 trait KinematicMethodable extends Methodable
 trait MaterialStrengthMethodable extends Methodable
 

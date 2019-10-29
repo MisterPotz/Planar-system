@@ -11,8 +11,8 @@ trait GearGeometricCharacteristic extends Characteristic{
   var ca: Double =0.25 //коэффициент радиального зазора
   var alpha:Double=scala.math.toRadians(20.0) //угол профиля
   var beta : Double = 0.0 // для косозубых передач угол наклона линии зубьев
-  var  axis_steady: Boolean = true //ось колеса фиксирована
-  var rotates : Boolean = true
+/*  var  axis_steady: Boolean = true //ось колеса фиксирована
+  var rotates : Boolean = true*/
   final def xt : Double = x/math.cos(beta)
   final def hta : Double = ha/math.cos(beta)
   final def r : Double = d / 2 //делительный радиус
