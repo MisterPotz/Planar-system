@@ -37,19 +37,22 @@ trait WheelConnectionCommonCalculator extends GearObjectedConversions {
   def dw2 : Double
   def da1 : Double  //диаметр вершин зубьев первого колеса
   def da2 : Double //диаметр вершин зубьев второго колеса
+  def maxDw : Double = if (dw1 > dw2) dw1 else dw2
+  def maxRw : Double = maxDw/2
   def get_da_by(holder : WheelHolder) : Double = {
     if (holder equals first){
       da1
     } else
       da2
   }
+  def interference : Boolean //by default everything is ok
+  def sign : Int
 }
 trait ConnectionCalculationBehavior extends WheelConnectionCommonCalculator;
 class InternalConnectionCalculationBehaviour(first_ : ExternalWheelHolder, second : InternalWheelHolder) extends ConnectionCalculationBehavior {
   def toStringFull: String =  BeautifulDebugOutput.print("Internal connection:\n" +super.toString)
   def toStringShort: String = "Internal connection"
   override def toString: String = toStringShort
-
   override var first: GearGeometricCharacteristic = first_
   override def a: Double = {0.5*first.m * (second.z - first.z) / cos(first.beta)}
   override def x_d: Double = second.x - first.x
@@ -75,53 +78,68 @@ class InternalConnectionCalculationBehaviour(first_ : ExternalWheelHolder, secon
       case Right(a) => a.d + 2 * (a.ha + a.x) * a.m
     }
   }
+  override def da1: Double =  2 * first.r + 2 * (first.ha + first.x) * first.m
+  override def da2: Double =  2 * second.r - 2 * (second.ha - second.x - 0.2) * second.m
+  override def interference: Boolean = {
+    val z1 : Double = first.z
+    val z2 : Double = second.z
+    val alpha_a1 : Double = first_.alpha_a
+    val alpha_a2 : Double = second.alpha_a
+    val gamma12 : Double = z1 / z2 * alpha_a1.radToInv - alpha_a2.radToInv + (1 - (z1 / z2)) * alpha_tw.radToInv;
+    val mu_max : Double = math.acos((math.pow(da2, 2.0)) - (math.pow(da1, 2.0)) - 4 * (math.pow(aw, 2.0)) / (4 * aw * da1));
+    val delta = z1/z2 * mu_max - math.asin(da1/da2 * sin(mu_max)) + gamma12
+    val eps_alpha : Double = (z1 * tan(alpha_a1) - z2 * tan(alpha_a2) + (z2 - z1) * tan(alpha_tw)) / (2 * math.Pi);
+    val tmp : Double = if (first.beta == 0.0) 1.2 else 1.0
+    if (delta < 0 || eps_alpha < tmp) false else true
+  }
 
-
-  override def da1: Double = ???
-
-  override def da2: Double = ???
+  override def sign: Int = -1
 }
 class ExternalConnectionCalculationBehaviour(first_ : ExternalWheelHolder, second : ExternalWheelHolder) extends ConnectionCalculationBehavior{
-  override def a: Double = {0.5*first.m * (first.z + second.z) / cos(first.beta)}
-
+  override def a: Double = {0.5*first.m * (first.z.toDouble + second.z.toDouble) / cos(first.beta)}
   override var first: GearGeometricCharacteristic = first_
   override def aw: Double = a * cos(alpha_t) / cos(alpha_tw)
-
   override def x_d: Double = first.x + second.x
-
   override def y: Double = (aw - a) / first.m
   override def d_w: Double = ???
-  override def dw1: Double = first.d + (2 * y / (first.z + second.z) * first.d)
-  override def dw2 : Double = second.z + (2 * y / (first.z + second.z) * first.d)
+  override def dw1: Double = first.d + (2 * y / (first.z.toDouble + second.z.toDouble) * first.d)
+  override def dw2 : Double = second.z + (2 * y / (first.z.toDouble +  second.z.toDouble) * first.d)
   override def alpha_tw: Double = {
-    (2 * (second.x  + first.x) * tan(alpha_t)/(first.z + second.z) + first.alpha_t.radToInv).invToRad
+    (2 * (second.x  + first.x) * tan(alpha_t)/(first.z.toDouble + second.z.toDouble) + first.alpha_t.radToInv).invToRad
   }
 
   override def da1: Double = first.d + 2 * (first.ha + first.x - delta_y) * first.m
 
   override def da2: Double = second.d + 2 * (second.ha + second.x - delta_y) * second.m
+  override def interference: Boolean = true
+
+  override def sign: Int = 1
 }
 class GearConnection(var gear1: GearWheel, var gear2 : GearWheel){
+  var connectionType : ConnectionType = getType
   var connectionCalculationBehavior : ConnectionCalculationBehavior =
-    connectionType match {
+    this.connectionType match {
       case (External) => new ExternalConnectionCalculationBehaviour(gear1.holder.asInstanceOf[ExternalWheelHolder]
-        , gear2.asInstanceOf[ExternalWheelHolder])
+        , gear2.holder.asInstanceOf[ExternalWheelHolder])
       case (Internal) => {
-        val tuple = gear1 match {
-          case a: ExternalWheelHolder => (a, gear2.asInstanceOf[InternalWheelHolder])
-          case a: InternalWheelHolder => (gear2.asInstanceOf[ExternalWheelHolder], a)
+        val tuple = gear1.holder match {
+          case a: ExternalWheelHolder => (a, gear2.holder.asInstanceOf[InternalWheelHolder])
+          case a: InternalWheelHolder => (gear2.holder.asInstanceOf[ExternalWheelHolder], a)
         }
         new InternalConnectionCalculationBehaviour(tuple._1, tuple._2)
       }
     }
-  var connectionType : ConnectionType = getType
-  //initialize connection based on input
+  def U : Double = gear2.holder.z.toDouble / gear1.holder.z.toDouble * connectionCalculationBehavior.sign
+  def U_verse : Double = 1 / U
   sealed trait ConnectionType; case object Internal extends  ConnectionType; case object External extends ConnectionType;
+
+  //initialize connection based on input
+
   def getType : ConnectionType = {
     (gear1, gear2) match {
       case (_ : ExternalWheel, _ : ExternalWheel) => External
       case (_ : ExternalWheel, _ : InternalWheel) => Internal
-      case (_ : InternalWheel, _ : ExternalWheel) => External
+      case (_ : InternalWheel, _ : ExternalWheel) => Internal
     }
   }
 }

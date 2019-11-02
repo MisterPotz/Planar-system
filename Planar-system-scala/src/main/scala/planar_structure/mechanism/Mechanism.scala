@@ -27,13 +27,5 @@ abstract class Mechanism {
   val methods : MechanismMethodsCase
   //Characteristic objects
   val characteristics : MechanismCharacteristicsCase
-  //Object for passing necessary characteristics to proper methods
-  val functionalityUnit : MechanismFunctionality
-  /*
-  methods:
-    synthesizeGearNumbers
-    checkConditions - do conditions type checks
-   */
-
 }
 

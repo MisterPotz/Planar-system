@@ -6,7 +6,7 @@ scalaVersion := "2.13.0"
 
 // Add dependency on ScalaFX library
 libraryDependencies += "org.scalafx" %% "scalafx" % "12.0.2-R18"
-
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.1.1"
 // Determine OS version of JavaFX binaries
 lazy val osName = System.getProperty("os.name") match {
   case n if n.startsWith("Linux")   => "linux"

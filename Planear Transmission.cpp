@@ -856,8 +856,7 @@ double maxRw(const planetary_transmission PlTr)
 		}
 		break;
 	}
-	return rw_max;
-}
+	return rw_max;}
 
  // 7 Условие (Минимальность размеров)
 const planetary_transmission& minimal(const planetary_transmission* Array, int n)	// желательно n принимать от 1 

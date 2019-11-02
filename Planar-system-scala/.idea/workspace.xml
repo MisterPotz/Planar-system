@@ -2,12 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_modules_scala_swing_2_13_2_1_1_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/GearGroupParameter.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/GearParametersJ.form" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/GearParametersJ.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/GearGroup.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/scala_compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/scala_compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/scala_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/scala_settings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.sbt" beforeDir="false" afterPath="$PROJECT_DIR$/build.sbt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/PlanarApp.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/PlanarApp.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Gear.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Gear.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/GearConnection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/GearConnection.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Mechanism.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Method.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Method.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Planear Transmission.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Planear Transmission.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,6 +62,7 @@
       <list>
         <option value="Scala Trait" />
         <option value="Package Object" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -69,6 +84,7 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH" value="204" />
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568841658657" />
     <property name="last_opened_file_path" value="$USER_HOME$/scala-2.13.1" />
     <property name="project.structure.last.edited" value="Libraries" />
@@ -180,18 +196,15 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="3137561591216" />
-        <entry key="$PROJECT_DIR$/build.sbt" value="4290105877" />
+        <entry key="$PROJECT_DIR$" value="3141241091593" />
+        <entry key="$PROJECT_DIR$/build.sbt" value="3923456420" />
         <entry key="$PROJECT_DIR$/project/build.properties" value="1156910148" />
-      </map>
-    </option>
-    <option name="projectSyncType">
-      <map>
-        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
       </map>
     </option>
   </component>
   <component name="ScalaProjectSettings">
+    <option name="dontShowConversionDialog" value="true" />
+    <option name="ignorePerformance" value="true" />
     <option name="intInjectionMapping">
       <map>
         <entry key="xml" value="XML" />
@@ -228,7 +241,36 @@
     <MESSAGE value="planar-structure heavy construction started" />
     <option name="LAST_COMMIT_MESSAGE" value="planar-structure heavy construction started" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala</url>
+          <line>36</line>
+          <properties>
+            <option name="lambda-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala</url>
+          <line>9</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala</url>
+          <line>62</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/GearConnection.scala</url>
+          <line>131</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Planar_system_scala$Planar_Test.ic" NAME="Planar Test Coverage Results" MODIFIED="1571767587661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/Planar_system_scala$Planar_Test.ic" NAME="Planar Test Coverage Results" MODIFIED="1572720088588" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>
