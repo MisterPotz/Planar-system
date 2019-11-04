@@ -2,26 +2,48 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_modules_scala_swing_2_13_2_1_1_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/GearGroupParameter.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/GearParametersJ.form" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/GearParametersJ.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/GearGroup.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/lib.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_controls_13_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_graphics_13_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_media_13_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_media_13_linux_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_swing_13_linux_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_web_13_linux_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_scala_library_2_13_1_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/ConceptTest.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/Test.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar/ConceptTest.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar/Main.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/model/PlanarAppModel.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupOnlyView.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupView.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView/GearView.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView/GearView.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_base_12_0_2_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_base_13_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_base_12_0_2_linux_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_controls_13_linux_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_controls_12_0_2_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_controls_12_0_2_linux_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_fxml_12_0_2_linux_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_graphics_13_linux_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_graphics_12_0_2_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_graphics_12_0_2_linux_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_media_12_0_2_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_media_12_0_2_linux_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_swing_12_0_2_linux_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_fxml_13_linux_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_web_12_0_2_linux_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_openjfx_javafx_base_13_linux_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_modules_scala_swing_2_13_2_1_1_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_scala_library_2_13_0_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_scala_reflect_2_13_0_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scalafx_scalafx_2_13_12_0_2_R18_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scalafx_scalafxml_core_macros_sfx8_2_13_0_5_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/sbt__org_scalafx_scalafxml_core_sfx8_2_13_0_5_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/scala_compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/scala_compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/scala_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/scala_settings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.sbt" beforeDir="false" afterPath="$PROJECT_DIR$/build.sbt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/GearParametersJ.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/PlanarApp.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/PlanarApp.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Gear.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Gear.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/GearConnection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/GearConnection.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Mechanism.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Method.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Method.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Planear Transmission.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Planear Transmission.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -62,7 +84,10 @@
       <list>
         <option value="Scala Trait" />
         <option value="Package Object" />
+        <option value="JavaFXApplication" />
+        <option value="module-info" />
         <option value="Class" />
+        <option value="FxmlFile" />
       </list>
     </option>
   </component>
@@ -86,10 +111,11 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH" value="204" />
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568841658657" />
-    <property name="last_opened_file_path" value="$USER_HOME$/scala-2.13.1" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java" />
+    <property name="last_opened_file_path" value="$JAVAFX_PATH$" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="project.structure.side.proportion" value="0.39942253" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RecentsManager">
@@ -97,10 +123,11 @@
       <recent name="" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView" />
+      <recent name="$PROJECT_DIR$/src/main/scala" />
+      <recent name="$PROJECT_DIR$/src/main/java/planar_java" />
+      <recent name="$PROJECT_DIR$/src/main/scala/planar" />
       <recent name="$PROJECT_DIR$/src/main/deprecated" />
-      <recent name="$PROJECT_DIR$/src/main" />
-      <recent name="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links/holders" />
-      <recent name="$PROJECT_DIR$/src/main/scala/planar_structure/core_structure/links" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -117,8 +144,9 @@
   </component>
   <component name="RunManager" selected="Application.Planar Test">
     <configuration name="Planar Test" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="planar_structure.Main" />
+      <option name="MAIN_CLASS_NAME" value="Test" />
       <module name="Planar-system-scala" />
+      <option name="VM_PARAMETERS" value="--module-path $JAVAFX_PATH$ --add-modules javafx.controls,javafx.fxml" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -196,8 +224,8 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="3141241091593" />
-        <entry key="$PROJECT_DIR$/build.sbt" value="3923456420" />
+        <entry key="$PROJECT_DIR$" value="3141548040694" />
+        <entry key="$PROJECT_DIR$/build.sbt" value="1265436186" />
         <entry key="$PROJECT_DIR$/project/build.properties" value="1156910148" />
       </map>
     </option>
@@ -258,8 +286,8 @@
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint type="scala-line">
-          <url>file://$PROJECT_DIR$/src/main/scala/planar_structure/Main.scala</url>
-          <line>62</line>
+          <url>file://$PROJECT_DIR$/src/main/scala/planar/Main.scala</url>
+          <line>19</line>
           <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="scala-line">

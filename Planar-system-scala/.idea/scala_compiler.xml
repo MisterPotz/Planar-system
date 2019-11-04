@@ -3,7 +3,6 @@
   <component name="ScalaCompilerConfiguration">
     <profile name="sbt 1" modules="planar-system-scala_1100,planar-system-scala_9442" />
     <profile name="sbt 2" modules="Planar-system-scala">
-      <option name="implicitConversions" value="true" />
       <parameters>
         <parameter value="-Ymacro-annotations" />
       </parameters>

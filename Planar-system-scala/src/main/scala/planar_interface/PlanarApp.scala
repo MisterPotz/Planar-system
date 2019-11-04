@@ -1,27 +1,47 @@
 package planar_interface
 import java.awt.event.{ActionEvent, ActionListener}
-import java.awt.{Color, FlowLayout, GridLayout}
 
-import javax.swing._
+import javafx.geometry.Insets
+import javafx.scene.control.{Button, Label, TextField}
+import javafx.scene.layout.{Border, FlowPane, Pane}
+import javafx.scene.{Node, Parent}
 import planar_structure.mechanism.GearWheel
+import javafx.animation.Animation
+import javafx.animation.FadeTransition
+import javafx.util.Duration
 
-import scala.swing.Dimension
-trait SwingEnums {
-  implicit def actionToInt(a : SFrame.Action) : Int = {
-    SFrame(a)
+//разбить вложенную рут ноду и вложенные на несколько классов
+abstract  class GearParameter(val gearWheel : GearWheel, val txt : String) extends FlowPane with ActionListener{
+  setHgap(10)
+  setPadding(new Insets(10))
+  val txt_Input = new TextField("")
+  txt_Input.setMaxWidth(100)
+  val btn_Input = new Button("Enter")
+  val lbl_Name = new Label(txt)
+  getChildren.addAll(lbl_Name, txt_Input, btn_Input)
+  protected def showRight(boolean: Boolean): Unit = {
+   // val s : Pseudo
   }
-}
-object SFrame{
-  sealed trait Action
-  case object EXIT_ON_CLOSE extends Action
-  def apply(a : Action) : Int = {
-    a match {
-      case EXIT_ON_CLOSE => 3
+  protected def showWrong(boolean: Boolean) : Unit = {
+  //  fadeTransition.playFromStart()
+  }
+  protected def checkText(a : String) : Boolean
+  protected def updateGear(a : String) : Unit
+  override def actionPerformed(actionEvent: ActionEvent): Unit = {
+    actionEvent.getActionCommand match {
+      case "entered" => if (checkText(txt_Input.getText())){
+        updateGear(txt_Input.getText)
+        showRight(true)
+      } else showWrong(true)
+      case "timer" => {showWrong(false);}
+      case "green-signal" => showRight(false)
     }
   }
 }
 
+
 //gear agent interconnects interface components for buttonsof interface and gears themselves
+/*
 abstract class GearParameter(val gearWheel : GearWheel, val txt : String) extends JPanel with ActionListener{
   val txt_Input = new JTextField("")
   txt_Input.setActionCommand("entered")
@@ -113,4 +133,4 @@ class GearParameterX(gearWheel : GearWheel) extends GearParameter(gearWheel = ge
 
 class PlanarApp extends JFrame{
 
-}
+}*/

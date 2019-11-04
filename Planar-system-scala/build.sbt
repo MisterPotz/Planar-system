@@ -1,12 +1,13 @@
+import java.io.File
 name := "Planar-system-scala"
 
 version := "0.1"
 
-scalaVersion := "2.13.0"
+scalaVersion := "2.13.1"
 
 // Add dependency on ScalaFX library
-libraryDependencies += "org.scalafx" %% "scalafx" % "12.0.2-R18"
-libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.1.1"
+/*libraryDependencies += "org.scalafx" %% "scalafx" % "12.0.2-R18"
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.1.1"*/
 // Determine OS version of JavaFX binaries
 lazy val osName = System.getProperty("os.name") match {
   case n if n.startsWith("Linux")   => "linux"
@@ -18,8 +19,17 @@ lazy val osName = System.getProperty("os.name") match {
 // Add dependency on JavaFX libraries, OS dependent
 lazy val javaFXModules = Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
 libraryDependencies ++= javaFXModules.map( m =>
-  "org.openjfx" % s"javafx-$m" % "12.0.2" classifier osName
+  "org.openjfx" % s"javafx-$m" % "13" classifier osName
 )
 scalacOptions += "-Ymacro-annotations"
 
-libraryDependencies += "org.scalafx" %% "scalafxml-core-sfx8" % "0.5"
+val fs = File.separator
+val ivyHome = Option(sys.props("sbt.ivy.home")).getOrElse(s"${sys.props("user.home")}${fs}.ivy2")
+val fxRoot = s"$ivyHome${fs}cache${fs}org.openjfx${fs}javafx-"
+val fxPaths = javaFXModules.map {m =>
+  s"$fxRoot$m${fs}jars${fs}javafx-$m-11-$osName.jar"
+}
+javaOptions ++= Seq(
+  "--module-path", fxPaths.mkString(File.pathSeparator),
+  "--add-modules", "ALL-MODULE-PATH"
+)
