@@ -9,19 +9,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 
 import planar.ConceptTest;
 import planar_interface.GearParameter;
-import planar_interface.view.AbstractGearViewControllerFactory;
-import planar_interface.view.GearView;
-import planar_interface.view.GearViewController;
-import planar_interface.view.GearViewControllerFactory;
+import planar_interface.view.GearGroupView.*;
+import planar_interface.view.GearView.AbstractGearViewControllerFactory;
+import planar_interface.view.GearListView.AbstractGearListViewControllerFactory;
+import planar_interface.view.GearListView.GearListViewController;
+import planar_interface.view.GearListView.GearListViewControllerFactory;
+import planar_interface.view.GearView.GearView;
+import planar_interface.view.GearView.GearViewController;
+import planar_interface.view.GearView.GearViewControllerFactory;
 import planar_structure.mechanism.*;
 import planar_structure.mechanism.Mechanism2KH;
 import planar_structure.mechanism.mech2kh.*;
@@ -45,22 +46,20 @@ public class Test extends Application {
         // Загружаем корневой макет из fxml файла.
         Mechanism mech = Mechanism2KH.apply("InternalInternal_CarrierInput");
         List<GearWheel> a = mech.characteristics().gearStructureCharacteristic().getGearList();
+        a.apply(0).holder().z_$eq(85);
+        a.apply(1).holder().z_$eq(45);
+        a.apply(2).holder().z_$eq(53);
+        a.apply(3).holder().z_$eq(72);
         // Отображаем сцену, содержащую корневой макет.
-        AbstractGearViewControllerFactory factory = new GearViewControllerFactory(a.apply(0));
-        Parent rootLayout = factory.getParent();
-        Accordion accordion = new Accordion();
-        SplitPane pane = new SplitPane();
-        
-        GearViewController controller = factory.createGearView();
-        Button btn = new Button("Click me test");
-        EventHandler<ActionEvent> ev = new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                System.out.println("S");
-            }
-        };
-        btn.setOnAction(ev);
-        Scene scene = new Scene(rootLayout);
+        AbstractGearListViewControllerFactory factory = new GearListViewControllerFactory(a);
+       // AbstractGearViewControllerFactory factory1 = new GearViewControllerFactory(a.apply(0));
+       Parent rootLayout =((GearListViewController) factory.createView()).gearListView().gearsList();
+       List<GearGroup> a1 = mech.characteristics().gearStructureCharacteristic().getGearGroups();
+        AbstractGearGroupOnlyViewControllerFactory fac1 = new GearGroupOnlyViewControllerFactory(a1.apply(0));
+        Parent root2 =((GearGroupOnlyViewController) fac1.createView()).gearGroupOnlyView().gearGroupOnlyPane();
+        AbstractGearGroupFullViewControllerFactory fac2 = new GearGroupFullViewControllerFactory(a1.apply((0)));
+        Parent root3 =((GearGroupFullViewController) fac2.createView()).gearGroupFullView().gearGroupPane();
+        Scene scene = new Scene(root3);
         stage.setScene(scene);
         stage.show();
         /*for (int i =0; i<a.length(); i++){
