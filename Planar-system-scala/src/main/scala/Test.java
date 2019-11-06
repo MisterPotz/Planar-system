@@ -1,4 +1,6 @@
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -6,26 +8,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.scene.control.Label;
 
-import planar.ConceptTest;
-import planar_interface.GearParameter;
-import planar_interface.view.GearGroupListView.AbstractGearGroupListViewControllerFactory;
-import planar_interface.view.GearGroupListView.GearGroupListViewController;
-import planar_interface.view.GearGroupListView.GearGroupListViewControllerFactory;
-import planar_interface.view.GearGroupView.*;
-import planar_interface.view.GearView.AbstractGearViewControllerFactory;
-import planar_interface.view.GearListView.AbstractGearListViewControllerFactory;
-import planar_interface.view.GearListView.GearListViewController;
-import planar_interface.view.GearListView.GearListViewControllerFactory;
-import planar_interface.view.GearView.GearView;
-import planar_interface.view.GearView.GearViewController;
-import planar_interface.view.GearView.GearViewControllerFactory;
+
 import planar_interface.view.OptionsView.AbstractMechanismControllerFactory;
 import planar_interface.view.OptionsView.MechanismController;
 import planar_interface.view.OptionsView.MechanismControllerFactory;
@@ -35,6 +22,8 @@ import planar_structure.mechanism.mech2kh.*;
 import scala.collection.immutable.List;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import planar.ConceptTest;
 
 public class Test extends Application {
@@ -72,7 +61,8 @@ public class Test extends Application {
         AbstractMechanismControllerFactory mech_control_factory = new MechanismControllerFactory();
         MechanismController mechanismController = mech_control_factory.createController();
         Parent menu = mechanismController.getParent();
-        mechanismController.setMechanism("External1_CarrierOutput");
+        //mechanismController.setMechanism("External1_CarrierOutput");
+        mechanismController.setMode("");
         Scene scene = new Scene(menu);
         stage.setScene(scene);
         stage.show();

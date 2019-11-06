@@ -41,7 +41,7 @@ class ProcessUnitConcrete extends  ProcessUnit {
 
   override  def process_KINEMATIC_SYNTHESIS(mechanism: Mechanism): Unit = println("KINEMATIC SYNTHESIS ACTIVATED")
 }
-
+//TODO store old mechanisms
 //stores current mode and mechanism
 class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) {
 

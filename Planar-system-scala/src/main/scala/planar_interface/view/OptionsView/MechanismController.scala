@@ -3,7 +3,8 @@ package planar_interface.view.OptionsView
 import javafx.scene.Parent
 import planar_interface.model.{CurrentMode, KINEMATIC_ANALYSIS_FORWARD, KINEMATIC_SYNTHESIS, MechanismDatabase, STRENGTH_ANALYSIS_FORWARD, STRENGTH_SYNTHESIS}
 import planar_interface.view.GearGroupListView.{AbstractGearGroupListViewControllerFactory, GearGroupListViewController, GearGroupListViewControllerFactory}
-import planar_structure.mechanism.{GearGroup, GearWheel, Mechanism}
+import planar_structure.mechanism.mech2kh.MechanismType
+import planar_structure.mechanism.{CarrierPosition, GearGroup, GearWheel, Mechanism}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -50,9 +51,24 @@ class MechanismControllerConcrete extends MechanismController with Observable {
    * stores current mechanism
    */
     init()
+  def makeCode(mechType : MechanismType, carrierType : CarrierPosition) : String = {
+    mechType.toCode + "_" + carrierType.toCode
+  }
+  def updateMechanism() : Unit = {
+    val mech_type_view = optionsViewController.optionsView.mechanismTypeCombo
+    val carrier_type_view = optionsViewController.optionsView.carrierPosCombo
+    setMechanism(makeCode(mech_type_view.getSelectionModel.getSelectedItem, carrier_type_view.getSelectionModel.getSelectedItem))
+  }
   def init() : Unit = {
     optionsViewControllerFactory = new OptionsViewControllerFactory
     optionsViewController = optionsViewControllerFactory.createView().asInstanceOf[OptionsViewController]
+    optionsViewController.optionsView.mechanismTypeCombo.setOnAction(event => {
+      updateMechanism()
+      //TODO check functionality
+    })
+    optionsViewController.optionsView.carrierPosCombo.setOnAction(event => {
+      updateMechanism()
+    })
   }
   override protected val mechanismDatabase: MechanismDatabase = new MechanismDatabase()
   //tracks current status
@@ -140,7 +156,9 @@ class GearViewMenu extends  Observer {
   }
   protected val savedModes : mutable.HashMap[Mechanism, mutable.HashMap[String, GearGroupListViewController]] =
     mutable.HashMap.empty[Mechanism, mutable.HashMap[String, GearGroupListViewController]]
+  //TODO add suport for changing mode - should change used fabric
   override def onChange(): Unit = {
+    //TODO add check if mode was changed - then we need to set a new fabric for the corresponding mode - so rework of this function is needed
     if (observable != null){
       val status = observable.getStatus.asInstanceOf[ControllerStatusReport]
       //if at least something has changed we must understand what to do

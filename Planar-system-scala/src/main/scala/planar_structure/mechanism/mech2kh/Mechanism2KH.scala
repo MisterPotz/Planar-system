@@ -8,13 +8,51 @@ import scala.collection.mutable.ListBuffer
 abstract class Mechanism2KH extends Mechanism
 
 //used to understand what wheels are present in the mechanism
-sealed trait MechanismType;
-case object ExternalInternal extends MechanismType
-case object InternalExternal extends MechanismType
-case object ExternalExternal extends MechanismType
-case object InternalInternal extends MechanismType
-case object External1 extends MechanismType //простейший тип планетарного механизма
-case object Internal1 extends MechanismType //такой же простой только наоборот
+sealed trait MechanismType {
+  def toCode : String
+}
+case object ExternalInternal extends MechanismType{
+
+  override def toString: String = {
+    "External Internal"
+  }
+  override def toCode: String = "ExternalInternal"
+}
+case object InternalExternal extends MechanismType{
+  override def toString: String = {
+    "Internal External"
+  }
+  override def toCode: String = "InternalExternal"
+
+}
+case object ExternalExternal extends MechanismType{
+  override def toString: String = {
+    "External External"
+  }
+  override def toCode: String = "ExternalExternal"
+
+}
+case object InternalInternal extends MechanismType{
+  override def toString: String = {
+    "Internal Internal"
+  }
+  override def toCode: String = "InternalInternal"
+
+}
+case object External1 extends MechanismType{ //простейший тип планетарного механизма
+  override def toString: String = {
+    "External 1 row"
+  }
+  override def toCode: String = "External1"
+
+}
+case object Internal1 extends MechanismType{ //такой же простой только наоборот
+  override def toString: String = {
+    "Internal 1 row"
+  }
+  override def toCode: String = "Internal1"
+
+}
 
 //constructor for proper gear structure characteristics
 object GearStructure2KHCharacteristic{

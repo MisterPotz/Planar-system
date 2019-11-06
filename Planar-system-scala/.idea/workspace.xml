@@ -2,23 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/model/MechanismDatabase.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupListView/GearGroupListView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/DarkTheme.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/MechanismController.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/Test.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/model/PlanarAppModel.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupListView/GearGroupListView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupListView/GearGroupListView.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupFullView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupFullView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupFullView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupFullView.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupView.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearListView/GearListView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearListView/GearListView.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView/GearView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView/GearView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView/GearView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView/GearView.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/model/MechanismDatabase.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/model/MechanismDatabase.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/MechanismController.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/MechanismController.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -252,7 +243,7 @@
       <breakpoints>
         <line-breakpoint type="scala-line">
           <url>file://$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala</url>
-          <line>36</line>
+          <line>74</line>
           <properties>
             <option name="lambda-ordinal" value="-1" />
           </properties>
