@@ -19,28 +19,30 @@ class GearListViewController(/*var gearsList : List[GearViewController], */var g
 
 }
 
-abstract class AbstractGearListViewControllerFactory(var gearsList : List[GearWheel],
-                                                     override val location : String = "GearListView.fxml")
+abstract class AbstractGearListViewControllerFactory(override val location : String = "GearListView.fxml")
 extends ViewFactory[AbstractGearListViewControllerFactory]{
   val gearViewControllerFactory : AbstractGearViewControllerFactory
-
+  var gearsList : List[GearWheel] = _
+  def setGearsList(gearsList : List[GearWheel]) : Unit = this.gearsList = gearsList
   override def getLocation: URL = classOf[AbstractGearListViewControllerFactory].getResource(location)
 }
 
-class GearListViewControllerFactory(gearsList : List[GearWheel]) extends AbstractGearListViewControllerFactory(gearsList){
+class GearListViewControllerFactory extends AbstractGearListViewControllerFactory{
   // Отображаем сцену, содержащую корневой макет.
-  override val gearViewControllerFactory : AbstractGearViewControllerFactory = new GearViewControllerFactory(gearsList(0))
+  override val gearViewControllerFactory : AbstractGearViewControllerFactory = new GearViewControllerFactory
   override def createView(): AnyRef= {
     super.createView() //updating loader
     //теперь её надо заполнить
-    val gearControllersList = gearsList.map((gearWheel) =>  {
+    val gearControllersList = gearsList.zipWithIndex.foreach((gearWheel) =>  {
       //устанавливаем на поток фабрики текущее колесо
       //gearViewFactory.gearWheel = gearWheel
       //получаем Pane под это колесо и записываем в Parent нашего контроллера
-      val lower_controller = gearViewControllerFactory.createView()
-      lower_controller.asInstanceOf[GearViewController].a =s"${gearWheel.holder.z}"
-      val view : GridPane = lower_controller.asInstanceOf[GearViewController].gearView.gearGridPane
+      gearViewControllerFactory.setGearWheel(gearWheel._1)
+      val lower_controller = gearViewControllerFactory.createView().asInstanceOf[GearViewController]
+      lower_controller.a =s"${gearWheel._1.holder.z}"
+      val view : GridPane = lower_controller.gearView.gearGridPane
       controller.asInstanceOf[GearListView].gearsList.getChildren.add(view)
+      lower_controller.gearView.gearNumberLabel.setText(s"Колесо ${gearWheel._2 + 1}")
       //получаем контроллер
      // gearViewFactory.createGearView()
     })

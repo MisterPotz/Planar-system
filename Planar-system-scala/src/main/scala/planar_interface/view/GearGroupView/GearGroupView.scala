@@ -53,14 +53,15 @@ class GearGroupOnlyViewController(var gearGroup : GearGroup, var gearGroupOnlyVi
 
 
 
-abstract class AbstractGearGroupOnlyViewControllerFactory(val gearGroup: GearGroup,
-                                                 val location : String = "GearGroupOnlyView.fxml") extends ViewFactory[AbstractGearGroupOnlyViewControllerFactory]{
+abstract class AbstractGearGroupOnlyViewControllerFactory(val location : String = "GearGroupOnlyView.fxml") extends ViewFactory[AbstractGearGroupOnlyViewControllerFactory]{
   override def getLocation : URL = {
     classOf[AbstractGearGroupOnlyViewControllerFactory].getResource(location)
   }
+  def setGearGroup(gearGroup: GearGroup) : Unit = this.gearGroup = gearGroup
+  var gearGroup: GearGroup = _
 }
 
-class GearGroupOnlyViewControllerFactory(gearGroup: GearGroup) extends AbstractGearGroupOnlyViewControllerFactory(gearGroup){
+class GearGroupOnlyViewControllerFactory extends AbstractGearGroupOnlyViewControllerFactory{
   // Отображаем сцену, содержащую корневой макет.
   override def createView(): AnyRef = {
     super.createView() //updating parent and controller

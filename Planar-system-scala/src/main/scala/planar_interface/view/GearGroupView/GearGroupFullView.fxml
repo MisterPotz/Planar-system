@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
 
-
-<SplitPane fx:controller="planar_interface.view.GearGroupView.GearGroupFullView" fx:id="gearGroupPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" />
-
+<AnchorPane fx:id="gearGroupAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.GearGroupView.GearGroupFullView">
+   <children>
+      <SplitPane fx:id="gearGroupPane" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: transparent;" stylesheets="@DarkTheme.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="34.0" />
+      <Label fx:id="gearGroupLabel" layoutX="14.0" layoutY="6.0" text="Группа " AnchorPane.leftAnchor="8.0" AnchorPane.topAnchor="8.0" />
+      <Separator layoutX="20.0" layoutY="23.0" prefWidth="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="28.0" />
+   </children>
+</AnchorPane>

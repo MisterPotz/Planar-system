@@ -15,6 +15,9 @@ import javafx.scene.control.Label;
 
 import planar.ConceptTest;
 import planar_interface.GearParameter;
+import planar_interface.view.GearGroupListView.AbstractGearGroupListViewControllerFactory;
+import planar_interface.view.GearGroupListView.GearGroupListViewController;
+import planar_interface.view.GearGroupListView.GearGroupListViewControllerFactory;
 import planar_interface.view.GearGroupView.*;
 import planar_interface.view.GearView.AbstractGearViewControllerFactory;
 import planar_interface.view.GearListView.AbstractGearListViewControllerFactory;
@@ -23,6 +26,9 @@ import planar_interface.view.GearListView.GearListViewControllerFactory;
 import planar_interface.view.GearView.GearView;
 import planar_interface.view.GearView.GearViewController;
 import planar_interface.view.GearView.GearViewControllerFactory;
+import planar_interface.view.OptionsView.AbstractMechanismControllerFactory;
+import planar_interface.view.OptionsView.MechanismController;
+import planar_interface.view.OptionsView.MechanismControllerFactory;
 import planar_structure.mechanism.*;
 import planar_structure.mechanism.Mechanism2KH;
 import planar_structure.mechanism.mech2kh.*;
@@ -51,7 +57,7 @@ public class Test extends Application {
         a.apply(2).holder().z_$eq(53);
         a.apply(3).holder().z_$eq(72);
         // Отображаем сцену, содержащую корневой макет.
-        AbstractGearListViewControllerFactory factory = new GearListViewControllerFactory(a);
+        /*AbstractGearListViewControllerFactory factory = new GearListViewControllerFactory(a);
        // AbstractGearViewControllerFactory factory1 = new GearViewControllerFactory(a.apply(0));
        Parent rootLayout =((GearListViewController) factory.createView()).gearListView().gearsList();
        List<GearGroup> a1 = mech.characteristics().gearStructureCharacteristic().getGearGroups();
@@ -59,7 +65,15 @@ public class Test extends Application {
         Parent root2 =((GearGroupOnlyViewController) fac1.createView()).gearGroupOnlyView().gearGroupOnlyPane();
         AbstractGearGroupFullViewControllerFactory fac2 = new GearGroupFullViewControllerFactory(a1.apply((0)));
         Parent root3 =((GearGroupFullViewController) fac2.createView()).gearGroupFullView().gearGroupPane();
-        Scene scene = new Scene(root3);
+        AbstractGearGroupListViewControllerFactory fac3 = new GearGroupListViewControllerFactory(a1);
+        Parent root4 = ((GearGroupListViewController) fac3.createView()).gearGroupListView().gearGroupList();
+        MechanismFactory mech_ = Mechanism2KH$.MODULE$;
+        mech_.apply("InternalInternal_CarrierInput");*/
+        AbstractMechanismControllerFactory mech_control_factory = new MechanismControllerFactory();
+        MechanismController mechanismController = mech_control_factory.createController();
+        Parent menu = mechanismController.getParent();
+        mechanismController.setMechanism("External1_CarrierOutput");
+        Scene scene = new Scene(menu);
         stage.setScene(scene);
         stage.show();
         /*for (int i =0; i<a.length(); i++){

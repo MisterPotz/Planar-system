@@ -93,10 +93,13 @@ package object mech2kh_I1{
     //override val functionalityUnit: MechanismFunctionality = null //TODO WHY THE HELL DO WE NEED THIS ONE!?
   }
 }
-
+trait MechanismFactory{
+  def apply(code : String) : Mechanism
+  def safeApply(code : String) : Either[Boolean, Mechanism]
+}
 //e.g. form of code: "ExternalExternal_CarrierInput"
-object Mechanism2KH{
-  def apply(code : String): Mechanism2KH ={
+object Mechanism2KH extends MechanismFactory {
+  override def apply(code : String): Mechanism ={
     val carrier = code.split("_")(1) match {
       case "CarrierInput" => CarrierInput
       case "CarrierOutput" => CarrierOutput
@@ -115,6 +118,14 @@ object Mechanism2KH{
         //----------------------
       case "Internal1" => new mech2kh_I1.Mechanism2kh_I1(carrier)
 
+    }
+  }
+
+  override def safeApply(code: String): Either[Boolean, Mechanism] = {
+    try {
+      Right(apply(code))
+    }catch {
+      case _ : Exception => Left(false)
     }
   }
 }

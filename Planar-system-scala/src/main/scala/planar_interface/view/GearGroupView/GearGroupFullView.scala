@@ -4,12 +4,17 @@ import java.net.URL
 
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.Parent
-import javafx.scene.control.SplitPane
+import javafx.scene.control.{Label, SplitPane}
+import javafx.scene.layout.AnchorPane
 import planar_interface.view.GearListView.{GearListViewController, GearListViewControllerFactory}
 import planar_interface.view.GearView.ViewFactory
 import planar_structure.mechanism.GearGroup
 
 class GearGroupFullView {
+  @FXML
+  var gearGroupAnchor : AnchorPane = _
+  @FXML
+  var gearGroupLabel : Label = _
   @FXML
   var gearGroupPane : SplitPane = _ //split pane where all info corresponding to the group is located
 }
@@ -19,23 +24,26 @@ class GearGroupFullViewController(var gearGroupFullView: GearGroupFullView){
   //TODO understand what methods should be here
 }
 
-abstract class AbstractGearGroupFullViewControllerFactory(val gearGroup : GearGroup,
-                                                          val location : String = "GearGroupFullView.fxml")
+abstract class AbstractGearGroupFullViewControllerFactory(val location : String = "GearGroupFullView.fxml")
 extends ViewFactory[AbstractGearGroupFullViewControllerFactory]{
   def getLocation : URL = {
     classOf[AbstractGearGroupFullViewControllerFactory].getResource(location)
   }
-  val gearGroupOnlyViewControllerFactory : GearGroupOnlyViewControllerFactory = new GearGroupOnlyViewControllerFactory(gearGroup)
-  val gearListViewControllerFactory : GearListViewControllerFactory = new GearListViewControllerFactory(gearGroup.gear_list)
+  var gearGroup : GearGroup = _
+  def setGearGroup(gearGroup: GearGroup) : Unit = this.gearGroup = gearGroup
+  val gearGroupOnlyViewControllerFactory : GearGroupOnlyViewControllerFactory = new GearGroupOnlyViewControllerFactory
+  val gearListViewControllerFactory : GearListViewControllerFactory = new GearListViewControllerFactory
 }
 
-class GearGroupFullViewControllerFactory(override val gearGroup: GearGroup) extends AbstractGearGroupFullViewControllerFactory(gearGroup){
+class GearGroupFullViewControllerFactory extends AbstractGearGroupFullViewControllerFactory{
 
   override def createView(): AnyRef = {
     //обновляем загрузчик для сохранения текущего контрллера и вида
     super.createView()
     //текущий контроллер
     val curr_controller = controller.asInstanceOf[GearGroupFullView]
+    gearListViewControllerFactory.setGearsList(gearGroup.gear_list)
+    gearGroupOnlyViewControllerFactory.setGearGroup(gearGroup)
     //теперь туда надо забросить то что мы полуаем от других фабрик
     val left = gearListViewControllerFactory.createView().asInstanceOf[GearListViewController]
     val right = gearGroupOnlyViewControllerFactory.createView().asInstanceOf[GearGroupOnlyViewController]

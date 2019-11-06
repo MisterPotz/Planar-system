@@ -38,6 +38,8 @@ class GearViewController(var gearWheel : GearWheel, var gearView: GearView){
 
 class GearView{
   @FXML
+  var gearNumberLabel : Label = _
+  @FXML
   var gearGridPane : GridPane = _
   @FXML
   var zTextField : TextField = _
@@ -57,8 +59,9 @@ trait ViewFactory[T <: AnyRef]{
   }
 }
 
-abstract class AbstractGearViewControllerFactory(var gearWheel: GearWheel,
-                                                 override val location : String = "GearView.fxml") extends ViewFactory[AbstractGearViewControllerFactory]{
+abstract class AbstractGearViewControllerFactory(override val location : String = "GearView.fxml") extends ViewFactory[AbstractGearViewControllerFactory]{
+  var gearWheel : GearWheel
+  def setGearWheel(gearWheel: GearWheel) = this.gearWheel = gearWheel
   override def getLocation: URL = {
     val a = classOf[AbstractGearViewControllerFactory].getResource(location)
     a
@@ -66,11 +69,12 @@ abstract class AbstractGearViewControllerFactory(var gearWheel: GearWheel,
 }
 //смысл в том чтобы каждый раз просто новый загрузчик делать. видимо там внутри есть какой-то механизм, который не
 //позволяет еще раз взять и сделать новый объект, может оно и правильно для избежания ошибок
-class GearViewControllerFactory(gearWheel : GearWheel) extends AbstractGearViewControllerFactory(gearWheel){
+class GearViewControllerFactory extends AbstractGearViewControllerFactory{
   // Отображаем сцену, содержащую корневой макет.
   override def createView(): GearViewController= {
     //updating loader for new instance of gearview
     super.createView()
     new GearViewController(gearWheel, controller.asInstanceOf[GearView])
   }
+  override var gearWheel: GearWheel = _
 }

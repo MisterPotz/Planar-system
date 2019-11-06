@@ -2,19 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupListView/GearGroupListView.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupFullView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupFullView.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearListView/GearListView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearListView/GearListView.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/model/MechanismDatabase.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupListView/GearGroupListView.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/DarkTheme.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/MechanismController.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/Test.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupOnlyView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupOnlyView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/model/PlanarAppModel.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupListView/GearGroupListView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupListView/GearGroupListView.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupFullView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupFullView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupFullView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupFullView.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearGroupView/GearGroupView.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearListView/GearListView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearListView/GearListView.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView/GearView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView/GearView.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView/GearView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/GearView/GearView.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -222,6 +226,9 @@
       <updated>1568821967145</updated>
     </task>
     <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.css" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
