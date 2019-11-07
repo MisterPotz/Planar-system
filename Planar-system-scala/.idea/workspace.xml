@@ -2,14 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fd0e273-204a-4b96-995d-eb3c83fecf15" name="Default Changelist" comment="planar-structure heavy construction started">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_modules_scala_parallel_collections_2_13_0_2_0_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Planar-system-scala.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/Test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.sbt" beforeDir="false" afterPath="$PROJECT_DIR$/build.sbt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/model/MechanismDatabase.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/model/MechanismDatabase.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/MechanismController.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/MechanismController.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_interface/view/OptionsView/OptionsView.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Mechanism.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Mechanism.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Method.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Method.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/package.scala" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -190,8 +193,8 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="3141548040694" />
-        <entry key="$PROJECT_DIR$/build.sbt" value="1265436186" />
+        <entry key="$PROJECT_DIR$" value="3141884912469" />
+        <entry key="$PROJECT_DIR$/build.sbt" value="3544159813" />
         <entry key="$PROJECT_DIR$/project/build.properties" value="1156910148" />
       </map>
     </option>
@@ -243,7 +246,7 @@
       <breakpoints>
         <line-breakpoint type="scala-line">
           <url>file://$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/mech2kh/Mechanism2KH.scala</url>
-          <line>74</line>
+          <line>86</line>
           <properties>
             <option name="lambda-ordinal" value="-1" />
           </properties>
@@ -251,7 +254,7 @@
         </line-breakpoint>
         <line-breakpoint type="scala-line">
           <url>file://$PROJECT_DIR$/src/main/scala/planar_structure/mechanism/Characteristic.scala</url>
-          <line>9</line>
+          <line>11</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint type="scala-line">

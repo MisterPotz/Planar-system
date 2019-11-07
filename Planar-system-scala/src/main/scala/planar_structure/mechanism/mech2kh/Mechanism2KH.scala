@@ -11,45 +11,57 @@ abstract class Mechanism2KH extends Mechanism
 sealed trait MechanismType {
   def toCode : String
 }
+trait MechanismTypeString{
+  implicit class Code(string: String){
+    def toMechanismType : MechanismType = {
+      string match {
+        case "ExternalInternal" => ExternalInternal
+        case "InternalExternal" => InternalExternal
+        case "ExternalExternal" => ExternalExternal
+        case "InternalInternal" => InternalExternal
+        case "External1" => External1
+        case "Internal1" => Internal1
+      }
+    }
+    def toCarrierType : CarrierPosition = {
+      string match {
+        case "CarrierInput" => CarrierInput
+        case "CarrierOutput" => CarrierOutput
+        case "CarrierNeutral" => CarrierNeutral
+      }
+    }
+    def toFullType : (MechanismType, CarrierPosition) = {
+      val a = string.split("_")
+      (a(0).toMechanismType, a(1).toCarrierType)
+    }
+  }
+}
 case object ExternalInternal extends MechanismType{
 
-  override def toString: String = {
-    "External Internal"
-  }
+  override def toString: String = toCode
   override def toCode: String = "ExternalInternal"
 }
 case object InternalExternal extends MechanismType{
-  override def toString: String = {
-    "Internal External"
-  }
+  override def toString: String = toCode
   override def toCode: String = "InternalExternal"
 
 }
 case object ExternalExternal extends MechanismType{
-  override def toString: String = {
-    "External External"
-  }
+  override def toString: String = toCode
   override def toCode: String = "ExternalExternal"
 
 }
 case object InternalInternal extends MechanismType{
-  override def toString: String = {
-    "Internal Internal"
-  }
+  override def toString: String = toCode
   override def toCode: String = "InternalInternal"
 
 }
 case object External1 extends MechanismType{ //простейший тип планетарного механизма
-  override def toString: String = {
-    "External 1 row"
-  }
+  override def toString: String = toCode
   override def toCode: String = "External1"
-
 }
 case object Internal1 extends MechanismType{ //такой же простой только наоборот
-  override def toString: String = {
-    "Internal 1 row"
-  }
+  override def toString: String = toCode
   override def toCode: String = "Internal1"
 
 }
@@ -69,32 +81,42 @@ object GearStructure2KHCharacteristic{
       (getGearList(0), getGearList(1)) :: (getGearList(1), getGearList(2)) :: Nil;
     }
   }
-  def apply(mechanismType: MechanismType, carrierPosition: CarrierPosition = CarrierOutput): GearStructureCharacteristic ={
-    mechanismType match {
+  def apply(mechanismType_ : MechanismType, carrierPosition: CarrierPosition = CarrierOutput): GearStructureCharacteristic ={
+    mechanismType_ match {
       case ExternalExternal => new GearStructure2KH_4Wheels_Characteristic {
         override protected val gears: List[GearWheel] = new ExternalWheel() :: new ExternalWheel() :: new ExternalWheel() :: new  ExternalWheel() :: Nil
         override val info: CarrierPosition = carrierPosition
-
+        override val mechanismType: MechanismType = mechanismType_
       }
       case InternalExternal => new GearStructure2KH_4Wheels_Characteristic {
         override protected val gears: List[GearWheel] = new InternalWheel() :: new ExternalWheel() :: new ExternalWheel() :: new  ExternalWheel() :: Nil
         override val info: CarrierPosition = carrierPosition
+        override val mechanismType: MechanismType = mechanismType_
+
       }
       case ExternalInternal => new GearStructure2KH_4Wheels_Characteristic {
         override protected val gears: List[GearWheel] = new ExternalWheel() :: new ExternalWheel() :: new ExternalWheel() :: new  InternalWheel() :: Nil
         override val info: CarrierPosition = carrierPosition
+        override val mechanismType: MechanismType = mechanismType_
+
       }
       case InternalInternal => new GearStructure2KH_4Wheels_Characteristic {
         override protected val gears: List[GearWheel] = new InternalWheel() :: new ExternalWheel() :: new ExternalWheel() :: new  InternalWheel() :: Nil
         override val info: CarrierPosition = carrierPosition
+        override val mechanismType: MechanismType = mechanismType_
+
       }
       case External1 => new GearStructure2KH_3Wheels_Characteristis {
         override protected val gears: List[GearWheel] = new ExternalWheel() :: new ExternalWheel() :: new InternalWheel() :: Nil
         override val info: CarrierPosition = carrierPosition
+        override val mechanismType: MechanismType = mechanismType_
+
       }
       case Internal1 => new GearStructure2KH_3Wheels_Characteristis {
         override protected val gears: List[GearWheel] = new InternalWheel() :: new ExternalWheel() :: new ExternalWheel() :: Nil
         override val info: CarrierPosition = carrierPosition
+        override val mechanismType: MechanismType = mechanismType_
+
       }
     }
   }

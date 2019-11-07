@@ -1,5 +1,7 @@
 package planar_structure.mechanism
 
+import planar_structure.mechanism.mech2kh.MechanismType
+
 abstract class Method{
 
 }
@@ -19,9 +21,40 @@ abstract class GeometricMethod extends Method{
   def minimalSizeComparingTo(a : List[Characteristic]) : Boolean//условие минимальных габаритов, сюда передается массив с другими страктами
                                                   //и текущий набор сравнивается с другим, возвращается самый малый механизм
 }
-abstract class KinematicMethod extends Method {
+
+
+/**
+ * used to describe:
+ * 1) the entity on which the condition was used
+ * 2) was the condition satisfied
+ * 3) string which describes the condition and summarizes it
+ */
+trait Condition{
 
 }
+/**
+ * defines an output for complex analysis and synthesis algorithms
+ * 1) incapsulates various Condition objects for each used condition function
+ */
+trait Report
+case class KinematicForwardReport(gearRatio : Float)
+  extends Report
+//TODO think on the hierarchy of mechanism class - methods - returning/input objects for methods and how they should be connected with controller/interface
+case class KinematicSynthesisReport(gearRatio : Float)
+  extends Report
+
+/**
+ * this thing is used for kinematic analysis and synthesis
+ */
+abstract class KinematicMethod extends Method {
+  /**
+    gives inside information about the mechanism
+   */
+  def kinematicForwardAnalysis : KinematicForwardReport
+  def kinematicSynthesis(mechanismEssential: MechanismEssential) : Report
+
+}
+
 abstract class MaterialStrengthMethod extends Method {
 }
 

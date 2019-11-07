@@ -1,5 +1,7 @@
 package planar_structure.mechanism
 
+import planar_structure.mechanism.mech2kh.MechanismType
+
 import scala.collection.mutable.ListBuffer
 
 abstract class Characteristic
@@ -37,6 +39,8 @@ trait SatellitesInfo{
 }
 
 trait GearStructureCharacteristic extends Characteristic with GearStructureStore with CarrierPositionInfo with SatellitesInfo {
+  val mechanismType : MechanismType
+  def getCode : String = mechanismType.toCode +  "_"+ info.toCode
   def getBiggestGear : GearWheel = {
     getGearList.maxBy(_.holder.z) //поиск максимальной шестерни по числу зубьев
   }

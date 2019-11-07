@@ -16,14 +16,13 @@ package object mech2kh_EE {
       override val kinematicMethods: KinematicMethod = null
       override val materialStrengthMethods: MaterialStrengthMethod = null
     }
-    ///override val functionalityUnit: MechanismFunctionality = null //TODO WHY THE HELL DO WE NEED THIS ONE!?
   }
 }
 
 package object mech2kh_II {
   class Mechanism2kh_II(carrierPosition: CarrierPosition) extends Mechanism2KH{
     override lazy val methods: MechanismMethodsCase = new MechanismMethodsCase {
-      override val geometricMethods: GeometricMethod = Geometric2KHMethod(characteristics.gearStructureCharacteristic) //TODO this one ASAP!
+      override val geometricMethods: GeometricMethod = Geometric2KHMethod(characteristics.gearStructureCharacteristic)
       override val kinematicMethods: KinematicMethod = null
       override val materialStrengthMethods: MaterialStrengthMethod = null
     }
@@ -31,7 +30,6 @@ package object mech2kh_II {
       override val inputPhysicalParamsCharacteristic: InputPhysicalParamsCharacteristic = null //TODO physical properties into input
       override val gearStructureCharacteristic: GearStructureCharacteristic = GearStructure2KHCharacteristic(InternalInternal, carrierPosition)
     }
-    ///override val functionalityUnit: MechanismFunctionality = null //TODO WHY THE HELL DO WE NEED THIS ONE!?
   }
 }
 
@@ -46,7 +44,6 @@ package object mech2kh_EI {
       override val inputPhysicalParamsCharacteristic: InputPhysicalParamsCharacteristic = null //TODO physical properties into input
       override val gearStructureCharacteristic: GearStructureCharacteristic = GearStructure2KHCharacteristic(ExternalInternal,carrierPosition)
     }
-  //  override val functionalityUnit: MechanismFunctionality = null //TODO WHY THE HELL DO WE NEED THIS ONE!?
   }
 }
 
@@ -61,7 +58,6 @@ package object mech2kh_IE{
       override val inputPhysicalParamsCharacteristic: InputPhysicalParamsCharacteristic = null //TODO physical properties into input
       override val gearStructureCharacteristic: GearStructureCharacteristic = GearStructure2KHCharacteristic(InternalExternal,carrierPosition)
     }
-    //override val functionalityUnit: MechanismFunctionality = null //TODO WHY THE HELL DO WE NEED THIS ONE!?
   }
 }
 
@@ -76,7 +72,6 @@ package object mech2kh_E1{
       override val inputPhysicalParamsCharacteristic: InputPhysicalParamsCharacteristic = null //TODO physical properties into input
       override val gearStructureCharacteristic: GearStructureCharacteristic = GearStructure2KHCharacteristic(External1,carrierPosition)
     }
-    //override val functionalityUnit: MechanismFunctionality = null //TODO WHY THE HELL DO WE NEED THIS ONE!?
   }
 }
 package object mech2kh_I1{
@@ -90,7 +85,6 @@ package object mech2kh_I1{
       override val inputPhysicalParamsCharacteristic: InputPhysicalParamsCharacteristic = null //TODO physical properties into input
       override val gearStructureCharacteristic: GearStructureCharacteristic = GearStructure2KHCharacteristic(Internal1,carrierPosition)
     }
-    //override val functionalityUnit: MechanismFunctionality = null //TODO WHY THE HELL DO WE NEED THIS ONE!?
   }
 }
 trait MechanismFactory{

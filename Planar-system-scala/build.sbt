@@ -16,6 +16,7 @@ lazy val osName = System.getProperty("os.name") match {
   case _ => throw new Exception("Unknown platform!")
 }
 
+
 // Add dependency on JavaFX libraries, OS dependent
 lazy val javaFXModules = Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
 libraryDependencies ++= javaFXModules.map( m =>
@@ -33,3 +34,6 @@ javaOptions ++= Seq(
   "--module-path", fxPaths.mkString(File.pathSeparator),
   "--add-modules", "ALL-MODULE-PATH"
 )
+
+// https://mvnrepository.com/artifact/org.scala-lang.modules/scala-parallel-collections
+libraryDependencies += "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0"

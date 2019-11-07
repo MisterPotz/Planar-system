@@ -1,5 +1,7 @@
 package planar_structure.mechanism
 
+import planar_structure.mechanism.mech2kh.MechanismType
+
 trait MechanismMethods{
 
 }
@@ -23,9 +25,12 @@ abstract class MechanismFunctionality(_mechanismCharacteristicsCase : MechanismC
 //----Mechanism------
 abstract class Mechanism {
   //Method objects
-  //TODO these methods + Methodable
   val methods : MechanismMethodsCase
   //Characteristic objects
   val characteristics : MechanismCharacteristicsCase
+  def getCode : String = {
+    characteristics.gearStructureCharacteristic.getCode
+  }
 }
 
+case class MechanismEssential(mechanismType: MechanismType, carrierPosition: CarrierPosition, satellitesInfo: SatellitesInfo)

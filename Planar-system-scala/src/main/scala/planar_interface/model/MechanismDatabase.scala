@@ -1,6 +1,11 @@
 package planar_interface.model
 
-import planar_structure.mechanism.{Mechanism, Mechanism2KH, MechanismFactory}
+import planar_structure.mechanism.mech2kh.{ExternalInternal, MechanismType, MechanismTypeString}
+import planar_structure.mechanism.{CarrierOutput, CarrierPosition, Mechanism, Mechanism2KH, MechanismFactory}
+
+import scala.collection.mutable.HashMap
+import scala.collection.{IterableOnce, mutable}
+import scala.collection.parallel.immutable.ParVector
 
 //subclasses must contain root view of the app and reference to the mechanism window
 
@@ -33,22 +38,45 @@ class ProcessUnitConcrete extends  ProcessUnit {
   //returns current status of execution
 
   def getCurrentStatus : Int = 100
-  override def process_KINEMATIC_ANALYSIS_FORWARD(mechanism: Mechanism): Unit = println("KINEMATIC_ANALYSIS_ACTIVATED")
+  override def process_KINEMATIC_ANALYSIS_FORWARD(mechanism: Mechanism): Unit = {
+    println("KINEMATIC_ANALYSIS_ACTIVATED")
+    //TODO here must be a reference to a method in model structure
+
+  }
 
   override def process_STRENGTH_ANALYSIS_FORWARD(mechanism: Mechanism): Unit = println("STERNGTH ANALYSIS ACTIVATED")
 
   override  def process_STRENGTH_SYNTHESIS(mechanism: Mechanism): Unit = println("STRENGTH SYNTHESIS ACTIVATED")
 
-  override  def process_KINEMATIC_SYNTHESIS(mechanism: Mechanism): Unit = println("KINEMATIC SYNTHESIS ACTIVATED")
+  override  def process_KINEMATIC_SYNTHESIS(mechanism: Mechanism): Unit = {
+    //TODO must be also an input in the interface
+    println("KINEMATIC SYNTHESIS ACTIVATED")
+  }
 }
-//TODO store old mechanisms
+sealed trait ModeArguments
+
+/**
+ *
+ * @param z_min_max пара минимального и максимального значения числа зубьев для соответствующего колеса
+ * @param m_arr массив допустимых модулей
+ * @param k число сателлитов
+ * @param n_input число оборотов входного колеса
+ * @param u1h целевое передаточное отношение
+ * @param eps_u1h требуемая точность передаточного отношения
+ */
+case class KinematicSynthesisArgs(z_min_max : Array[(Double, Double)], m_arr : Array[Double], k : Int, n_input : Double, u1h : Double, eps_u1h : Int)
 //stores current mode and mechanism
-class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) {
+class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) extends MechanismTypeString{
 
   protected val processUnit = new ProcessUnitConcrete
   var currentMode : CurrentMode = KINEMATIC_ANALYSIS_FORWARD;
+  var currentType : (MechanismType, CarrierPosition) = (ExternalInternal, CarrierOutput)
+  val mechanismDatabase : mutable.HashMap[(MechanismType, CarrierPosition), Mechanism] =
+    mutable.HashMap.empty[(MechanismType, CarrierPosition), Mechanism]
   //current mechanism
-  var mechanism : Mechanism = _
+  def mechanism : Mechanism = {
+    mechanismDatabase(currentType)
+  }
   //mechanism factory
   var mechanismFactory : MechanismFactory = Mechanism2KH
   init()
@@ -66,10 +94,23 @@ class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) {
    * @return return boolean which indicates the success of an operation
    */
   def makeMechanism(code : String): Boolean ={
-    mechanismFactory.safeApply(code) match {
-      case Left(value) => false
-      case Right(value) => { mechanism = value; true}
+    mechanismDatabase.get(code.toFullType) match {
+        //if we had such mechanism in the base before
+      case Some(mechanism) =>
+        println("Specialists found the same old mechanism")
+        currentType = code.toFullType
+        true
+      case None => mechanismFactory.safeApply(code) match {
+        case Left(_) => false
+        case Right(value) =>
+          println("new mechanism baked at Motherbase")
+          //we must create the new mechanism lol, we must add it
+          mechanismDatabase.addOne(code.toFullType -> value)
+          currentType = code.toFullType
+          true
+      }
     }
+
   }
   //default mechanism - externalinternal with carier as an output
   def makeMechanism() : Boolean = {

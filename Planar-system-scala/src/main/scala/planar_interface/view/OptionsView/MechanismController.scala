@@ -91,7 +91,7 @@ class MechanismControllerConcrete extends MechanismController with Observable {
   }
   override def setMechanism(s: String): Unit = {
     if (mechanismDatabase.makeMechanism(s)){
-      println("Successfully made mechanism")
+      println("Successfully set mechanism")
       currentStatus = ControllerStatusReport(mechanismChanged = true, modeChanged = false)
       notifyObservers()
     } else {
@@ -167,9 +167,12 @@ class GearViewMenu extends  Observer {
         savedModes get mechanism match {
             //if we found an old mechanism then we must check if there is the necessary view for it
           case Some(value) => value get observableController.getMode match {
-            case Some(view) => updateView()
+            case Some(view) =>
+              println("Found the old view and the old mechanism")
+              updateView()
             //in case we don't have such view yet we must create a new one
             case None => {
+              println("Found the old mechanism but view")
               currentGearViewControllerFactory.setGearGroups(mechanism.characteristics.gearStructureCharacteristic.getGearGroups)
               //creating new view based on the mechanism of the observableController
               val new_view = currentGearViewControllerFactory
@@ -182,6 +185,7 @@ class GearViewMenu extends  Observer {
           }
           //we didn't find such mechanism before
           case None => {
+            println("Found nothing, baking the new ")
             val mechanism = observableController.getMechanism
             //creating new view based on the mechanism of the observableController
             val new_view = currentGearViewControllerFactory
