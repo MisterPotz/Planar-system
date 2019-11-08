@@ -1,35 +1,20 @@
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 
-import planar_interface.view.OptionsView.AbstractMechanismControllerFactory;
-import planar_interface.view.OptionsView.MechanismController;
-import planar_interface.view.OptionsView.MechanismControllerFactory;
+import planar_interface.AbstractMechanismControllerFactory;
+import planar_interface.MechanismController;
+import planar_interface.MechanismControllerFactory;
 import planar_structure.mechanism.*;
-import planar_structure.mechanism.Mechanism2KH;
 import planar_structure.mechanism.mech2kh.*;
 import scala.collection.immutable.List;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import planar.ConceptTest;
 
 public class Test extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setTitle("Some");
+        stage.setTitle("Planar Synthesis");
         /*FlowPane rootNode = new FlowPane();
         Scene scene = new Scene(rootNode, 300, 250);
         stage.setScene(scene);

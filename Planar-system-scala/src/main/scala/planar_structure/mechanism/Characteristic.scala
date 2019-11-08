@@ -1,34 +1,18 @@
 package planar_structure.mechanism
 
-import planar_structure.mechanism.mech2kh.MechanismType
+
+import planar_structure.mechanism.types.{CarrierPosition, MechanismType}
 
 import scala.collection.mutable.ListBuffer
 
 abstract class Characteristic
 
-trait GearStructureStore{
-  this : GearStructureCharacteristic =>
-  protected val gears : List[GearWheel]
-  protected lazy val gear_connections : List[GearConnection] = makeGearConnectionList(preparePairsForConnections)
-  protected lazy val gear_groups : List[GearGroup] = GearGroup(gears, gear_connections)//TODO check geargroup
-
-}
-//position of carrier is important and is used to calculate proper gear ratio and understand structure of mechanism
-sealed trait CarrierPosition{
-  def toCode : String
-}
-case object CarrierInput extends CarrierPosition {
-  override def toCode: String = "CarrierInput"
-  override def toString: String = "CarrierInput"
-}
-case object CarrierOutput extends CarrierPosition{
-  override def toCode: String = "CarrierOutput"
-  override def toString: String = "CarrierOutput"
-}
-
-case object CarrierNeutral extends CarrierPosition{
-  override def toCode: String = "CarrierNeutral"
-  override def toString: String = "CarrierNeutral"
+//TODO this one was a trait before
+class GearStructureStore(
+                                   val gears : List[GearWheel],
+                                   val gear_connections : List[GearConnection],
+                                   val gear_groups : List[GearGroup]
+                                 ){
 }
 
 trait CarrierPositionInfo{
@@ -38,8 +22,24 @@ trait SatellitesInfo{
   val amount_of_satellites : Int = 3 //amount of satellites
 }
 
-trait GearStructureCharacteristic extends Characteristic with GearStructureStore with CarrierPositionInfo with SatellitesInfo {
-  val mechanismType : MechanismType
+
+abstract class GearStructureCharacteristic(gears : List[GearWheel],
+                                  val mechanismType : MechanismType,
+                                  val info : CarrierPosition,
+                                 var amount_of_satellites : Int = 3) extends Characteristic{
+
+  val storage : GearStructureStore = {
+    val gear_connections_ = makeGearConnectionList(preparePairsForConnections)
+    new GearStructureStore(gears,
+      gear_connections_,
+      GearGroup(gears, gear_connections_))
+  }
+  def setSatellitesAmount(k : Int) : Unit = amount_of_satellites = k
+  protected def gear_groups : List[GearGroup] = storage.gear_groups
+  protected def gear_connections : List[GearConnection] = storage.gear_connections
+  def setStorage(gears : List[GearWheel]) : Unit = {
+
+  }
   def getCode : String = mechanismType.toCode +  "_"+ info.toCode
   def getBiggestGear : GearWheel = {
     getGearList.maxBy(_.holder.z) //поиск максимальной шестерни по числу зубьев

@@ -1,6 +1,6 @@
 package planar_structure.mechanism
 
-import planar_structure.mechanism.mech2kh.MechanismType
+import planar_structure.mechanism.types.MechanismType
 
 abstract class Method{
 

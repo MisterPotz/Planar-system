@@ -1,7 +1,7 @@
 package planar_interface.view.OptionsView
 
 import java.net.URL
-
+import planar_structure.mechanism.types._
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, MenuBar}
@@ -9,9 +9,6 @@ import javafx.scene.layout.{AnchorPane, BorderPane}
 import planar_interface.model.{CurrentMode, KINEMATIC_ANALYSIS_FORWARD, KINEMATIC_SYNTHESIS, STRENGTH_ANALYSIS_FORWARD, STRENGTH_SYNTHESIS}
 import planar_interface.view.GearGroupView.AbstractGearGroupOnlyViewControllerFactory
 import planar_interface.view.GearView.ViewFactory
-import planar_structure.mechanism.{CarrierInput, CarrierNeutral, CarrierOutput, CarrierPosition}
-import planar_structure.mechanism.mech2kh.MechanismType
-import planar_structure.mechanism.mech2kh.{External1, ExternalExternal, ExternalInternal, Internal1, InternalExternal, InternalInternal}
 
 class OptionsView {
   @FXML

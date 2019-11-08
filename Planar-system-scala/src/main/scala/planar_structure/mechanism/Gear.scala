@@ -1,7 +1,6 @@
 package planar_structure.mechanism
 
 import planar_structure.help_traits.BeautifulDebugOutput
-import planar_structure.old.core_structure.links.LinkElemHolder
 //уникальные характерситики зуба, которые могут менять в пределах передачи:
 //z, x, ha, ca - правильно?
 trait GearGeometricCharacteristic extends Characteristic{

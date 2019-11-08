@@ -1,7 +1,8 @@
 package planar_interface.model
 
-import planar_structure.mechanism.mech2kh.{ExternalInternal, MechanismType, MechanismTypeString}
-import planar_structure.mechanism.{CarrierOutput, CarrierPosition, Mechanism, Mechanism2KH, MechanismFactory}
+import planar_structure.mechanism.mech2kh.Mechanism2KH
+import planar_structure.mechanism.types._
+import planar_structure.mechanism.{Mechanism, MechanismFactory}
 
 import scala.collection.mutable.HashMap
 import scala.collection.{IterableOnce, mutable}
@@ -66,7 +67,7 @@ sealed trait ModeArguments
  */
 case class KinematicSynthesisArgs(z_min_max : Array[(Double, Double)], m_arr : Array[Double], k : Int, n_input : Double, u1h : Double, eps_u1h : Int)
 //stores current mode and mechanism
-class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) extends MechanismTypeString{
+class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) extends CodeGenerator {
 
   protected val processUnit = new ProcessUnitConcrete
   var currentMode : CurrentMode = KINEMATIC_ANALYSIS_FORWARD;

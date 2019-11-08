@@ -67,6 +67,7 @@ abstract class AbstractGearViewControllerFactory(override val location : String 
     a
   }
 }
+
 //смысл в том чтобы каждый раз просто новый загрузчик делать. видимо там внутри есть какой-то механизм, который не
 //позволяет еще раз взять и сделать новый объект, может оно и правильно для избежания ошибок
 class GearViewControllerFactory extends AbstractGearViewControllerFactory{
