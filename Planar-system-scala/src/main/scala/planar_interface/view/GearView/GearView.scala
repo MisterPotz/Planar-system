@@ -6,34 +6,35 @@ import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.{Button, Label, TextField}
 import planar_structure.mechanism.GearWheel
 import java.net.URL
+
 import scala.reflect.ClassTag
 import javafx.scene.Parent
 import javafx.scene.layout.GridPane
+import planar_interface.view.{GearParamsInput, TextCallbackChecker, TextCallbackCheckerSimple}
 
-class GearViewController(var gearWheel : GearWheel, var gearView: GearView){
-  protected def checkTextZ(a : String) : Boolean = {
-    try {
-      if (a.toInt > 5 && a.toInt < 400) true else false
-    }catch {
-      case _ : Exception => false
-    }
+class GearViewController(var gearWheel : GearWheel, var gearView: GearView) extends GearParamsInput{
+  val zChecker : TextCallbackChecker = TextCallbackCheckerSimple((a) => a.toInt > 5 && a.toInt < 400,
+    () => gearView.zTextField.getText(), (s) => gearView.zTextField.setText(s),"Число вышло за допустимые пределы",
+    "Введено не целое число")
+  val xChecker : TextCallbackChecker = TextCallbackCheckerSimple((a) => math.abs(a.toDouble) < 5,
+    () => gearView.xTextField.getText(), (s) => gearView.xTextField.setText(s),"Недопустимо большое смещение",
+    "Введено не число")
+
+  override def checkInput: Boolean = {
+    zChecker.checkIfElseSet() & xChecker.checkIfElseSet()
   }
-  protected def checkTextX(a : String) : Boolean = {
-    try {if (math.abs(a.toDouble) < 100) true else false}
-    catch {
-      case _ : Exception => false
-    }
+
+  override def performSideEffect(): Unit = {
+    gearWheel.holder.z = zChecker.getText().toInt
+    gearWheel.holder.x = xChecker.getText().toFloat
   }
-  def processAll() : Unit = {processEventX(); processEventZ();}
-  def processEventZ() : Unit = {println(a)
-    if (checkTextZ(gearView.zTextField.getText)){
-      gearWheel.holder.z =  gearView.zTextField.getText.toInt
-    }}
-  def processEventX() : Unit  = {println(a)
-    if (checkTextX(gearView.xTextField.getText)){
-      gearWheel.holder.x =  gearView.xTextField.getText.toDouble
-    }}
-  var a : String = "Default gear"
+
+  override def getParent: Parent = gearView.gearGridPane
+
+  override def clearInput(): Unit = {
+    zChecker.setText("")
+    xChecker.setText("")
+  }
 }
 
 class GearView{

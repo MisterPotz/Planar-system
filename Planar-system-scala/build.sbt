@@ -37,3 +37,7 @@ javaOptions ++= Seq(
 
 // https://mvnrepository.com/artifact/org.scala-lang.modules/scala-parallel-collections
 libraryDependencies += "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0"
+
+// https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.5.26"
+libraryDependencies += "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0"

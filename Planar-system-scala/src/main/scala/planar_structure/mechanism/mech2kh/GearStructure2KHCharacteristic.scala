@@ -1,60 +1,63 @@
 package planar_structure.mechanism.mech2kh
 
-import planar_structure.mechanism.{Characteristic, ExternalWheel, GearStructureCharacteristic, GearWheel, GeometricMethod, InternalWheel, Mechanism}
+import planar_structure.mechanism.{ExternalWheel, GearStructureCharacteristic, GearStructureCharacteristic2KH, GearWheel, GeometricMethod, InternalWheel, Mechanism, WheelHolder}
 import planar_structure.mechanism.types.{External1, Internal1, InternalInternal, _}
 
 import scala.collection.mutable.ListBuffer
 
 //constructor for proper gear structure characteristics
 object GearStructure2KHCharacteristic{
-  //TODO make decorators for this things
   class GearStructure2KH_4Wheels_Characteristic(gears : List[GearWheel],
                                                 mechanismType : MechanismType,
                                                 info : CarrierPosition)
-    extends GearStructureCharacteristic(gears, mechanismType, info){
+    extends GearStructureCharacteristic2KH(gears, mechanismType, info){
     override def getSatelliteGears: List[GearWheel] = getGearList.slice(1,3)
-    override def preparePairsForConnections: List[(GearWheel, GearWheel)] = {
-      (getGearList(0), getGearList(1)) :: (getGearList(2), getGearList(3)) :: Nil;
+    override protected def preparePairsForConnections(gear_list : List[GearWheel]) : List[(GearWheel, GearWheel)] = {
+      (gear_list(0), gear_list(1)) :: (gear_list(2), gear_list(3)) :: Nil;
     }
   }
-  class GearStructure2KH_3Wheels_Characteristis(gears : List[GearWheel],
+  class GearStructure2KH_3Wheels_Characteristic(gears : List[GearWheel],
                                                 mechanismType : MechanismType,
                                                 info : CarrierPosition)
-    extends GearStructureCharacteristic(gears, mechanismType, info){
+    extends GearStructureCharacteristic2KH(gears, mechanismType, info){
     override def getSatelliteGears: List[GearWheel] = getGearList.slice(1,2)
-    override def preparePairsForConnections: List[(GearWheel, GearWheel)] = {
-      (getGearList(0), getGearList(1)) :: (getGearList(1), getGearList(2)) :: Nil;
+    override def preparePairsForConnections(gear_list : List[GearWheel]) : List[(GearWheel, GearWheel)] = {
+      (gear_list(0), gear_list(1)) :: (gear_list(1), gear_list(2)) :: Nil;
     }
   }
   def apply(mechanismType_ : MechanismType, carrierPosition: CarrierPosition = CarrierOutput): GearStructureCharacteristic ={
     mechanismType_ match {
       case ExternalExternal => new GearStructure2KH_4Wheels_Characteristic(
-        new ExternalWheel() :: new ExternalWheel() :: new ExternalWheel() :: new  ExternalWheel() :: Nil,
+        new ExternalWheel() :: new ExternalWheel(WheelHolder.externalSatellite)
+          :: new ExternalWheel(WheelHolder.externalSatellite) :: new  ExternalWheel() :: Nil,
         mechanismType_,
         carrierPosition
       )
       case InternalExternal => new GearStructure2KH_4Wheels_Characteristic(
-        new InternalWheel() :: new ExternalWheel() :: new ExternalWheel() :: new  ExternalWheel() :: Nil,
+        new InternalWheel() :: new ExternalWheel(WheelHolder.externalSatellite)
+          :: new ExternalWheel(WheelHolder.externalSatellite) :: new  ExternalWheel() :: Nil,
         mechanismType_,
         carrierPosition)
 
       case ExternalInternal => new GearStructure2KH_4Wheels_Characteristic(
-        new ExternalWheel() :: new ExternalWheel() :: new ExternalWheel() :: new  InternalWheel() :: Nil,
+        new ExternalWheel() :: new ExternalWheel(WheelHolder.externalSatellite)
+          :: new ExternalWheel(WheelHolder.externalSatellite) :: new  InternalWheel() :: Nil,
         mechanismType_,
         carrierPosition)
 
       case InternalInternal => new GearStructure2KH_4Wheels_Characteristic(
-        new InternalWheel() :: new ExternalWheel() :: new ExternalWheel() :: new  InternalWheel() :: Nil,
+        new InternalWheel() :: new ExternalWheel(WheelHolder.externalSatellite)
+          :: new ExternalWheel(WheelHolder.externalSatellite):: new  InternalWheel() :: Nil,
         mechanismType_,
         carrierPosition)
 
-      case External1 => new GearStructure2KH_3Wheels_Characteristis(
-        new ExternalWheel() :: new ExternalWheel() ::  new  InternalWheel() :: Nil,
+      case External1 => new GearStructure2KH_3Wheels_Characteristic(
+        new ExternalWheel() ::  new ExternalWheel(WheelHolder.externalSatellite)::  new  InternalWheel() :: Nil,
         mechanismType_,
         carrierPosition)
 
-      case Internal1 => new GearStructure2KH_3Wheels_Characteristis(
-          new InternalWheel() :: new ExternalWheel() ::  new  ExternalWheel() :: Nil,
+      case Internal1 => new GearStructure2KH_3Wheels_Characteristic(
+          new InternalWheel() :: new ExternalWheel(WheelHolder.externalSatellite)::  new  ExternalWheel() :: Nil,
           mechanismType_,
           carrierPosition)
     }

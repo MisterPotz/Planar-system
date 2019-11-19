@@ -2,16 +2,18 @@ package planar_structure.mechanism
 
 import scala.collection.mutable.ListBuffer
 
-case class GearGroupCommonParameters(m : Double, alpha : Double)
+case class GearGroupCommonParameters(m : Float, alpha : Float = 20.toRadians, beta : Float = 0)
 //GearGroup stores only the gears that are connected directly
 class GearGroup(val gear_list : List[GearWheel]) {
-  println("GearGroup created")
+  //println("GearGroup created")
   def setCommon(common : GearGroupCommonParameters): GearGroup ={
-    gear_list.foreach((gear) => {gear.holder.m = common.m; gear.holder.alpha = common.alpha})
+    gear_list.foreach((gear) => {gear.holder.m = common.m;
+      gear.holder.alpha = common.alpha
+    gear.holder.beta = common.beta})
     this
   }
   def getCommon : GearGroupCommonParameters = {
-    GearGroupCommonParameters(gear_list(0).holder.m, gear_list(0).holder.alpha)
+    GearGroupCommonParameters(gear_list(0).holder.m, gear_list(0).holder.alpha, gear_list(0).holder.beta)
   }
 }
 object GearGroup{

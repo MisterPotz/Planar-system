@@ -1,27 +1,38 @@
 package planar_structure.mechanism
 
-import planar_structure.mechanism.types.{CarrierPosition, MechanismType}
+import planar_structure.mechanism.types.{CarrierPosition, CodeGenerator, MechanismType}
 
-trait MechanismMethods{
-
+trait MechanismStructure{
+  def getCode : String
+  def toStringShort : String = ""
+  def toStringFull : String = ""
+  def name : String = ""
+  def getGears : List[GearWheel]
+  def getGearGroups : List[GearGroup]
+  def getGearConnections : List[GearConnection]
+  def getMechanismType : MechanismType
+  def getCarrierPosition : CarrierPosition
+  def getStorage : GearStructureStore
 }
-//------------Methods of mechanism----------
-class MechanismMethodsCase(val geometricMethods : GeometricMethod,
-                                     val kinematicMethods : KinematicMethod,
-                                    val materialStrengthMethods : MaterialStrengthMethod)
 
-//------------Characteristics of mechanism----------
-class MechanismCharacteristicsCase(val inputPhysicalParamsCharacteristic : InputPhysicalParamsCharacteristic,
-                                              val gearStructureCharacteristic : GearStructureCharacteristic)
+
 //----Mechanism------
-abstract class Mechanism {
+abstract class Mechanism extends MechanismStructure {
   //Method objects
-  val methods : MechanismMethodsCase
   //Characteristic objects
-  val characteristics : MechanismCharacteristicsCase
-  def getCode : String = {
-    characteristics.gearStructureCharacteristic.getCode
-  }
+  val methods : GeometricMethod
+  val gearStructureCharacteristic : GearStructureCharacteristic
+  override def getStorage : GearStructureStore = gearStructureCharacteristic.storage
+  def getCode : String = gearStructureCharacteristic.getCode
+  override def toStringShort : String = ""
+  override def toStringFull : String = ""
+  override def name : String = ""
+
+  override def getGears : List[GearWheel] = getStorage.gears
+  override def getGearGroups : List[GearGroup] = getStorage.gearGroups
+  override def getGearConnections : List[GearConnection] = getStorage.gearConnections
+  override def getMechanismType : MechanismType = getStorage.mechanismType
+  override def getCarrierPosition : CarrierPosition = getStorage.carrierPosition
+
 }
 
-case class MechanismEssential(mechanismType: MechanismType, carrierPosition: CarrierPosition, satellitesInfo: SatellitesInfo)

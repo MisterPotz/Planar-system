@@ -1,4 +1,4 @@
-class Main{
+class MainE{
   /*def main(args: Array[String]): Unit = { //Schedule a job for the event dispatch thread:
     //creating and showing this application's GUI.
   /*  javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -9,7 +9,7 @@ class Main{
     gears(1).holder.z = 34
     gears(2).holder.z = 28
     gears(3).holder.z = 81
-    println(s"${mech.methods.geometricMethods.getGearRatio}") //TODO DANGEROUS BUG with all gears being interconnected with prepareAllGears functions. Must be overloaded in classes
+    println(s"${mech.methods.geometricMethods.getGearRatio}")
     mech.characteristics.gearStructureCharacteristic.getGearGroup(0)
     println(s"${mech.methods.geometricMethods.noPruningOnAll}")
     println(s"${mech.methods.geometricMethods.neighborhoodCondition}")
@@ -22,10 +22,4 @@ class Main{
     launch(args)
    // EventQueue.invokeLater( () => {var ex = new SimpleEx(); ex.setVisible(true) })
   }*/
-}
-
-object Main{
-  def smain(args: Array[String]): Unit = {
-    println("Works")
-  }
 }

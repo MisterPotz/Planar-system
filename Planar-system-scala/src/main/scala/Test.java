@@ -11,6 +11,8 @@ import planar_structure.mechanism.*;
 import planar_structure.mechanism.mech2kh.*;
 import scala.collection.immutable.List;
 
+import java.util.ResourceBundle;
+
 public class Test extends Application {
     @Override
     public void start(Stage stage) throws Exception {
@@ -25,7 +27,7 @@ public class Test extends Application {
         rootNode.getChildren();*/
         // Загружаем корневой макет из fxml файла.
         Mechanism mech = Mechanism2KH.apply("InternalInternal_CarrierInput");
-        List<GearWheel> a = mech.characteristics().gearStructureCharacteristic().getGearList();
+        List<GearWheel> a = mech.gearStructureCharacteristic().getGearList();
         a.apply(0).holder().z_$eq(85);
         a.apply(1).holder().z_$eq(45);
         a.apply(2).holder().z_$eq(53);
@@ -43,11 +45,11 @@ public class Test extends Application {
         Parent root4 = ((GearGroupListViewController) fac3.createView()).gearGroupListView().gearGroupList();
         MechanismFactory mech_ = Mechanism2KH$.MODULE$;
         mech_.apply("InternalInternal_CarrierInput");*/
+        System.out.println(ResourceBundle.getBundle("MechanismNames").getString("mech_ii"));
         AbstractMechanismControllerFactory mech_control_factory = new MechanismControllerFactory();
         MechanismController mechanismController = mech_control_factory.createController();
         Parent menu = mechanismController.getParent();
         //mechanismController.setMechanism("External1_CarrierOutput");
-        mechanismController.setMode("");
         Scene scene = new Scene(menu);
         stage.setScene(scene);
         stage.show();

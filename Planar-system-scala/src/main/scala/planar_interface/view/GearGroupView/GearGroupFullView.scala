@@ -7,7 +7,8 @@ import javafx.scene.Parent
 import javafx.scene.control.{Label, SplitPane}
 import javafx.scene.layout.AnchorPane
 import planar_interface.view.GearListView.{GearListViewController, GearListViewControllerFactory}
-import planar_interface.view.GearView.ViewFactory
+import planar_interface.view.GearParamsInput
+import planar_interface.view.GearView.{GearViewController, ViewFactory}
 import planar_structure.mechanism.GearGroup
 
 class GearGroupFullView {
@@ -18,10 +19,32 @@ class GearGroupFullView {
   @FXML
   var gearGroupPane : SplitPane = _ //split pane where all info corresponding to the group is located
 }
-
-class GearGroupFullViewController(var gearGroupFullView: GearGroupFullView){
+//must save the underlying lower-level controllers
+class GearGroupFullViewController(var gearGroupFullView: GearGroupFullView,
+                                  var gearListViewController : GearListViewController,
+                                  var gearGroupOnlyViewController: GearGroupOnlyViewController
+                                  ) extends GearParamsInput{
+  init()
+  def init() : Unit = {
+    gearGroupFullView.gearGroupPane.getItems.add(gearListViewController.gearListView.gearsList)
+    gearGroupFullView.gearGroupPane.getItems.add(gearGroupOnlyViewController.gearGroupOnlyView.gearGroupOnlyPane)
+  }
   //must get the common pane and fill it with gears of group on the left and common parameters for the group on the right
   //TODO understand what methods should be here
+  override def checkInput: Boolean = {
+    gearListViewController.checkInput & gearGroupOnlyViewController.checkInput
+  }
+  override def performSideEffect(): Unit = {
+    gearListViewController.performSideEffect()
+    gearGroupOnlyViewController.performSideEffect()
+  }
+
+  override def getParent: Parent = gearGroupFullView.gearGroupPane
+
+  override def clearInput(): Unit = {
+    gearListViewController.clearInput()
+    gearGroupOnlyViewController.clearInput()
+  }
 }
 
 abstract class AbstractGearGroupFullViewControllerFactory(val location : String = "GearGroupFullView.fxml")
@@ -47,18 +70,7 @@ class GearGroupFullViewControllerFactory extends AbstractGearGroupFullViewContro
     //теперь туда надо забросить то что мы полуаем от других фабрик
     val left = gearListViewControllerFactory.createView().asInstanceOf[GearListViewController]
     val right = gearGroupOnlyViewControllerFactory.createView().asInstanceOf[GearGroupOnlyViewController]
-    curr_controller.gearGroupPane.getItems.add(left.gearListView.gearsList)
-    curr_controller.gearGroupPane.getItems.add(right.gearGroupOnlyView.gearGroupOnlyPane)
     //создаем новую штуку
-    new GearGroupFullViewController(curr_controller)
+    new GearGroupFullViewController(curr_controller, left, right)
   }
 }
-
-/*
-class GearGroupFullViewControllerFactory(gearGroup: GearGroup) extends AbstractGearGroupFullViewControllerFactory(gearGroup){
-  // Отображаем сцену, содержащую корневой макет.
-  override def createGearView(): GearGroupOnlyViewController= {
-    val controller = loader.getController[GearGroupFullView]
-    new GearGroupFullViewController(gearGroup, controller)
-  }
-}*/

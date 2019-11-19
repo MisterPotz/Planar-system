@@ -1,79 +1,24 @@
 package planar_interface.model
 
+import planar_interface.Observable
+import planar_interface.view.event_types.{CalculatedKinematicForward, CalculatedKinematicSynthesis, EventListener}
 import planar_structure.mechanism.mech2kh.Mechanism2KH
+import planar_structure.mechanism.process.actors.{KinematicSynthesisProcessor, KinematicSynthesisProcessorInterface}
+import planar_structure.mechanism.process.argument.KinematicSynthesisArgs
+import planar_structure.mechanism.process.report.KinematicSynthesisReport
 import planar_structure.mechanism.types._
-import planar_structure.mechanism.{Mechanism, MechanismFactory}
+import planar_structure.mechanism.{Mechanism, MechanismFactory, types}
 
-import scala.collection.mutable.HashMap
-import scala.collection.{IterableOnce, mutable}
-import scala.collection.parallel.immutable.ParVector
-
-//subclasses must contain root view of the app and reference to the mechanism window
+import scala.collection.mutable
 
 
-sealed trait CurrentMode;
-case object KINEMATIC_ANALYSIS_FORWARD extends CurrentMode{
-  override def toString: String = "KINEMATIC_ANALYSIS_FORWARD"
-}
-case object KINEMATIC_SYNTHESIS extends CurrentMode{
-  override def toString: String = "KINEMATIC_SYNTHESIS"
-}
-case object STRENGTH_ANALYSIS_FORWARD extends CurrentMode{
-  override def toString: String = "STRENGTH_ANALYSIS_FORWARD"
-}
-case object STRENGTH_SYNTHESIS extends CurrentMode{
-  override def toString: String = "STRENGTH_SYNTHESIS"
-}
-
-
-trait ProcessUnit{
-
-   def process_KINEMATIC_ANALYSIS_FORWARD(mechanism : Mechanism);
-   def process_STRENGTH_ANALYSIS_FORWARD(mechanism : Mechanism);
-   def process_STRENGTH_SYNTHESIS(mechanism : Mechanism);
-   def process_KINEMATIC_SYNTHESIS(mechanism: Mechanism);
-
-}
-
-class ProcessUnitConcrete extends  ProcessUnit {
-  //returns current status of execution
-
-  def getCurrentStatus : Int = 100
-  override def process_KINEMATIC_ANALYSIS_FORWARD(mechanism: Mechanism): Unit = {
-    println("KINEMATIC_ANALYSIS_ACTIVATED")
-    //TODO here must be a reference to a method in model structure
-
-  }
-
-  override def process_STRENGTH_ANALYSIS_FORWARD(mechanism: Mechanism): Unit = println("STERNGTH ANALYSIS ACTIVATED")
-
-  override  def process_STRENGTH_SYNTHESIS(mechanism: Mechanism): Unit = println("STRENGTH SYNTHESIS ACTIVATED")
-
-  override  def process_KINEMATIC_SYNTHESIS(mechanism: Mechanism): Unit = {
-    //TODO must be also an input in the interface
-    println("KINEMATIC SYNTHESIS ACTIVATED")
-  }
-}
-sealed trait ModeArguments
-
-/**
- *
- * @param z_min_max пара минимального и максимального значения числа зубьев для соответствующего колеса
- * @param m_arr массив допустимых модулей
- * @param k число сателлитов
- * @param n_input число оборотов входного колеса
- * @param u1h целевое передаточное отношение
- * @param eps_u1h требуемая точность передаточного отношения
- */
-case class KinematicSynthesisArgs(z_min_max : Array[(Double, Double)], m_arr : Array[Double], k : Int, n_input : Double, u1h : Double, eps_u1h : Int)
 //stores current mode and mechanism
-class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) extends CodeGenerator {
-
-  protected val processUnit = new ProcessUnitConcrete
-  var currentMode : CurrentMode = KINEMATIC_ANALYSIS_FORWARD;
-  var currentType : (MechanismType, CarrierPosition) = (ExternalInternal, CarrierOutput)
-  val mechanismDatabase : mutable.HashMap[(MechanismType, CarrierPosition), Mechanism] =
-    mutable.HashMap.empty[(MechanismType, CarrierPosition), Mechanism]
+class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) extends CodeGenerator with Observable{
+  //protected val processUnit = null //new ProcessUnitConcrete
+  var currentMode : String = ProcessType.KINEMATIC_ANALYSIS_FORWARD
+  var currentType : String =  CodeGenerator(ExternalInternal, CarrierOutput)
+  val mechanismDatabase : mutable.HashMap[String, Mechanism] =
+    mutable.HashMap.empty[String, Mechanism]
   //current mechanism
   def mechanism : Mechanism = {
     mechanismDatabase(currentType)
@@ -95,19 +40,20 @@ class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) ex
    * @return return boolean which indicates the success of an operation
    */
   def makeMechanism(code : String): Boolean ={
-    mechanismDatabase.get(code.toFullType) match {
+    mechanismDatabase.get(code) match {
         //if we had such mechanism in the base before
       case Some(mechanism) =>
         println("Specialists found the same old mechanism")
-        currentType = code.toFullType
+        currentType = code
         true
       case None => mechanismFactory.safeApply(code) match {
-        case Left(_) => false
+        case Left(_) =>
+          false
         case Right(value) =>
           println("new mechanism baked at Motherbase")
           //we must create the new mechanism lol, we must add it
-          mechanismDatabase.addOne(code.toFullType -> value)
-          currentType = code.toFullType
+          mechanismDatabase.addOne(code -> value)
+          currentType = code
           true
       }
     }
@@ -117,13 +63,27 @@ class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) ex
   def makeMechanism() : Boolean = {
     makeMechanism("ExternalInternal_CarrierOutput")
   }
-  def processCurrentMode() : Unit = {
-    //TODO make this process in another thread(s)
+  val processorBoi : ProcessUnitInterface = new ProcessUnitInterface {}
+  def processCurrentMode(args: AnyRef = null) : Unit = {
+    currentMode match {
+      case ProcessType.KINEMATIC_ANALYSIS_FORWARD =>
+        //getting result, this is a fast operation so we don't do threading
+        val res = mechanism.methods.fullConditionCheck
+        //notifying everyone that we have processed the request
+        notifyObservers(CalculatedKinematicForward(res))
+      case ProcessType.KINEMATIC_SYNTHESIS =>
+        val callback : (KinematicSynthesisReport) => Unit = (report) => {
+          //notifyObservers(CalculatedKinematicSynthesis(report))
+        }
+        processorBoi.performKinematicSynthesis(args.asInstanceOf[KinematicSynthesisArgs], callback)
+      case _ => println("unknown type of process")
+    }
+    /*//TODO make this process in another thread(s)
     currentMode match {
       case KINEMATIC_ANALYSIS_FORWARD => processUnit.process_KINEMATIC_ANALYSIS_FORWARD(mechanism)
       case KINEMATIC_SYNTHESIS => processUnit.process_KINEMATIC_SYNTHESIS(mechanism)
       case STRENGTH_ANALYSIS_FORWARD => processUnit.process_STRENGTH_ANALYSIS_FORWARD(mechanism)
       case STRENGTH_SYNTHESIS => processUnit.process_STRENGTH_SYNTHESIS(mechanism)
-    }
+    }*/
   }
 }

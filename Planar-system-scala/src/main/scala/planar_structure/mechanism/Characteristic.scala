@@ -1,64 +1,84 @@
 package planar_structure.mechanism
 
 
-import planar_structure.mechanism.types.{CarrierPosition, MechanismType}
+import planar_structure.mechanism.types.{CarrierPosition, CodeGenerator, MechanismType}
 
 import scala.collection.mutable.ListBuffer
 
-abstract class Characteristic
-
-//TODO this one was a trait before
-class GearStructureStore(
-                                   val gears : List[GearWheel],
-                                   val gear_connections : List[GearConnection],
-                                   val gear_groups : List[GearGroup]
-                                 ){
+//interface of gearstructurecharacteristic
+//operates on a given gearstructurestore
+trait GearStructureCharacteristic{
+  val storage : GearStructureStore
+  def toStringShort : String = s"Mechanism Type: "
+  def toStringFull : String
+  def mechanismTypeString : String
+  def setSatellitesAmount(k : Byte) : Unit
+  protected def gear_groups : List[GearGroup]
+  protected def gear_connections : List[GearConnection]
+  def getCode : String
+  def getBiggestGear : GearWheel
+  def getMaxStageSize : Float
+  def getMaxRw : Float
+  def getGearList : List[GearWheel]
+  def getGearConnectionList : List[GearConnection]
+  def getGearGroups : List[GearGroup]
+  def getSatelliteGears : List[GearWheel]
+  protected def makeGearConnectionList(b : List[(GearWheel, GearWheel)]): List[GearConnection]
+  protected def preparePairsForConnections(gear_list : List[GearWheel]) : List[(GearWheel, GearWheel)]
+  protected def mkStore(gears : List[GearWheel], mechanismType: MechanismType,
+                        carrierPosition: CarrierPosition) : GearStructureStore
 }
 
-trait CarrierPositionInfo{
-  val info : CarrierPosition
-}
-trait SatellitesInfo{
-  val amount_of_satellites : Int = 3 //amount of satellites
-}
+abstract class GearStructureCharacteristic2KH(gears : List[GearWheel],
+                                     mechanismType: MechanismType,
+                                     carrierPosition: CarrierPosition
+                                    )
+  extends GearStructureCharacteristic {
+  override val storage: GearStructureStore = mkStore(
+    gears, mechanismType, carrierPosition
+  )
 
+  override def toStringShort: String = s"Mechanism Type: "
 
-abstract class GearStructureCharacteristic(gears : List[GearWheel],
-                                  val mechanismType : MechanismType,
-                                  val info : CarrierPosition,
-                                 var amount_of_satellites : Int = 3) extends Characteristic{
+  override def toStringFull: String = "Gear Characteristics"
 
-  val storage : GearStructureStore = {
-    val gear_connections_ = makeGearConnectionList(preparePairsForConnections)
-    new GearStructureStore(gears,
-      gear_connections_,
-      GearGroup(gears, gear_connections_))
-  }
-  def setSatellitesAmount(k : Int) : Unit = amount_of_satellites = k
-  protected def gear_groups : List[GearGroup] = storage.gear_groups
-  protected def gear_connections : List[GearConnection] = storage.gear_connections
-  def setStorage(gears : List[GearWheel]) : Unit = {
+  override def mechanismTypeString: String = storage.mechanismType.toString
 
-  }
-  def getCode : String = mechanismType.toCode +  "_"+ info.toCode
-  def getBiggestGear : GearWheel = {
+  override def setSatellitesAmount(k: Byte): Unit = storage.k = k
+
+  protected def gear_groups: List[GearGroup] = storage.gearGroups
+
+  protected def gear_connections: List[GearConnection] = storage.gearConnections
+
+  def getCode: String = CodeGenerator(storage.mechanismType, storage.carrierPosition)
+
+  def getBiggestGear: GearWheel = {
     getGearList.maxBy(_.holder.z) //поиск максимальной шестерни по числу зубьев
   }
-  def getMaxRw : Double = {
+
+  override def getMaxRw: Float = {
     getGearConnectionList.maxBy(_.connectionCalculationBehavior.maxRw).connectionCalculationBehavior.maxRw
   }
-  def getGearList : List[GearWheel] = gears
-  def getGearConnectionList : List[GearConnection] = gear_connections
-  def getGear(i : Int) : GearWheel = getGearList(i)
-  def getConnection(i : Int) : GearConnection =  getGearConnectionList(i)
-  def getGearGroups : List[GearGroup] = gear_groups
-  def getGearGroup(i : Int) : GearGroup = gear_groups(i)
-  def getSatelliteGears : List[GearWheel]
-  def makeGearConnectionList(b : List[(GearWheel, GearWheel)]): List[GearConnection] = b.map{ a =>
+
+  override def getMaxStageSize: Float = {
+    storage.gearConnections.maxBy(_.connectionCalculationBehavior.stageSize).connectionCalculationBehavior.stageSize
+  }
+  override def getGearList: List[GearWheel] = storage.gears
+
+  override def getGearConnectionList: List[GearConnection] = storage.gearConnections
+
+  override def getGearGroups: List[GearGroup] = gear_groups
+
+  override def getSatelliteGears: List[GearWheel] //must be overridden in subclasses
+
+  protected def makeGearConnectionList(b: List[(GearWheel, GearWheel)]): List[GearConnection] = b.map { a =>
     new GearConnection(a._1, a._2)
   }
-  def preparePairsForConnections : List[(GearWheel, GearWheel)] = {
-    @scala.annotation.tailrec
+
+  //really works only for the one-row mechanisms
+  protected def preparePairsForConnections(gear_list: List[GearWheel]): List[(GearWheel, GearWheel)]
+
+  /*  @scala.annotation.tailrec
     def recursivePair(list : ListBuffer[(GearWheel, GearWheel)], analyzed_list : List[GearWheel]){
       if (analyzed_list.isEmpty || analyzed_list.tail.isEmpty){
       }
@@ -66,14 +86,16 @@ abstract class GearStructureCharacteristic(gears : List[GearWheel],
         list.append((analyzed_list.head, analyzed_list.tail.head))
         recursivePair(list, analyzed_list.tail)
       }
-
     }
     val listBuffer  = ListBuffer.empty[(GearWheel, GearWheel)]
-    recursivePair(listBuffer, getGearList)
-    listBuffer.toList
+    recursivePair(listBuffer, gear_list)
+    listBuffer.toList*/
+  protected def mkStore(gears: List[GearWheel], mechanismType: MechanismType,
+                        carrierPosition: CarrierPosition): GearStructureStore = {
+    val gearConnections = makeGearConnectionList(preparePairsForConnections(gears))
+    val gearGroups = GearGroup(gears, gearConnections)
+    new GearStructureStore(GearStructureStoreImmutable(gears,
+      gearConnections, gearGroups, mechanismType, carrierPosition),
+      new GearStructureStoreMutable)
   }
 }
-
-trait GearRelativePositionCharacteristic extends  Characteristic
-trait InputPhysicalParamsCharacteristic extends Characteristic
-

@@ -813,7 +813,7 @@ bool assembly(const planetary_transmission& PlTr)
 {
 	double U1H = PlTr.getU1h_k();
 	int z1 = PlTr.getZ1();
-	int k = PlTr.getK();
+	int k = PlTr.getK();.toFloat
 	int p = 1;
 	for (	;p < PMAX; p++)			// цикл по числу p
 	{

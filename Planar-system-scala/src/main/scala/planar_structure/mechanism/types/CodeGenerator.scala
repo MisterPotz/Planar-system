@@ -1,6 +1,6 @@
 package planar_structure.mechanism.types
 
-class CodeGenerator {
+trait CodeGenerator {
   implicit class Code(string: String){
     def toMechanismType : MechanismType = {
       string match {
@@ -23,5 +23,11 @@ class CodeGenerator {
       val a = string.split("_")
       (a(0).toMechanismType, a(1).toCarrierType)
     }
+  }
+}
+
+object CodeGenerator{
+  def apply(mechanismType: MechanismType, carrierPosition: CarrierPosition) : String ={
+    mechanismType.toCode + "_" + carrierPosition.toCode
   }
 }

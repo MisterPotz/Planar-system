@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="resultPane" alignment="CENTER_LEFT" hgap="6.0" minHeight="-Infinity" minWidth="-Infinity" vgap="6.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1"
+          fx:controller="planar_interface.view.result.KinematicForwardView">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="80.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="50.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+    <RowConstraints vgrow="SOMETIMES" />
+    <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <Label text="Результаты кинематического анализа заданного механизма" wrapText="true" GridPane.columnSpan="2">
+         <padding>
+            <Insets bottom="5.0" />
+         </padding>
+      </Label>
+      <Label text="Передаточное отношение механизма" wrapText="true" GridPane.rowIndex="1" />
+      <Label text="Условие соосности" wrapText="true" GridPane.rowIndex="2" />
+      <Label text="Условие соседства" wrapText="true" GridPane.rowIndex="3" />
+      <Label text="Подрезание зубьев отсутствует " wrapText="true" GridPane.rowIndex="5" />
+      <Label fx:id="gearRatioLabel" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label fx:id="alignmentLabel" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Label fx:id="neighborhoodLabel" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <Label fx:id="pruningLabel" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <Label fx:id="interferenceLabel" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <Label text="Интерференция во внешних зацеплениях отсутствует" wrapText="true" GridPane.rowIndex="6" />
+      <Label text="Условие сборки" GridPane.rowIndex="4" />
+      <Label fx:id="assemblyLabel" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+   </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</GridPane>

@@ -15,42 +15,50 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="appBorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.OptionsView.OptionsView">
+<BorderPane fx:id="appBorderPane" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.OptionsView.OptionsView">
    <bottom>
-      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="BOTTOM_RIGHT">
+      <AnchorPane BorderPane.alignment="BOTTOM_RIGHT">
          <children>
             <HBox spacing="7.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0">
                <children>
                   <Button fx:id="eraseButton" mnemonicParsing="false" text="Стереть" />
                   <Button fx:id="enterButton" mnemonicParsing="false" text="Ввести" />
+                  <Button fx:id="calculateButton" mnemonicParsing="false" text="Расчитать" />
+                  <Button fx:id="cancelButton" mnemonicParsing="false" text="Отменить" />
                </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
             </HBox>
          </children>
       </AnchorPane>
    </bottom>
    <left>
-      <AnchorPane fx:id="settingsAnchorPane" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey;" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="settingsAnchorPane" maxWidth="50.0" prefWidth="50.0" style="-fx-border-color: grey;" BorderPane.alignment="TOP_CENTER">
          <children>
             <Label layoutX="44.0" layoutY="71.0" text="Настройки расчёта" AnchorPane.leftAnchor="7.0" AnchorPane.topAnchor="7.0" />
             <VBox layoutX="14.0" layoutY="24.0" spacing="8.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="30.0">
                <children>
-                  <GridPane hgap="5.0" vgap="5.0">
+                  <GridPane hgap="5.0" maxWidth="100.0" vgap="5.0" VBox.vgrow="NEVER">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="-Infinity" prefWidth="150.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="Тип механизма" />
-                        <ComboBox fx:id="mechanismTypeCombo" promptText="Тип механизма" visibleRowCount="7" GridPane.columnIndex="1" />
-                        <Label text="Положение водила" GridPane.rowIndex="1" />
-                        <ComboBox fx:id="carrierPosCombo" promptText="Положение водила" visibleRowCount="5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label text="Тип расчёта" GridPane.rowIndex="2" />
-                        <ComboBox fx:id="modeTypeCombo" promptText="Тип расчёта" visibleRowCount="5" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="mechanismTypeCombo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Тип механизма" visibleRowCount="7" GridPane.rowIndex="1" />
+                        <Label text="Положение водила" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="carrierPosCombo" promptText="Положение водила" visibleRowCount="5" GridPane.rowIndex="3" />
+                        <Label text="Тип расчёта" GridPane.rowIndex="4" />
+                        <ComboBox fx:id="modeTypeCombo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Тип расчёта" visibleRowCount="5" GridPane.rowIndex="5" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" right="5.0" />
@@ -65,14 +73,14 @@
       </AnchorPane>
    </left>
    <right>
-      <AnchorPane fx:id="resultsAnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" visible="false" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="resultsAnchorPane" visible="false" BorderPane.alignment="TOP_CENTER">
          <children>
             <Label text="Результат вычислений" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
          </children>
       </AnchorPane>
    </right>
    <top>
-      <MenuBar fx:id="appMenuBar" BorderPane.alignment="CENTER">
+      <MenuBar fx:id="appMenuBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>

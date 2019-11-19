@@ -1,20 +1,22 @@
 package planar_interface.view.OptionsView
 
 import java.net.URL
+
 import planar_structure.mechanism.types._
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, MenuBar}
 import javafx.scene.layout.{AnchorPane, BorderPane}
-import planar_interface.model.{CurrentMode, KINEMATIC_ANALYSIS_FORWARD, KINEMATIC_SYNTHESIS, STRENGTH_ANALYSIS_FORWARD, STRENGTH_SYNTHESIS}
+import planar_interface.{Event, Observable, Observer}
 import planar_interface.view.GearGroupView.AbstractGearGroupOnlyViewControllerFactory
 import planar_interface.view.GearView.ViewFactory
+import planar_interface.view.event_types.{CalculatingResultObtained, CalculationStarted, InitialEvent, SuccessfulEnter, UnsuccessfulEnter}
 
 class OptionsView {
   @FXML
   var carrierPosCombo : ComboBox[CarrierPosition] = _
   @FXML
-  var modeTypeCombo : ComboBox[CurrentMode] = _
+  var modeTypeCombo : ComboBox[ProcessType] = _
   @FXML
   var mechanismTypeCombo : ComboBox[MechanismType] = _
   @FXML
@@ -29,13 +31,30 @@ class OptionsView {
   var resultsAnchorPane : AnchorPane = _
   @FXML
   var appMenuBar : MenuBar =  _
+  @FXML
+  var calculateButton : Button = _
+  @FXML
+  var cancelButton : Button = _
 }
-class OptionsViewController(var optionsView: OptionsView){
+class OptionsViewController(var optionsView: OptionsView) extends Observer{
   init()
   def init() : Unit = {
     setupMode();
     setupMechanism()
     setupCarrier()
+    setLock(false)
+  }
+  def setLock(bool : Boolean) = {
+    optionsView.carrierPosCombo.setDisable(bool)
+    optionsView.modeTypeCombo.setDisable(bool)
+    optionsView.mechanismTypeCombo.setDisable(bool)
+    optionsView.eraseButton.setDisable(bool)
+    optionsView.enterButton.setDisable(bool)
+    optionsView.calculateButton.setDisable(bool)
+    optionsView.cancelButton.setDisable(!bool)
+  }
+  def lockCalculate(lock : Boolean = true) : Unit = {
+    optionsView.calculateButton.setDisable(lock)
   }
   def setupMechanism() : Unit = {
     val observable : ObservableList[MechanismType] = FXCollections.observableArrayList(
@@ -56,11 +75,23 @@ class OptionsViewController(var optionsView: OptionsView){
     //TODO carrier position combo box
   }
   def setupMode() : Unit = {
-    val observable : ObservableList[CurrentMode] = FXCollections.observableArrayList(KINEMATIC_ANALYSIS_FORWARD, KINEMATIC_SYNTHESIS, STRENGTH_ANALYSIS_FORWARD, STRENGTH_SYNTHESIS)
+    val observable : ObservableList[ProcessType] = FXCollections.observableArrayList(KINEMATIC_ANALYSIS_FORWARD, KINEMATIC_SYNTHESIS, STRENGTH_ANALYSIS_FORWARD, STRENGTH_SYNTHESIS)
     optionsView.modeTypeCombo.setItems(observable)
     optionsView.modeTypeCombo.getSelectionModel.select(0)
   }
 
+  override protected var observable: Observable = _
+
+  override def onChange(event: Event): Unit = {
+    event match  {
+      case UnsuccessfulEnter => lockCalculate(true)
+      case SuccessfulEnter => lockCalculate(false)
+      case CalculationStarted => setLock(true)
+      case _ : CalculatingResultObtained => setLock(false)
+      case InitialEvent() => lockCalculate(true)
+      case _ => ()
+    }
+  }
 }
 abstract class AbstractOptionsViewControllerFactory(val location : String = "OptionsView.fxml") extends ViewFactory[AbstractOptionsViewControllerFactory]{
   override def getLocation : URL = {
