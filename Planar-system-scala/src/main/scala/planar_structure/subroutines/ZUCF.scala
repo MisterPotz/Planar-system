@@ -9,7 +9,7 @@ object ZUCF {
            AW : Float, M: Float, BW1 : Float, BW2 : Float, U : Float, SIGN : Int, FT : Float,
            TTED : Float, V : Float, PSIBD : Float, YEP : Float, NWR : Int,
           //---------------------
-            HG: Float, BET : Float, EPALF : Float, EPBET : Float, Z0: Float, G0: Float, ST : Int,
+            HG: Float = ChangeableParameters.HG, BET : Float = ChangeableParameters.BETFS, EPALF : Float, EPBET : Float, Z0: Float, G0: Float, ST : Int,
            WV : Float, CONSOL : Int, KFB : Float) :
   //SGF1, SGF2, SGFM1, SGFM2, KFV, KFB
   (Float, Float, Float, Float, Float, Float) = {
@@ -18,11 +18,11 @@ object ZUCF {
     val endNumber = 7
     def assignOperationNumber(operationToMatch : () => Float, on_low : Int, on_eq : Int, on_gt: Int) : Unit = {
       operationToMatch() match {
-        case _ < 0 =>
+        case a if a  < 0 =>
           currentOperationNumber = on_low
-        case _ == 0 =>
+        case a if a == 0 =>
           currentOperationNumber = on_eq
-        case _ > 0 =>
+        case a if a > 0 =>
           currentOperationNumber = on_gt
       }
     }
@@ -93,7 +93,7 @@ object ZUCF {
           breakable{
             ZV = abs(Z / pow(cos(BET), 3).toFloat)
             YF = 3.6f*(1f+ (112f*pow(X, 2).toFloat- 154f*X + 71f)/pow(ZV, 2).toFloat-(2.8f*X+0.93f)/ZV)
-            if (Z < abs(Z)) YF = 4.3f-8f/pow(Z0, 0.8f).toFloat*(1f+0.23f*X)-0.33f*Z0*1.e-4f*(180f-ZV)*(1f+56f*X/pow(Z0, 0.8).toFloat)
+            if (Z < abs(Z)) YF = 4.3f-8f/pow(Z0, 0.8f).toFloat*(1f+0.23f*X)-0.33f*Z0*1.0e1f-4f*(180f-ZV)*(1f+56f*X/pow(Z0, 0.8).toFloat)
             YBET = 1f - BET/140f*180/Pi.toFloat
             if (YBET < 0.7f) YBET=0.7f
             SGF=YEP * YBET * YF * WFT / M

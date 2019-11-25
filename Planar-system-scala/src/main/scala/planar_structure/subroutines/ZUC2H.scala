@@ -12,22 +12,22 @@ object ZUC2H {
             M : Float, BW:Float, U : Float, N2 : Float, SIGN : Int, T2 : Float, TTED : Float, NWR : Int,
            //-----------------
             HG : Float, BET: Float, ALF : Float, ALFT : Float, ALFTW: Float, EPALF : Float,
-            E1 : Float, E2 : Float, PUAS : Float, ST: Int, CONSOL : Float, KHB : Float) :
-  (Float, Float, Float, Float, Float, Float, Float,Float, Float, Float, Float, Float, Float, Float) =
+            E1 : Float, E2 : Float, PUAS : Float, ST: Int=0, CONSOL : Float=1, KHB : Float =1 ) :
+  (Float, Float, Float, Float, Float, Float, Float,Float, Float, Float, Float, Float, Float, Float,Float, Float) =
   //V, PSIBD, SGH, SGHM, DW1, DW2, FT, FA, FR, KHV
   //------
-  //EPBET, G0. WV, AKA
+  //EPBET, G0. WV, AKA, ST_LOCAL, KHB_LOCAL
    {
      //changes on continue operator
      var currentOperationNumber = 0
      val endNumber = 12
      def assignOperationNumber(operationToMatch : () => Float, on_low : Int, on_eq : Int, on_gt: Int) : Unit = {
        operationToMatch() match {
-         case _ < 0 =>
+         case a if a < 0 =>
            currentOperationNumber = on_low
-         case _ == 0 =>
+         case a if a == 0 =>
            currentOperationNumber = on_eq
-         case _ > 0 =>
+         case a if a > 0 =>
            currentOperationNumber = on_gt
        }
      }
@@ -77,17 +77,17 @@ object ZUC2H {
              currentOperationNumber = 2
              break
            }
-           ST_LOCAL = (10.1f - 0.2f*U).toInt
+           ST_LOCAL = (10.1f - 0.2f*V).toInt
            assignOperationNumberN(2)
          }
          case 2=>
            KHALF = 1f
            assignOperationNumberN(5)
          case 3=>
-           ST_LOCAL = (10.1f - 0.12f*U).toInt
+           ST_LOCAL = (10.1f - 0.12f*V).toInt
            assignOperationNumberN(4)
          case 4 =>
-           KHALF = ((0.0026f*ST_LOCAL - 0.013)*V + 0.027f*ST+0.84).toFloat
+           KHALF = ((0.0026f*ST_LOCAL - 0.013)*V + 0.027f*ST_LOCAL+0.84).toFloat
            assignOperationNumberN(5)
          case 5=>
            PSIBD = BW / DW1
@@ -154,7 +154,7 @@ object ZUC2H {
      (V, PSIBD, SGH, SGHM, DW1, DW2, FT, FA, FR, KHV,
        //------
        //EPBET, G0. WV, AKA
-       EPBET, G0, WV, AKA)
+       EPBET, G0, WV, AKA, ST_LOCAL, KHB_LOCAL)
    }
 
 }

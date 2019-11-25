@@ -20,11 +20,11 @@ object ZUCEP {
     val endNumber = 17
     def assignOperationNumber(operationToMatch : () => Float, on_low : Int, on_eq : Int, on_gt: Int) : Unit = {
       operationToMatch() match {
-        case _ < 0 =>
+        case a if a < 0 =>
           currentOperationNumber = on_low
-        case _ == 0 =>
+        case a if a == 0 =>
           currentOperationNumber = on_eq
-        case _ > 0 =>
+        case a if a > 0 =>
           currentOperationNumber = on_gt
       }
     }
