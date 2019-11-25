@@ -55,7 +55,7 @@ class GeometricCommonMethods(meth : GearStructureCharacteristic) extends Geometr
   }
   override def alignmentCondition: Boolean = {
     val res : Double = structure.getGearConnectionList(0).connectionCalculationBehavior.aw - structure.getGearConnectionList(1).connectionCalculationBehavior.aw
-    if (res <= 0.001) true else false
+    if (math.abs(res) <= 0.001) true else false
   }
   override var structure: GearStructureCharacteristic = meth
   override def getGearRatio: Double = outerMethod.getGearRatio  //carrier decorated

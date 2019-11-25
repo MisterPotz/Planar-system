@@ -1,19 +1,15 @@
-package planar_interface.view.GearGroupView
+package planar_interface.view.KinematicSynthesisInputView
 
-import javafx.event.{ActionEvent, EventHandler}
-import javafx.fxml.FXML
-import javafx.scene.control.{Button, TextField}
-import planar_structure.mechanism.{GearGroup, GearGroupCommonParameters, GearWheel}
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
-import javafx.fxml.{FXML, FXMLLoader}
-import javafx.scene.control.{Button, Label, TextField}
 import java.net.URL
 
+import javafx.fxml.FXML
 import javafx.scene.Parent
-import javafx.scene.layout.{AnchorPane, GridPane}
-import planar_interface.view.{GearParamsInput, TextCallbackChecker, TextCallbackCheckerSimple}
+import javafx.scene.control.TextField
+import javafx.scene.layout.GridPane
 import planar_interface.view.GearView.ViewFactory
+import planar_interface.view.{GearParamsInput, TextCallbackChecker, TextCallbackCheckerSimple}
+import planar_structure.mechanism.{GearGroup, GearGroupCommonParameters}
+
 class GearGroupOnlyView{
   @FXML
   var gearGroupOnlyPane : GridPane = _
@@ -24,7 +20,9 @@ class GearGroupOnlyView{
   @FXML
   var betaTextField : TextField = _
 }
-class GearGroupOnlyViewController(var gearGroup : GearGroup, var gearGroupOnlyView: GearGroupOnlyView) extends GearParamsInput{
+case class GroupViewParams(m : Float, alpha: Float, beta: Float)
+
+class GearGroupOnlyViewController(var gearGroupOnlyView: GearGroupOnlyView) extends GearParamsInput{
   val mChecker : TextCallbackChecker = TextCallbackCheckerSimple((a) => a.toDouble > 0 && a.toDouble < 20,
     () => gearGroupOnlyView.mTextField.getText(), (s) => gearGroupOnlyView.mTextField.setText(s),"Число вышло за допустимые пределы",
     "Введено не число", true, () => gearGroupOnlyView.mTextField.getPromptText)
@@ -45,7 +43,6 @@ class GearGroupOnlyViewController(var gearGroup : GearGroup, var gearGroupOnlyVi
     val m = mChecker.getText().toFloat
     val alpha = alphaChecker.getText().toFloat.toRadians
     val beta = betaChecker.getText().toFloat.toRadians
-    gearGroup.setCommon(GearGroupCommonParameters(m = m, alpha = alpha, beta = beta))
   }
 
   override def getParent: Parent = gearGroupOnlyView.gearGroupOnlyPane
@@ -55,25 +52,21 @@ class GearGroupOnlyViewController(var gearGroup : GearGroup, var gearGroupOnlyVi
     alphaChecker.setText("")
     betaChecker.setText("")
   }
-}
 
-
-
-
-abstract class AbstractGearGroupOnlyViewControllerFactory(val location : String = "GearGroupOnlyView.fxml") extends ViewFactory[AbstractGearGroupOnlyViewControllerFactory]{
-  override def getLocation : URL = {
-    classOf[AbstractGearGroupOnlyViewControllerFactory].getResource(location)
+  override def getUsefulObject: AnyRef = {
+    GroupViewParams(mChecker.getText().toFloat, alphaChecker.getText().toFloat, betaChecker.getText().toFloat)
   }
-  def setGearGroup(gearGroup: GearGroup) : Unit = this.gearGroup = gearGroup
-  var gearGroup: GearGroup = _
 }
 
-class GearGroupOnlyViewControllerFactory extends AbstractGearGroupOnlyViewControllerFactory{
+
+class GearGroupOnlyViewControllerFactory(val location : String = "GearGroupOnlyView.fxml") extends ViewFactory[GearGroupOnlyViewController]{
+  override def getLocation : URL = {
+    classOf[GearGroupOnlyViewControllerFactory].getResource(location)
+  }
   // Отображаем сцену, содержащую корневой макет.
   override def createView(): AnyRef = {
     super.createView() //updating parent and controller
     val controller = this.controller.asInstanceOf[GearGroupOnlyView]
-
-    new GearGroupOnlyViewController(gearGroup, controller)
+    new GearGroupOnlyViewController(controller)
   }
 }

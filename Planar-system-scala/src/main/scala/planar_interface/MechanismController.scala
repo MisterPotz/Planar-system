@@ -59,10 +59,12 @@ class MechanismControllerConcrete extends MechanismController with Observable wi
     addObserver(optionsViewController)
     optionsViewController.optionsView.mechanismTypeCombo.setOnAction(event => {
       updateMechanism()
+      notifyObservers(MechanismChangedEvent(optionsViewController.optionsView.mechanismTypeCombo.getValue))
       //TODO check functionality
     })
     optionsViewController.optionsView.carrierPosCombo.setOnAction(event => {
       updateMechanism()
+      notifyObservers(MechanismChangedEvent(optionsViewController.optionsView.mechanismTypeCombo.getValue))
     })
     optionsViewController.optionsView.modeTypeCombo.setOnAction(onModeChange)
     optionsViewController.optionsView.enterButton.setOnAction(onEnter)
@@ -86,11 +88,11 @@ class MechanismControllerConcrete extends MechanismController with Observable wi
   }
   def calculateWithBundle(bundleKeeper: BundleKeeper) : Unit = {
     bundleKeeper.bundle match {
-      case KinematicSynthesisArgsPartial(z_min_max, k, u1h, eps_u1h) =>
+      case KinematicSynthesisArgsPartial(z_min_max, k, u1h, eps_u1h,additionalWheelParams) =>
         val full_arg : KinematicSynthesisArgs =
           KinematicSynthesisArgs(z_min_max, k, u1h, eps_u1h,
             mechanismDatabase.mechanism.getMechanismType,
-            mechanismDatabase.mechanism.getCarrierPosition)
+            mechanismDatabase.mechanism.getCarrierPosition, additionalWheelParams)
         mechanismDatabase.processCurrentMode(full_arg)
       case _ => mechanismDatabase.processCurrentMode()
     }

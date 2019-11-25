@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="gearGroupOnlyPane" alignment="CENTER_LEFT" hgap="5.0" vgap="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.KinematicSynthesisInputView.GearGroupOnlyView">
+   <columnConstraints>
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="90.0" />
+      <ColumnConstraints hgrow="SOMETIMES" prefWidth="60.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+      <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+   </rowConstraints>
+   <children>
+      <Label text="m" wrapText="true" GridPane.rowIndex="1" />
+      <Label text="α, °" wrapText="true" GridPane.rowIndex="2" />
+      <Label depthTest="DISABLE" text="β, °" wrapText="true" GridPane.rowIndex="3" />
+      <TextField fx:id="mTextField" promptText="1.25" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <TextField fx:id="alphaTextField" promptText="20" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <TextField fx:id="betaTextField" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <Label text="Общие параметры группы зацеплений" wrapText="true" GridPane.columnSpan="2147483647" />
+   </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</GridPane>

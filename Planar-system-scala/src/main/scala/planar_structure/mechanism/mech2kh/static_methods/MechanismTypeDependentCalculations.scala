@@ -84,4 +84,16 @@ object MechanismTypeDependentCalculations extends MechanismTypeDependentCalculat
      // tasksupport = new ForkJoinTaskSupport(new ForkJoinPool(5))
     array.toArray
   }
+
+  def createArraysAll(z_min_max:  Array[(Short, Short)],mechanismType: MechanismType) : Array[ParVector[Short]] = {
+    //место для хранения массивов
+    val array : ArrayBuffer[ParVector[Short]] = ArrayBuffer.empty[ParVector[Short]]
+    // --  этот комментарий не акутален ->//создаем коллекции и добавляем их (последнюю не трогаем пока, её мы вычислим на основе условия соосности
+    //создаем все области
+    for (i <- 0 until z_min_max.length){
+      array.addOne(ParVector.range(z_min_max(i)._1, z_min_max(i)._2))
+    }
+    // tasksupport = new ForkJoinTaskSupport(new ForkJoinPool(5))
+    array.toArray
+  }
 }

@@ -2,6 +2,7 @@ package planar_interface.view
 
 import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.ScrollPane
 import javafx.scene.layout.BorderPane
 import planar_interface.{Event, MechanismController, MechanismControllerConcrete, Observable, Observer}
 import planar_interface.model._
@@ -42,8 +43,15 @@ class GearViewMenu extends  Observer {
   def updateView(): Unit = {
    /* observableController.updateGearViewWith(
       savedModes(observableController.getMechanism)(observableController.getMode).getParent)*/
-    BorderPane.setAlignment(gearViewBehavior.getParent, Pos.TOP_LEFT)
-    observableController.updateGearViewWith(gearViewBehavior.getParent)
+    val scrollPane = new ScrollPane()
+    scrollPane.setContent(gearViewBehavior.getParent)
+    import javafx.scene.control.ScrollPane.ScrollBarPolicy
+    // Always show vertical scroll bar// Always show vertical scroll bar
+    scrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS)
+    // Horizontal scroll bar is only displayed when needed
+    scrollPane.setHbarPolicy(ScrollBarPolicy.ALWAYS)
+    BorderPane.setAlignment(scrollPane, Pos.TOP_LEFT)
+    observableController.updateGearViewWith(scrollPane)
   }
   protected val savedModes : mutable.HashMap[Mechanism, mutable.HashMap[String, GearParamsInput]] =
     mutable.HashMap.empty[Mechanism, mutable.HashMap[String, GearParamsInput]]
@@ -67,10 +75,16 @@ class GearViewMenu extends  Observer {
   }
   protected def onEnter : Unit = {
     println("сработал ввод")
+    if (gearViewBehavior.getCurrentController.isBlocked) {
+      observableController.successfulEnter(false)
+      gearViewBehavior.getCurrentController.unblockView
+    }
+    else
     if (gearViewBehavior.getCurrentController.checkInput){
       println("ввод принят")
-      observableController.successfulEnter(true)
+    observableController.successfulEnter(true)
       gearViewBehavior.getCurrentController.performSideEffect()
+      gearViewBehavior.getCurrentController.blockView
     }
     else{
       observableController.successfulEnter(false)

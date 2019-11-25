@@ -34,6 +34,16 @@ extends GearParamsInput{
     //must check all the fields for the good input
   }
 
+  override def blockView: Unit = {
+    getParent.setDisable(true)
+  }
+  override def isBlocked: Boolean = {
+    getParent.isDisabled
+  }
+  override def unblockView: Unit = {
+    getParent.setDisable(false)
+  }
+
   override def checkInput: Boolean = {
     controllers.foldLeft(true)((x,y ) => x & y.checkInput)
   }

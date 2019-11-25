@@ -18,6 +18,7 @@ import scala.util.{Failure, Success, Try}
 //intented to check promises with given period
 //in other words incapsulates the launch of actor system
 trait KinematicSynthesisProcessorInterface{
+  def stop(): Unit
   def startComputation() : Unit
   def performCallback() : Unit
   def setCompletionListener(eventListener : EventListener) : Unit
@@ -36,7 +37,7 @@ class KinematicSynthesisProcessor(val args : KinematicSynthesisArgs) extends Kin
   var completionPromise : Future[KinematicSynthesisReport] = _
 
   override def startComputation(): Unit = {
-    implicit val timeout: Timeout = Timeout(15, TimeUnit.SECONDS)
+    implicit val timeout: Timeout = Timeout(60, TimeUnit.SECONDS)
     //футура для исполнения колбека при завершении обсчета
     completionPromise =     //асинхронный запрос
       ask(kinematicRouter, args).mapTo[KinematicSynthesisReport]
@@ -53,4 +54,6 @@ class KinematicSynthesisProcessor(val args : KinematicSynthesisArgs) extends Kin
   }
   //забрасываем вовнутрь интерфейс для колбека
   override def setCompletionListener(eventListener: EventListener): Unit = this.eventListener = eventListener
+
+  override def stop(): Unit = actorSystem.terminate()
 }

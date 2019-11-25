@@ -7,6 +7,10 @@ import javafx.stage.Stage;
 import planar_interface.AbstractMechanismControllerFactory;
 import planar_interface.MechanismController;
 import planar_interface.MechanismControllerFactory;
+import planar_interface.view.KinematicSynthesisInputView.GearGroupFullViewController;
+import planar_interface.view.KinematicSynthesisInputView.GearGroupFullViewControllerFactory;
+import planar_interface.view.KinematicSynthesisInputView.GearListViewController;
+import planar_interface.view.KinematicSynthesisInputView.GearListViewControllerFactory;
 import planar_structure.mechanism.*;
 import planar_structure.mechanism.mech2kh.*;
 import scala.collection.immutable.List;
@@ -45,6 +49,12 @@ public class Test extends Application {
         Parent root4 = ((GearGroupListViewController) fac3.createView()).gearGroupListView().gearGroupList();
         MechanismFactory mech_ = Mechanism2KH$.MODULE$;
         mech_.apply("InternalInternal_CarrierInput");*/
+        /*GearListViewControllerFactory facc = new GearListViewControllerFactory("GearListView.fxml");
+        facc.setGearsNumber((short) 3);
+        GearListViewController some =  (GearListViewController) facc.createView();
+        GearGroupFullViewControllerFactory facc1 = new GearGroupFullViewControllerFactory("GearGroupFullView.fxml");
+        facc1.setGearsNumber((short) 3);
+        GearGroupFullViewController some1 =  (GearGroupFullViewController) facc1.createView();*/
         System.out.println(ResourceBundle.getBundle("MechanismNames").getString("mech_ii"));
         AbstractMechanismControllerFactory mech_control_factory = new MechanismControllerFactory();
         MechanismController mechanismController = mech_control_factory.createController();

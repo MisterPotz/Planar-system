@@ -10,7 +10,7 @@ import javafx.scene.layout.{AnchorPane, BorderPane}
 import planar_interface.{Event, Observable, Observer}
 import planar_interface.view.GearGroupView.AbstractGearGroupOnlyViewControllerFactory
 import planar_interface.view.GearView.ViewFactory
-import planar_interface.view.event_types.{CalculatingResultObtained, CalculationStarted, InitialEvent, SuccessfulEnter, UnsuccessfulEnter}
+import planar_interface.view.event_types.{CalculatingResultObtained, CalculationStarted, InitialEvent, MechanismChangedEvent, ModeChangedEvent, SuccessfulEnter, UnsuccessfulEnter}
 
 class OptionsView {
   @FXML
@@ -55,6 +55,9 @@ class OptionsViewController(var optionsView: OptionsView) extends Observer{
   }
   def lockCalculate(lock : Boolean = true) : Unit = {
     optionsView.calculateButton.setDisable(lock)
+   // optionsView.cancelButton.setDisable(lock)
+  //  optionsView.enterButton.setDisable((!lock))
+    optionsView.eraseButton.setDisable(!lock)
   }
   def setupMechanism() : Unit = {
     val observable : ObservableList[MechanismType] = FXCollections.observableArrayList(
@@ -84,10 +87,16 @@ class OptionsViewController(var optionsView: OptionsView) extends Observer{
 
   override def onChange(event: Event): Unit = {
     event match  {
-      case UnsuccessfulEnter => lockCalculate(true)
-      case SuccessfulEnter => lockCalculate(false)
+      case UnsuccessfulEnter =>
+        lockCalculate(true)
+      case SuccessfulEnter =>
+        lockCalculate(false)
+      case MechanismChangedEvent(_) => lockCalculate(true)
+      case ModeChangedEvent(_) => lockCalculate(true)
       case CalculationStarted => setLock(true)
-      case _ : CalculatingResultObtained => setLock(false)
+      case _ : CalculatingResultObtained =>
+        setLock(false)
+        lockCalculate(true)
       case InitialEvent() => lockCalculate(true)
       case _ => ()
     }

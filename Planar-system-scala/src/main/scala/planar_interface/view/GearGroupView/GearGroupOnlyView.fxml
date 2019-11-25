@@ -7,25 +7,34 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="gearGroupOnlyPane" alignment="CENTER_LEFT" hgap="5.0" vgap="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.GearGroupView.GearGroupOnlyView">
+<GridPane fx:id="gearGroupOnlyPane" alignment="CENTER_LEFT" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.GearGroupView.GearGroupOnlyView">
    <columnConstraints>
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="150.0" />
-      <ColumnConstraints hgrow="SOMETIMES" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="150.0" />
+      <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
    </columnConstraints>
    <rowConstraints>
-      <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
       <RowConstraints vgrow="SOMETIMES" />
       <RowConstraints vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <Label text="Модуль зацепления m" wrapText="true" GridPane.rowIndex="1" />
-      <Label text="Угол зацепления alpha" wrapText="true" GridPane.rowIndex="2" />
-      <Label depthTest="DISABLE" text="Угол наклона линии зубьев beta" wrapText="true" GridPane.rowIndex="3" />
-      <TextField fx:id="mTextField" promptText="Введите значение" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <TextField fx:id="alphaTextField" promptText="Введите значение" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <TextField fx:id="betaTextField" promptText="Введите значение" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-      <Label text="Общие параметры группы зацеплений" wrapText="true" GridPane.columnSpan="2" />
+      <Label text="m" wrapText="true" GridPane.rowIndex="1" />
+      <Label text="α, °" wrapText="true" GridPane.rowIndex="2" />
+      <Label depthTest="DISABLE" text="β, °" wrapText="true" GridPane.rowIndex="3" />
+      <TextField fx:id="mTextField" promptText="1.25" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </GridPane.margin></TextField>
+      <TextField fx:id="alphaTextField" promptText="20" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </GridPane.margin></TextField>
+      <TextField fx:id="betaTextField" promptText="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+         <GridPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </GridPane.margin></TextField>
+      <Label text="Общие параметры группы зацеплений" wrapText="true" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" />
    </children>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

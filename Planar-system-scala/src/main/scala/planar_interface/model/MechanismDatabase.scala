@@ -1,7 +1,8 @@
 package planar_interface.model
 
+import javafx.application.Platform
 import planar_interface.Observable
-import planar_interface.view.event_types.{CalculatedKinematicForward, CalculatedKinematicSynthesis, EventListener}
+import planar_interface.view.event_types.{CalculatedKinematicForward, CalculatedKinematicSynthesis, CalculationFailed, EventListener}
 import planar_structure.mechanism.mech2kh.Mechanism2KH
 import planar_structure.mechanism.process.actors.{KinematicSynthesisProcessor, KinematicSynthesisProcessorInterface}
 import planar_structure.mechanism.process.argument.KinematicSynthesisArgs
@@ -10,6 +11,7 @@ import planar_structure.mechanism.types._
 import planar_structure.mechanism.{Mechanism, MechanismFactory, types}
 
 import scala.collection.mutable
+import scala.concurrent.{ExecutionContext, Future}
 
 
 //stores current mode and mechanism
@@ -61,7 +63,13 @@ class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) ex
   }
   //default mechanism - externalinternal with carier as an output
   def makeMechanism() : Boolean = {
-    makeMechanism("ExternalInternal_CarrierOutput")
+    makeMechanism("ExternalExternal_CarrierOutput")
+  }
+  def stopProcessCurrentMode() : Unit = {
+    processorBoi.stopWhatever()
+    Platform.runLater(() => {
+      notifyObservers(CalculationFailed)
+    })
   }
   val processorBoi : ProcessUnitInterface = new ProcessUnitInterface {}
   def processCurrentMode(args: AnyRef = null) : Unit = {
@@ -73,7 +81,9 @@ class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) ex
         notifyObservers(CalculatedKinematicForward(res))
       case ProcessType.KINEMATIC_SYNTHESIS =>
         val callback : (KinematicSynthesisReport) => Unit = (report) => {
-          //notifyObservers(CalculatedKinematicSynthesis(report))
+          Platform.runLater(() => {
+            notifyObservers(CalculatedKinematicSynthesis(report))
+          })
         }
         processorBoi.performKinematicSynthesis(args.asInstanceOf[KinematicSynthesisArgs], callback)
       case _ => println("unknown type of process")

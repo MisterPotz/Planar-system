@@ -3,6 +3,10 @@ package planar_structure.mechanism.mech2kh
 import planar_structure.mechanism.{Mechanism, MechanismFactory}
 import planar_structure.mechanism.types.{CarrierInput, CarrierNeutral, CarrierOutput, CarrierPosition, External1, ExternalExternal, ExternalInternal, Internal1, InternalExternal, InternalInternal, MechanismType}
 import planar_structure.mechanism.mech2kh.concrete_mechanisms._
+import planar_structure.mechanism.process.argument.AdditionalWheelParams
+
+
+case class WheelInfo(z: Short,ca : Float, ha: Float, x: Float, m : Float, alpha: Float, beta: Float)
 
 abstract class Mechanism2KH extends  Mechanism
 //e.g. form of code: "ExternalExternal_CarrierInput"
@@ -36,15 +40,22 @@ object Mechanism2KH extends MechanismFactory {
     }
   }
 
-  protected def setupMech(mechanism: Mechanism, z_list: List[Short],  k: Byte) : Mechanism = {
+  protected def setupMech(mechanism: Mechanism, additional: List[WheelInfo],  k: Byte) : Mechanism = {
     val gears = mechanism.getGears
     for (i <- Range(0, gears.length)){
-      gears(i).holder.z = z_list(i)
+      gears(i).holder.z = additional(i).z
+      gears(i).holder.ca = additional(i).ca
+      gears(i).holder.ha = additional(i).ha
+      gears(i).holder.alpha = additional(i).alpha
+      gears(i).holder.beta = additional(i).beta
+      gears(i).holder.m = additional(i).m
+      gears(i).holder.x = additional(i).x
     }
     mechanism.gearStructureCharacteristic.storage.mutable.amount_of_satellites = k
     mechanism
   }
-  def apply(mechanismType: MechanismType, carrierPosition: CarrierPosition, z_list: List[Short], k: Byte): Mechanism = {
+  def apply(mechanismType: MechanismType, carrierPosition: CarrierPosition, wheelParams: List[WheelInfo],
+            k: Byte): Mechanism = {
     val new_mech = mechanismType match {
       case ExternalExternal => {
         new Mechanism2kh_EE(carrierPosition)
@@ -60,6 +71,6 @@ object Mechanism2KH extends MechanismFactory {
       //----------------------
       case Internal1 => new Mechanism2kh_I1(carrierPosition)
     }
-    setupMech(new_mech, z_list, k)
+    setupMech(new_mech, wheelParams, k)
   }
 }

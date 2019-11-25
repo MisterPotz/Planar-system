@@ -29,7 +29,7 @@ object InternalWheelCalculations extends WheelTypeDependentCalculations {
 object ExternalWheelCalculations extends  WheelTypeDependentCalculations {
   override def da(r : Float, ha : Float, x: Float, m : Float): Float = 2 * r + 2 * (ha + x) * m
   override def noPruning(hta : Float, xt : Float, alpha_t : Float, z : Int): Boolean = {
-    val z_min = (2 * (hta - xt) / math.pow(math.sin(alpha_t), 2.0)).ceil
+    val z_min = (2 * (hta - xt) / math.pow(math.sin(alpha_t), 2.0)).floor
     if (z_min> z) false else true
   }
 }

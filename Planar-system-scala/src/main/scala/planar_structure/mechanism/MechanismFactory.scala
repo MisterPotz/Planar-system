@@ -1,5 +1,6 @@
 package planar_structure.mechanism
 
+import planar_structure.mechanism.mech2kh.WheelInfo
 import planar_structure.mechanism.types.{CarrierPosition, MechanismType}
 
 trait MechanismFactory{
@@ -7,6 +8,6 @@ trait MechanismFactory{
   def safeApply(code : String) : Either[Boolean, Mechanism]
   def apply(mechanismType: MechanismType,
             carrierPosition: CarrierPosition,
-            z_list: List[Short],
+            z_list: List[WheelInfo],
             k : Byte) : Mechanism
 }

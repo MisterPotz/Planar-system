@@ -5,7 +5,23 @@ import javafx.scene.Parent
 trait GearParamsInput {
   def getParent : Parent
   def clearInput() : Unit
-  def blockView : Unit = ()
+  def blockView(): Unit = {
+    getParent.setDisable(true)
+  }
+  def isBlocked: Boolean = {
+    getParent.isDisabled
+  }
+  def unblockView(): Unit = {
+    getParent.setDisable(false)
+  }
+
+  def blockView(boolean: Boolean) : Unit={
+    if (boolean)
+      blockView()
+    else
+      unblockView()
+
+  }
   //checks the input
   def checkInput : Boolean
   def performSideEffect() : Unit
