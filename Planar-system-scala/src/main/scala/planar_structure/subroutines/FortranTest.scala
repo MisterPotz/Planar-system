@@ -11,4 +11,16 @@ object FortranTest extends App{
   println(s"1 : ${some1._1}")
   println(s"2 : ${some1._2}")
   println(s"3 : ${some1._3}")
+  val some12 = new ZETHAB.B_Iterator(140)
+  println(some12.toList)
+/*  val ZA = new Iterator[Int]{
+    var number: Int = 24
+    override def hasNext: Boolean = if (number - za_corr > ZA_MIN) true else false
+    override def next(): Int = {za_corr -= nw; za_corr}
+  }
+  println(ZA.toList)*/
+  //val some2 = ZETHAB.W3(3, 24,3,0,0,0,0)
+  Range(3, 10,1).foreach{(a : Int)=>
+    println(ZETHAB.W3(a, 20,3,0,0,0,0))
+  }
 }
