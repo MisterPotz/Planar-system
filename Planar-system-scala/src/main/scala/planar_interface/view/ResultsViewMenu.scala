@@ -5,7 +5,7 @@ import planar_interface.view.result.{AbstractResultViewController, AbstractResul
 import planar_interface.{Event, MechanismController, Observable, Observer}
 import planar_structure.mechanism.types.{KINEMATIC_ANALYSIS_FORWARD, ProcessType}
 
-
+/*
 class ResultsViewMenu extends Observer with Observable{
   //by default it should block the results view
   override protected var observable: Observable = _
@@ -53,4 +53,4 @@ class ResultsViewMenu extends Observer with Observable{
   def checkResults(obj : CalculatingResultObtained) : Unit = {
      notifyObservers(obj)
   }
-}
+}*/

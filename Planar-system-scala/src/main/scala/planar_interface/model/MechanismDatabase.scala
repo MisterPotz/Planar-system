@@ -97,3 +97,10 @@ class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) ex
     }*/
   }
 }
+
+object MechanismDatabase{
+  var mechanismDB = new MechanismDatabase()
+  def getAvailableDB : Option[MechanismDatabase] = {
+    Option(mechanismDB)
+  }
+}

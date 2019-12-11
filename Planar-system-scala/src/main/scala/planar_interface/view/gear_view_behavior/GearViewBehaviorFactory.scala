@@ -8,9 +8,8 @@ trait AbstractGearViewBehaviorFactory{
 object GearViewBehaviorFactory extends AbstractGearViewBehaviorFactory {
   override def apply(behavior_mode : String) : GearViewBehavior = {
     behavior_mode match {
-      case ProcessType.KINEMATIC_ANALYSIS_FORWARD => new KinematicForwardBehavior
-      case ProcessType.KINEMATIC_SYNTHESIS => new KinematicSynthesisBehavior
-    //TODO  case ProcessType.KINEMATIC_SYNTHESIS => new
+      case ProcessType.KINEMATIC_ANALYSIS_FORWARD => KinematicForwardBehavior
+      case ProcessType.KINEMATIC_SYNTHESIS =>  KinematicSynthesisBehavior
     }
   }
 }

@@ -1,12 +1,16 @@
 package planar_structure.mechanism.mech2kh
 
+import planar_structure.mechanism.common_mechanisms.Constants
 import planar_structure.mechanism.{Mechanism, MechanismFactory}
 import planar_structure.mechanism.types.{CarrierInput, CarrierNeutral, CarrierOutput, CarrierPosition, External1, ExternalExternal, ExternalInternal, Internal1, InternalExternal, InternalInternal, MechanismType}
 import planar_structure.mechanism.mech2kh.concrete_mechanisms._
 import planar_structure.mechanism.process.argument.AdditionalWheelParams
 
 
-case class WheelInfo(z: Short,ca : Float, ha: Float, x: Float, m : Float, alpha: Float, beta: Float)
+case class WheelInfo(z: Short,ca : Float = Constants.CA , ha: Float = Constants.HA, x: Float = Constants.X,
+                     m : Float = Constants.M,
+                     alpha: Float = Constants.ALPHA,
+                     beta: Float = Constants.BETA)
 
 abstract class Mechanism2KH extends  Mechanism
 //e.g. form of code: "ExternalExternal_CarrierInput"

@@ -6,7 +6,7 @@ import javafx.fxml.FXML
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
-import planar_interface.view.GearView.ViewFactory
+import planar_interface.view.mode_dependent_screen.kinematic_analysis.GearView.ViewFactory
 import planar_interface.view.event_types.{CalculatedKinematicForward, CalculatingResultObtained}
 import planar_interface.{Event, Observable, Observer}
 import planar_structure.mechanism.process.report.FullConditionCheck
@@ -78,6 +78,14 @@ class KinematicForwardViewController(val kinematicForwardView : KinematicForward
         kinematicForwardView.resultPane.setDisable(true)
     }
   }
+  def obtainResults(obj : FullConditionCheck) : Unit = {
+    obj match {
+      case some : FullConditionCheck => setResults(some)
+      case _=>
+        setAll("Ошибка при получении результатов")
+        kinematicForwardView.resultPane.setDisable(true)
+    }
+  }
   protected def setResults(check: FullConditionCheck) : Unit = {
     kinematicForwardView.resultPane.setDisable(false)
     setGearRatio(check.gearRatio.toString)
@@ -115,7 +123,7 @@ abstract class AbstractKinematicForwardViewControllerFactory(val location : Stri
 }
 import javafx.collections.FXCollections
 
-class KinematicForwardViewControllerFactory extends AbstractKinematicForwardViewControllerFactory {
+object KinematicForwardViewControllerFactory extends AbstractKinematicForwardViewControllerFactory {
   override def createView(): AnyRef = {
     super.createView() //updating parent and controller
     val controller = this.controller.asInstanceOf[KinematicForwardView]

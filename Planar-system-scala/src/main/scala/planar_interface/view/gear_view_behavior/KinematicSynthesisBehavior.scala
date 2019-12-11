@@ -1,33 +1,37 @@
 package planar_interface.view.gear_view_behavior
 
 import javafx.scene.Parent
-import planar_interface.view.GearGroupListView.{GearGroupListViewController, GearGroupListViewControllerFactory}
+import planar_interface.view.mode_dependent_screen.kinematic_analysis.GearGroupListView.{GearGroupListViewController, GearGroupListViewControllerFactory}
 import planar_interface.view.GearParamsInput
-import planar_interface.view.GearView.ViewFactory
-import planar_interface.view.KinematicSynthesisInputView.{ KSIVC_Factory, KinematicSynthesisInputViewController}
+import planar_interface.view.mode_dependent_screen.kinematic_analysis.GearView.ViewFactory
+import planar_interface.view.mode_dependent_screen.KinematicSynthesisInputView.{KSIVC_Factory, KinematicSynthesisInputViewController, SynthesisInput}
 import planar_structure.mechanism.GearGroup
-import planar_structure.mechanism.types.MechanismType
+import planar_structure.mechanism.raw_algorithms.ExternalConnectionCalculation
+import planar_structure.mechanism.types.{ExternalInternal, MechanismType}
 
-class KinematicSynthesisBehavior extends GearViewBehavior{
-  protected var currentGearViewController : KinematicSynthesisInputViewController = _
-  protected val currentGearViewControllerFactory : KSIVC_Factory = new KSIVC_Factory
-  override def getCurrentController: GearParamsInput = currentGearViewController
-  override def getCurrentFactory: ViewFactory[_] = currentGearViewControllerFactory
-  override def installCurrentController(some : AnyRef): Unit = {
-    try{
-      currentGearViewControllerFactory.setMechanismType(some.asInstanceOf[MechanismType])
-      val to_ret = currentGearViewControllerFactory
-        .createView()
-        .asInstanceOf[KinematicSynthesisInputViewController]
-      currentGearViewController =  to_ret
-    } catch {
-      case e : Exception => e.printStackTrace()
-    }
-  }
+object KinematicSynthesisBehavior extends GearViewBehavior{
+  protected val inputResController: SynthesisInput = new SynthesisInput
+  override def getCurrentController: GearParamsInput = inputResController.inputController
+
   override def blockView(block: Boolean): Unit = {
-    currentGearViewController.getParent.setDisable(block)
+    inputResController.getParent.setDisable(block)
   }
   override def getParent: Parent = {
-    currentGearViewController.getParent
+    inputResController.getParent
+  }
+
+  override def clearInput: Unit = inputResController.clearInput()
+
+  /**
+   * @return current input controller
+   */
+  override def updateView(): Unit = ()
+
+  override def calculate(): Unit = ()
+
+  override def getCurrentFactory: ViewFactory[_] = ???
+
+  override def calculateCB(callback: () => Unit): Unit = {
+    inputResController.calculateCB(callback)
   }
 }

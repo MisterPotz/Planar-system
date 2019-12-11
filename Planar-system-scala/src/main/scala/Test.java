@@ -4,13 +4,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
-import planar_interface.AbstractMechanismControllerFactory;
-import planar_interface.MechanismController;
-import planar_interface.MechanismControllerFactory;
-import planar_interface.view.KinematicSynthesisInputView.GearGroupFullViewController;
-import planar_interface.view.KinematicSynthesisInputView.GearGroupFullViewControllerFactory;
-import planar_interface.view.KinematicSynthesisInputView.GearListViewController;
-import planar_interface.view.KinematicSynthesisInputView.GearListViewControllerFactory;
+import planar_interface.*;
 import planar_structure.mechanism.*;
 import planar_structure.mechanism.mech2kh.*;
 import scala.collection.immutable.List;
@@ -56,8 +50,7 @@ public class Test extends Application {
         facc1.setGearsNumber((short) 3);
         GearGroupFullViewController some1 =  (GearGroupFullViewController) facc1.createView();*/
         System.out.println(ResourceBundle.getBundle("MechanismNames").getString("mech_ii"));
-        AbstractMechanismControllerFactory mech_control_factory = new MechanismControllerFactory();
-        MechanismController mechanismController = mech_control_factory.createController();
+        MechanismController mechanismController = PlanarSystemLauncher$.MODULE$.createController();
         Parent menu = mechanismController.getParent();
         //mechanismController.setMechanism("External1_CarrierOutput");
         Scene scene = new Scene(menu);

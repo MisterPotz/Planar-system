@@ -217,7 +217,7 @@ object ZETHAB {
     }
     CALCULATED(0)
   }
-
+/*
   /**
    * @note если xa и xg == 0, то при возникновении подрезания они высчитываются
    *       в противном случае (>0) остаются фиксированными при выполнении программы
@@ -262,9 +262,9 @@ object ZETHAB {
       override def next(): Int = {number -= nw; number}
     }
 
-    val zb = new B_Iterator(za*(POSITIVE_U).toInt)
+    /*val zb = new B_Iterator(za*(POSITIVE_U).toInt)*/
 
-  }
+  }*/
 
 
 }

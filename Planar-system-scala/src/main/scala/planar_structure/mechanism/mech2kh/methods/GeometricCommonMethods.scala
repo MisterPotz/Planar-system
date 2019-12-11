@@ -35,13 +35,12 @@ class GeometricCommonMethods(meth : GearStructureCharacteristic) extends Geometr
     val k = structure.storage.k.toFloat
     @scala.annotation.tailrec
     def calc(p : Int): Boolean ={
-      if (p == 6) {
-        true
+      if (p == 25) {
+        false
       } else{
-        val res : Float = (U1H * z.toFloat / k.toFloat * (1 + p * k)).toFloat
-        val res_rounded : Float = res.round
-        if (math.abs(res - res_rounded) >= 0.001f){
-          false
+        val res : Float = ( z.toFloat / k.toFloat * (1 + p * k)).toFloat
+        if (math.abs(res - res.round) == 0){
+          true
         }else{
           calc(p+1)
         }
@@ -70,43 +69,6 @@ class GeometricCommonMethods(meth : GearStructureCharacteristic) extends Geometr
   }
 
   override def neighborhoodCondition: Boolean = {
-    /*val z : List[Float] = structure.getGearList.slice(0,3).map(_.holder.z.toFloat)
-    val gears : List[GearWheel] = structure.getGearList
-    val alpha_t : Float = structure.getGearList(0).holder.alpha_t
-    val alpha_tw : Float = structure.getGearConnectionList(0).connectionCalculationBehavior.alpha_tw
-    val k : Float = structure.storage.k
-    if (k == 1.0){
-      true
-    } else {
-      val A : Float = ((z(0) + z(1)) * math.cos(alpha_t ) / math.cos(alpha_tw) * math.sin(math.Pi / k.toFloat)).toFloat
-      val mt2 : Float = gears(1).holder.mt	// 1й ряд
-      val xt2 : Float =  gears(1).holder.xt
-      val hta2 : Float = gears(1).holder.hta
-      val alpha_t2 : Float  = gears(1).holder.alpha_t
-      val alpha_tw2 : Float = structure.getGearConnectionList(0).connectionCalculationBehavior.alpha_tw
-      val y2 = z(1) * (math.cos(alpha_t2) / math.cos(alpha_tw2) - 1);
-      val dy2 = 2 * xt2 - y2;
-
-      val mt3 : Float = gears(2).holder.mt		// 2й ряд
-      val xt3 : Float = gears(2).holder.xt
-      val hta3 : Float = gears(2).holder.hta
-      val alpha_t3 : Float = gears(2).holder.alpha_t
-      val alpha_tw3 : Float = structure.getGearConnectionList(1).connectionCalculationBehavior.alpha_tw
-      val y3 = z(2) * (math.cos(alpha_t3) / math.cos(alpha_tw3) - 1)
-      val dy3 = 2 * xt3 - y3;
-      val B2 = (z(1) / 2 + xt2 + hta2 - dy2);
-      val B3 = (z(2) / 2 + xt3 + hta3 - dy3);
-      if (B2 >= B3)
-      {
-        val ans = (A > B2);
-        ans
-      }
-      else
-      {
-        val ans = (A > B3);
-        ans
-      }
-    }*/
     //first, we must get the biggest gear on our satellite
     val max_wheel : GearWheel = structure.getSatelliteGears.maxBy(_.holder.da)
     //now we must get the connection where our max_wheel is located

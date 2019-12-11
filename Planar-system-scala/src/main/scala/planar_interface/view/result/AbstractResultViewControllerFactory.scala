@@ -16,7 +16,7 @@ trait AbstractResultViewController extends Observer {
 
 object ResultViewControllerFactory extends AbstractResultViewControllerFactory{
   val kinematicForwardViewControllerFactory : AbstractKinematicForwardViewControllerFactory =
-    new KinematicForwardViewControllerFactory
+     KinematicForwardViewControllerFactory
   override def createResultViewController(s: String): Option[AbstractResultViewController] = {
     s match {
         //TODO add synthesis

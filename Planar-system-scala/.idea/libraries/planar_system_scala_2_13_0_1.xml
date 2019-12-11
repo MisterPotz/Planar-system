@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="planar-system-scala_2.13-0.1">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/target/scala-2.13/planar-system-scala_2.13-0.1.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

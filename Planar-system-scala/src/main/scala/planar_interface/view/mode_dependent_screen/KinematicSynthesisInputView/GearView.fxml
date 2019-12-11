@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="gearGridPane" alignment="CENTER" hgap="3.0" minWidth="150.0" vgap="1.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.mode_dependent_screen.KinematicSynthesisInputView.GearView">
+   <columnConstraints>
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="60.0" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="50.0" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="50.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="15.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="ALWAYS" />
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+   </rowConstraints>
+   <children>
+      <Label alignment="CENTER" text="z" wrapText="true" GridPane.rowIndex="2" />
+      <TextField fx:id="zminTextField" promptText="17" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Label alignment="CENTER" text="x" wrapText="true" GridPane.rowIndex="4" />
+      <TextField promptText="0.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" fx:id="xTextField" />
+      <Label fx:id="gearNumberLabel" text="Колесо 1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" />
+      <Label text="ha" wrapText="true" GridPane.rowIndex="6" />
+      <Label text="ca" wrapText="true" GridPane.rowIndex="8" />
+      <TextField fx:id="haTextField" promptText="1.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+      <TextField fx:id="caTextField" promptText="0.25" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="8" />
+      <TextField fx:id="zmaxTextField" promptText="100" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+      <Label text="min" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label text="max" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
+      <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="5" />
+      <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="7" />
+   </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</GridPane>

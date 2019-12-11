@@ -8,8 +8,8 @@
 
 <GridPane fx:id="resultPane" alignment="CENTER_LEFT" hgap="3.0" minHeight="-Infinity" minWidth="-Infinity" vgap="3.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.result.KinematicForwardView">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="130.0" />
-    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="30.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="-Infinity" />
+    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="120.0" minWidth="30.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
