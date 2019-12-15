@@ -10,6 +10,7 @@ import planar_interface.view.mode_dependent_screen.InputResultPairViewInterface
 import planar_interface.view.mode_dependent_screen.kinematic_analysis.GearView.ViewFactory
 import planar_structure.mechanism.process.report.{FullConditionCheck, SynthesizedMechanisms}
 import planar_structure.mechanism.Mechanism
+import planar_structure.mechanism.common_mechanisms.CommonMechanismCharacteristics.WheelNumberArgs
 
 class SynthesisInput extends InputResultPairViewInterface{
   override protected var observable: Observable = MechanismControllerConcrete
@@ -85,10 +86,8 @@ class InputController extends GearParamsInput{
   def calculate(cb : (SynthesizedMechanisms) => Unit ) : Unit = {
     println("Calculated reports: here")
 
-    val synthesized = MechanismSynthesizer.synthesizeByWheelNumber(MechanismSynthesizer.WheelNumberArgs(planar_structure.mechanism.common_mechanisms.B_AH_B,
-      controller.getU,controller.getAccuracyU, controller.getK))
-    cb(SynthesizedMechanisms(MechanismSynthesizer.sortedByMin(synthesized).sorted_mechanisms ,synthesized.sorted_mechanisms.length,
-      MechanismSynthesizer.minimalSize(synthesized)))
+    val synthesized = MechanismSynthesizer.synthesizeByWheelNumber(WheelNumberArgs(controller.getU,controller.getAccuracyU, controller.getK))
+    cb(synthesized)
   }
   override def getParent : Parent = rootScrollPane
 

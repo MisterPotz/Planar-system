@@ -1,12 +1,14 @@
 package planar_interface.view.mode_dependent_screen.KinematicSynthesisInputView
 
+import java.io.InputStream
 import java.net.URL
 
 import javafx.fxml.FXML
 import javafx.geometry.Insets
 import javafx.scene.Parent
-import javafx.scene.control.{Accordion, Label, TitledPane, TreeItem}
-import javafx.scene.layout.GridPane
+import javafx.scene.control.{Accordion, Label, TitledPane}
+import javafx.scene.image.{Image, ImageView}
+import javafx.scene.layout.{GridPane, StackPane, VBox}
 import planar_interface.view.mode_dependent_screen.kinematic_analysis.GearView.ViewFactory
 import planar_structure.mechanism.Mechanism
 import planar_structure.mechanism.process.report.SynthesizedMechanisms
@@ -21,6 +23,10 @@ class SynthesisResultViewController {
   var resGridPane : GridPane = _
   @FXML
   var resultsAccordion : Accordion = _
+  @FXML
+  var schemeTypeLabel : Label = _
+  @FXML
+  var schemeImage : VBox = _
 }
 
 trait LocationTrait
@@ -29,21 +35,35 @@ class SynthesisResultViewControllerW(controller : SynthesisResultViewController)
   def setAll(s : String = "") = {
     setVariantsAmount(s)
     setMinimalSizeLabel(s)
+    setSchemeType(s)
+    setSchemeVisibility(false)
   }
-
+  def setSchemeVisibility(boolean: Boolean): Unit = {
+    controller.schemeImage.setVisible(boolean)
+  }
   def setVariantsAmount(some : String): Unit = {
     controller.variantsAmountLabel.setText(some)
   }
   def setMinimalSizeLabel(s : String): Unit = {
     controller.minimalSizeLabel.setText(s)
   }
-
+  def setSchemeImage(stream : InputStream ): Unit ={
+    val image = new ImageView(new Image(stream))
+    if (controller.schemeImage.getChildren.size() > 0)
+      controller.schemeImage.getChildren.remove(0)
+    image.setPreserveRatio(true)
+    image.setFitWidth(controller.resGridPane.getWidth*0.75)
+    controller.schemeImage.getChildren.add(image)
+  }
   //override protected var observable: Observable = _
   /*override def onChange(event: Event): Unit = {
     event match {
       case event: CalculatingResultObtained => obtainResults(event)
     }
   }*/
+  def setSchemeType(s : String) : Unit = {
+    controller.schemeTypeLabel.setText(s)
+  }
 
   def obtainResults(obj : AnyRef) : Unit = {
     obj match {
@@ -56,10 +76,16 @@ class SynthesisResultViewControllerW(controller : SynthesisResultViewController)
   protected def setResults(check: SynthesizedMechanisms) : Unit = {
     val minimalSize : Int = check.minimalSize
     val mechsAmount : Int = check.mechanismAmount
+    val type_ : String = check.mechClassifier.stringClassificator
+    val image_stream  = check.mechClassifier.PICTURE_PATH
     val list_  = check.sorted_mechanisms
     setMinimalSizeLabel(minimalSize.toString)
     setVariantsAmount(mechsAmount.toString)
     setMechanisms(list_)
+    setSchemeType(type_)
+    setSchemeVisibility(true)
+    setSchemeImage(image_stream)
+
   }
   def createOneMechanismsPane(index : Int, mech : Mechanism) : TitledPane = {
     val pane = new TitledPane()
@@ -83,7 +109,6 @@ class SynthesisResultViewControllerW(controller : SynthesisResultViewController)
       createOneMechanismsPane(elem._2, elem._1)
     }
     )
-
     panes.foreach(
       controller.resultsAccordion.getPanes.add(_)
     )

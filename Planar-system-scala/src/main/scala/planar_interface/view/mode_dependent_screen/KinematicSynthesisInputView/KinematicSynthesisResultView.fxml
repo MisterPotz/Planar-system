@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <GridPane fx:id="resGridPane" hgap="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" vgap="3.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.mode_dependent_screen.KinematicSynthesisInputView.SynthesisResultViewController">
@@ -17,8 +18,11 @@
   </columnConstraints>
   <rowConstraints>
     <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+      <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+      <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
     <RowConstraints vgrow="SOMETIMES" />
-    <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -33,17 +37,20 @@
             <Insets bottom="5.0" />
          </GridPane.margin>
       </Label>
-      <Label text="Число найденных вариантов" wrapText="true" GridPane.rowIndex="1" />
-      <Label fx:id="variantsAmountLabel" text="Нет результата" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <Label text="Минимальный габаритный размер" wrapText="true" GridPane.rowIndex="3" />
-      <Label fx:id="minimalSizeLabel" text="Нет результата" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-      <Label text="Найденные мехнизмы:" wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="5" />
-      <ScrollPane GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+      <Label text="Число найденных вариантов" wrapText="true" GridPane.rowIndex="4" />
+      <Label fx:id="variantsAmountLabel" text="Нет результата" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Label text="Минимальный габаритный размер" wrapText="true" GridPane.rowIndex="6" />
+      <Label fx:id="minimalSizeLabel" text="Нет результата" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <Label text="Найденные механизмы:" wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="8" />
+      <ScrollPane GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER">
          <content>
             <Accordion fx:id="resultsAccordion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
          </content>
       </ScrollPane>
-      <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
-      <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4" />
+      <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="5" />
+      <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="7" />
+      <Label text="Выбранный тип механизма" wrapText="true" GridPane.rowIndex="1" />
+      <Label fx:id="schemeTypeLabel" text="Нет результата" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <VBox fx:id="schemeImage" alignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
    </children>
 </GridPane>
