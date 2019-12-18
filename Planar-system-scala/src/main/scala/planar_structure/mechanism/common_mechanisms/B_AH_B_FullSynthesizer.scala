@@ -101,4 +101,60 @@ object B_AH_B_FullSynthesizer extends FullSynthesizer(B_AH_B_WheelCalculator, B_
       case 3 => -wheelCalculator.carrierFrequency(inputFrequency, wheelNumbers)
     }
   }
+
+  /*//модули передабтся только от каждой ступени
+  def compensateM(wheelNumbers: ListBuffer[Int], modules: List[Int],
+                           aw: List[Double], z_summ: List[Int]): (Double, Double) = {
+    //задать границу, после которой несоосность удовлетворяется смещениями, а не новым модулем
+    /**
+     * функция для нахождения аргумента, про котором данное выражение принимает минимальное значение
+     * предполагается что в начальный
+     * @param func
+     */
+    def getMinArg(func : (Double) => Double, module : Double) : Double = {
+      val init_meaning = func(module)
+      var new_meaning = init_meaning
+      var saved_module = module
+      var new_module = 0.0
+      do {
+        new_module = StandardParameters.findNearest(StandardParameters.MS, module+0.01)
+        new_meaning = func(new_module)
+        if (new_meaning <= init_meaning){
+          saved_module = new_module
+        }
+      } while (new_meaning <= init_meaning)
+      saved_module
+    }
+    var aw_min = 0
+    var aw_max = 0
+    var m_start = 0
+    if (aw(0) > aw(1)) {
+      aw_min = 1
+      aw_max = 0
+      m_start = modules(3)
+    } else if (aw(0) < aw(1)) {
+      aw_max = 1
+      aw_min = 0
+      m_start = modules(0)
+    } else {
+      //если равны то уходим
+      return (modules(0), modules(1))
+    }
+
+    val func : Double => Double = (some : Double) =>
+      math.abs(CylindricGearTransmissionsCalculation.findAWbyM(some, z_summ(aw_min)) - aw(aw_max))
+
+    val m_maxed = getMinArg(func, m_start)
+
+    println(s"${B_AH_B_FullSynthesizer.getClass.getName}: compensating m... $m_maxed")
+    if (aw_min== 0){
+      (m_maxed, modules(1))
+    } else
+      (modules(0), m_maxed)
+  }
+*/
+//  def getCompensations(wheelNumbers: ListBuffer[Int], modules: List[Int],
+//                                aw : List[Double], z_summ : List[Int]): ListBuffer[Compensations] = null
+//
+//  override protected def compensateM(wheelNumbers: ListBuffer[Int], modules: List[Int], aw: List[Double], z_summ: List[Double]): (Double, Double) = ???
 }

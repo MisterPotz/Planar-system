@@ -21,6 +21,7 @@ case object _3K extends PlanarMechanismType
 
 
 abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi : MECHANISM_FULL_CLASSIFIER) {
+  case class Compensations(m : Double, x : Double = 0, beta : Double = 0)
   def mainScript(mechanismArgs: MechanismArgs): SynthesizedMechanisms
 
   /*
@@ -37,6 +38,18 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi 
 
   def getFrequencyOn(wheelNumber: Int, wheelNumbers: ListBuffer[Int], inputFrequency: Double): Double
   def getRelationalFreqOn(wheelNumber: Int, wheelNumbers: ListBuffer[Int], inputFrequency: Double): Double
+
+  /**
+   * нужна для поправки модуля, смещений и косинуса бета для зубьев для удовлетворения
+   * передаточного отношения и условия соосности
+   * @param wheelNumbers
+   * @param modules
+   */
+  /*def getCompensations(wheelNumbers : ListBuffer[Int], modules : List[Int],
+                       aw : List[Double], z_summ : List[Double]) : ListBuffer[Compensations] = null //TODO
+
+  protected def compensateM(wheelNumbers : ListBuffer[Int], modules : List[Int],
+                            aw : List[Double], z_summ : List[Double]) : (Double, Double)*/
 
 }
 

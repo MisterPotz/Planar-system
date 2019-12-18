@@ -19,69 +19,84 @@ import scala.collection.mutable.ListBuffer
 
 class SynthesisResultViewController {
   @FXML
-  var variantsAmountLabel : Label  = _
+  var variantsAmountLabel: Label = _
   @FXML
-  var minimalSizeLabel : Label = _
+  var minimalSizeLabel: Label = _
   @FXML
-  var resGridPane : GridPane = _
+  var resGridPane: GridPane = _
   @FXML
-  var resultsAccordion : Accordion = _
+  var resultsAccordion: Accordion = _
   @FXML
-  var schemeTypeLabel : Label = _
+  var schemeTypeLabel: Label = _
   @FXML
-  var schemeImage : VBox = _
+  var schemeImage: VBox = _
 }
 
 trait LocationTrait
-class SynthesisResultViewControllerW(controller : SynthesisResultViewController) extends LocationTrait {
+
+class SynthesisResultViewControllerW(controller: SynthesisResultViewController) extends LocationTrait {
   setAll("Расчет ещё не проведен")
-  def setAll(s : String = "") = {
+  def setAll(s: String = "") = {
     setVariantsAmount(s)
     setMinimalSizeLabel(s)
     setSchemeType(s)
     setSchemeVisibility(false)
   }
+
   def setSchemeVisibility(boolean: Boolean): Unit = {
     controller.schemeImage.setVisible(boolean)
   }
-  def setVariantsAmount(some : String): Unit = {
+
+  def setVariantsAmount(some: String): Unit = {
     controller.variantsAmountLabel.setText(some)
   }
-  def setMinimalSizeLabel(s : String): Unit = {
+
+  def setMinimalSizeLabel(s: String): Unit = {
     controller.minimalSizeLabel.setText(s)
   }
-  def setSchemeImage(stream : InputStream ): Unit ={
+
+  def setSchemeImage(stream: InputStream): Unit = {
     val image = new ImageView(new Image(stream))
-    if (controller.schemeImage.getChildren.size() > 0)
-      controller.schemeImage.getChildren.remove(0)
     image.setPreserveRatio(true)
-    image.setFitWidth(controller.resGridPane.getWidth*0.75)
-    controller.schemeImage.getChildren.add(image)
+    image.setFitWidth(controller.resGridPane.getWidth * 0.75)
+    if (controller.schemeImage.getChildren.size() > 0) {
+      //ontroller.schemeImage.getChildren(
+      controller.schemeImage.getChildren.add(image)
+      setSchemeVisibility(true)
+      image.setVisible(true)
+    } else
+      controller.schemeImage.getChildren.add(image)
+
   }
+
   //override protected var observable: Observable = _
   /*override def onChange(event: Event): Unit = {
     event match {
       case event: CalculatingResultObtained => obtainResults(event)
     }
   }*/
-  def setSchemeType(s : String) : Unit = {
+  def setSchemeType(s: String): Unit = {
     controller.schemeTypeLabel.setText(s)
   }
 
-  def obtainResults(obj : AnyRef) : Unit = {
+  def obtainResults(obj: AnyRef): Unit = {
     obj match {
-      case some : SynthesizedMechanisms if some != null => setResults(some)
-      case _=>
+      case some: SynthesizedMechanisms if some != null => setResults(some)
+      case _ =>
         setAll("Ошибка при получении результатов")
-        //kinematicForwardView.resultPane.setDisable(true)
+      //kinematicForwardView.resultPane.setDisable(true)
     }
   }
-  protected def setResults(check: SynthesizedMechanisms) : Unit = {
-    val minimalSize : Int = check.minimalSize
-    val mechsAmount : Int = check.mechanismAmount
+
+  protected def setResults(check: SynthesizedMechanisms): Unit = {
+    val minimalSize: Int = check.minimalSize
+    val mechsAmount: Int = check.mechanismAmount
     val type_ : String = check.mechClassifier.stringClassificator
-    val image_stream  = check.mechClassifier.PICTURE_PATH
-    val list_  = check.sorted_mechanisms
+    val image_stream = check.mechClassifier.PICTURE_PATH
+    val list_ = check.sorted_mechanisms
+    while (controller.resultsAccordion.getPanes.size() > 0) {
+      controller.resultsAccordion.getPanes.remove(0)
+    }
     setMinimalSizeLabel(minimalSize.toString)
     setVariantsAmount(mechsAmount.toString)
     setMechanisms(list_, check.mechClassifier.WHEEL_INDECES)
@@ -90,7 +105,8 @@ class SynthesisResultViewControllerW(controller : SynthesisResultViewController)
     setSchemeImage(image_stream)
 
   }
-  def createOneMechanismsPane(index : Int, mech : Mechanism, wheelIndeces : List[String]) : TitledPane = {
+
+  def createOneMechanismsPane(index: Int, mech: Mechanism, wheelIndeces: List[String]): TitledPane = {
     val pane = new TitledPane()
     pane.setText(s"Набор $index")
     val grid = new GridPane()
@@ -100,22 +116,24 @@ class SynthesisResultViewControllerW(controller : SynthesisResultViewController)
     val gearsIndeces = wheelIndeces.zipWithIndex
     grid.add(new Label("Z"), 1, 0)
     grid.add(new Label("M"), 2, 0)
-    for (i <- gearsIndeces){
-      grid.add(new Label(s"Колесо ${i._1}: "), 0,i._2+1)
-      grid.add(new Label(s"${mech.getGears(i._2).holder.z}"), 1, i._2+1)
-      grid.add(new Label(s"${mech.getGears(i._2).holder.m}"), 2, i._2+1)
+    for (i <- gearsIndeces) {
+      grid.add(new Label(s"Колесо ${i._1}: "), 0, i._2 + 1)
+      grid.add(new Label(s"${mech.getGears(i._2).holder.z}"), 1, i._2 + 1)
+      grid.add(new Label(s"${mech.getGears(i._2).holder.m}"), 2, i._2 + 1)
     }
     val new_grid_origin = gearsIndeces.length
-    grid.addRow(new_grid_origin+1, new Label("U"), new Label(
+    grid.addRow(new_grid_origin + 1, new Label("U"), new Label(
       s"${
         val ratio = mech.methods.getGearRatio.toString;
-          ratio.slice(0, ratio.indexOf(".")+4)}"))
+        ratio.slice(0, ratio.indexOf(".") + 4)
+      }"))
     //grid.add(new Label(s"Модуль первой ступени"), 0, new_grid_origin)
     pane.setContent(grid)
     pane
   }
-  def setMechanisms(list: ListBuffer[Mechanism], wheelIndeces : List[String]): Unit = {
-    val panes : ListBuffer[TitledPane] = list.slice(130,160).zipWithIndex.map(elem => {
+
+  def setMechanisms(list: ListBuffer[Mechanism], wheelIndeces: List[String]): Unit = {
+    val panes: ListBuffer[TitledPane] = list.slice(130, 160).zipWithIndex.map(elem => {
       createOneMechanismsPane(elem._2, elem._1, wheelIndeces)
     }
     )
@@ -123,17 +141,19 @@ class SynthesisResultViewControllerW(controller : SynthesisResultViewController)
       controller.resultsAccordion.getPanes.add(_)
     )
   }
-  def setFailure(reason : String) : Unit = {
+
+  def setFailure(reason: String): Unit = {
     setAll(reason)
   }
-   def getParent: Parent = controller.resGridPane
 
-   def showLoading(boolean: Boolean): Unit = if (boolean) setAll("Результат вычисляется") else setAll("Результат получен")
+  def getParent: Parent = controller.resGridPane
+
+  def showLoading(boolean: Boolean): Unit = if (boolean) setAll("Результат вычисляется") else setAll("Результат получен")
 }
 
 
-class SynthesisResultViewControllerWFactory(override val location : String ="KinematicSynthesisResultView.fxml")
-  extends ViewFactory[SynthesisResultViewControllerWFactory]{
+class SynthesisResultViewControllerWFactory(override val location: String = "KinematicSynthesisResultView.fxml")
+  extends ViewFactory[SynthesisResultViewControllerWFactory] {
   override def getLocation: URL = classOf[SynthesisResultViewControllerWFactory].getResource(location)
 
   override def createView(): AnyRef = {

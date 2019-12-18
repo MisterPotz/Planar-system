@@ -2,6 +2,8 @@ package planar_structure.subroutines
 
 import com.sun.jdi.connect.Connector.BooleanArgument
 
+import scala.math.Numeric.DoubleIsFractional
+
 object CylindricGearTransmissionsCalculation {
   //1 - шестерня, 2 - колесо
   def getK(matrow1: StandardParameters.MaterialTableRow, matrow2: StandardParameters.MaterialTableRow): Double = {
@@ -190,6 +192,10 @@ object CylindricGearTransmissionsCalculation {
   def findM(aw: Double, z_summ: Int): Double = {
     val pre_m = 2 * aw / z_summ
     StandardParameters.findNearest(StandardParameters.MS.map(_.toDouble), pre_m)
+  }
+
+  def findAWbyM(m: Double, z_summ: Int) : Double = {
+    z_summ * m / 2.toDouble
   }
 }
 
