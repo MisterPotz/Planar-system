@@ -11,7 +11,10 @@ import javafx.scene.image.{Image, ImageView}
 import javafx.scene.layout.{GridPane, StackPane, VBox}
 import planar_interface.view.mode_dependent_screen.kinematic_analysis.GearView.ViewFactory
 import planar_structure.mechanism.Mechanism
+import planar_structure.mechanism.common_mechanisms.MECHANISM_FULL_CLASSIFIER
 import planar_structure.mechanism.process.report.SynthesizedMechanisms
+
+import scala.collection.mutable.ListBuffer
 
 
 class SynthesisResultViewController {
@@ -81,39 +84,48 @@ class SynthesisResultViewControllerW(controller : SynthesisResultViewController)
     val list_  = check.sorted_mechanisms
     setMinimalSizeLabel(minimalSize.toString)
     setVariantsAmount(mechsAmount.toString)
-    setMechanisms(list_)
+    setMechanisms(list_, check.mechClassifier.WHEEL_INDECES)
     setSchemeType(type_)
     setSchemeVisibility(true)
     setSchemeImage(image_stream)
 
   }
-  def createOneMechanismsPane(index : Int, mech : Mechanism) : TitledPane = {
+  def createOneMechanismsPane(index : Int, mech : Mechanism, wheelIndeces : List[String]) : TitledPane = {
     val pane = new TitledPane()
     pane.setText(s"Набор $index")
     val grid = new GridPane()
-
     grid.setPadding(new Insets(5))
     grid.setHgap(5)
     grid.setVgap(1)
-
-    val gearsAmount = mech.getGears.length
-    for (i <- 0 until gearsAmount){
-      grid.add(new Label(s"Колесо $i"), 0,i)
-      grid.add(new Label(s"${mech.getGears(i).holder.z}"), 1, i)
+    val gearsIndeces = wheelIndeces.zipWithIndex
+    grid.add(new Label("Z"), 1, 0)
+    grid.add(new Label("M"), 2, 0)
+    for (i <- gearsIndeces){
+      grid.add(new Label(s"Колесо ${i._1}: "), 0,i._2+1)
+      grid.add(new Label(s"${mech.getGears(i._2).holder.z}"), 1, i._2+1)
+      grid.add(new Label(s"${mech.getGears(i._2).holder.m}"), 2, i._2+1)
     }
+    val new_grid_origin = gearsIndeces.length
+    grid.addRow(new_grid_origin+1, new Label("U"), new Label(
+      s"${
+        val ratio = mech.methods.getGearRatio.toString;
+          ratio.slice(0, ratio.indexOf(".")+4)}"))
+    //grid.add(new Label(s"Модуль первой ступени"), 0, new_grid_origin)
     pane.setContent(grid)
     pane
   }
-  def setMechanisms(list: List[Mechanism]): Unit = {
-    val panes : List[TitledPane] = list.slice(130,160).zipWithIndex.map(elem => {
-      createOneMechanismsPane(elem._2, elem._1)
+  def setMechanisms(list: ListBuffer[Mechanism], wheelIndeces : List[String]): Unit = {
+    val panes : ListBuffer[TitledPane] = list.slice(130,160).zipWithIndex.map(elem => {
+      createOneMechanismsPane(elem._2, elem._1, wheelIndeces)
     }
     )
     panes.foreach(
       controller.resultsAccordion.getPanes.add(_)
     )
   }
-
+  def setFailure(reason : String) : Unit = {
+    setAll(reason)
+  }
    def getParent: Parent = controller.resGridPane
 
    def showLoading(boolean: Boolean): Unit = if (boolean) setAll("Результат вычисляется") else setAll("Результат получен")

@@ -10,14 +10,15 @@ import planar_interface.view.mode_dependent_screen.InputResultPairViewInterface
 import planar_interface.view.mode_dependent_screen.kinematic_analysis.GearView.ViewFactory
 import planar_structure.mechanism.process.report.{FullConditionCheck, SynthesizedMechanisms}
 import planar_structure.mechanism.Mechanism
-import planar_structure.mechanism.common_mechanisms.CommonMechanismCharacteristics.WheelNumberArgs
+import planar_structure.mechanism.common_mechanisms.CommonMechanismCharacteristics.{MechanismArgs, WheelNumberArgs}
+
+import scala.util.Try
 
 class SynthesisInput extends InputResultPairViewInterface{
   override protected var observable: Observable = MechanismControllerConcrete
-  private val splitPane : SplitPane = new SplitPane()
   var inputController : InputController = new InputController
   var resController : ResController = new ResController
-  splitPane.getItems.addAll(inputController.getParent, resController.getParent)
+  setContentView(inputController.getParent, resController.getParent)
   override def performSideEffect(): Unit = {
     inputController.performSideEffect()
   }
@@ -30,8 +31,9 @@ class SynthesisInput extends InputResultPairViewInterface{
     println("Setting result")
   }
   def calculate() : Unit = {
-    inputController.calculate(resController.setResult _ )
+    inputController.calculate(resController.setResult _ )(resController.setFailure _ )
   }
+  //outer callback
   def calculateCB(callback: () => Unit) : Unit = {
     calculate()
     callback()
@@ -41,10 +43,6 @@ class SynthesisInput extends InputResultPairViewInterface{
    * must be inherited from Argument trait, represents an input in a program
    */
   override def getArguments(): Option[InputResultPairViewInterface.Argument] = ???
-
-  override def getRoot: Parent = splitPane
-
-  override def getParent: Parent = splitPane
 
   override def clearInput(): Unit = inputController.clearInput()
 
@@ -83,11 +81,18 @@ class InputController extends GearParamsInput{
   val root = controller.getParent
   rootScrollPane.setContent(root)
 
-  def calculate(cb : (SynthesizedMechanisms) => Unit ) : Unit = {
+  def calculate(cb : (SynthesizedMechanisms) => Unit )(onFailure : (String) => Unit) : Unit = {
     println("Calculated reports: here")
-
-    val synthesized = MechanismSynthesizer.synthesizeByWheelNumber(WheelNumberArgs(controller.getU,controller.getAccuracyU, controller.getK))
-    cb(synthesized)
+    (try{
+        Left(MechanismSynthesizer.findMechanisms(
+          MechanismArgs(WheelNumberArgs(controller.getU,controller.getAccuracyU, controller.getK),controller.getT,
+            controller.getFreq)))
+    }catch{
+        case a : IllegalArgumentException => Right(a.getMessage)
+    }) match {
+      case Left(synthesized) => cb(synthesized)
+      case Right(a) => onFailure(a)
+    }
   }
   override def getParent : Parent = rootScrollPane
 
@@ -113,4 +118,5 @@ class ResController{
   def setResult(res  : SynthesizedMechanisms) : Unit = {
     controller.obtainResults(res)
   }
+  def setFailure(reason : String) : Unit = controller.setFailure(reason)
 }

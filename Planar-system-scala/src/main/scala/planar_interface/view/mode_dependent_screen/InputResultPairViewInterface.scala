@@ -1,9 +1,9 @@
 package planar_interface.view.mode_dependent_screen
 
-import javafx.scene.Node
+import javafx.scene.{Node, Parent}
+import javafx.scene.control.SplitPane
 import planar_interface.{Event, Observable, Observer}
 import planar_interface.view.GearParamsInput
-import planar_interface.view.mode_dependent_screen.InputResultPairViewInterface.{RequestArguments}
 
 object InputResultPairViewInterface{
   trait Argument
@@ -35,6 +35,8 @@ object InputResultPairViewInterface{
  */
 
 trait InputResultPairViewInterface extends Observer with GearParamsInput{
+  private val splitPane : SplitPane = new SplitPane()
+  override def getParent: Parent = splitPane
   override def onChange(event: Event): Unit = {
     event match {
       case InputResultPairViewInterface.RequestArguments(cb) => cb(getArguments())
@@ -43,7 +45,9 @@ trait InputResultPairViewInterface extends Observer with GearParamsInput{
       case _ => ()
     }
   }
-
+  def setContentView(left: Node, right: Node) : Unit = {
+    splitPane.getItems.addAll(left, right)
+  }
   /**
    *
    * result of any calculation must be inherited from Result trait
@@ -56,6 +60,6 @@ trait InputResultPairViewInterface extends Observer with GearParamsInput{
    */
   def getArguments() : Option[InputResultPairViewInterface.Argument]
 
-  def getRoot : Node
+  def getRoot : Node = splitPane
 
 }

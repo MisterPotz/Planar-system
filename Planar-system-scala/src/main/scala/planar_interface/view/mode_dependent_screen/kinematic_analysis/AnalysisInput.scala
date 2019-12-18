@@ -15,10 +15,9 @@ import planar_structure.mechanism.{Mechanism}
 
 object AnalysisInput extends InputResultPairViewInterface{
   override protected var observable: Observable = MechanismControllerConcrete
-  private val splitPane : SplitPane = new SplitPane()
    var inputController : InputController = new InputController
    var resController : ResController = new ResController
-  splitPane.getItems.addAll(inputController.getParent, resController.getParent)
+  setContentView(inputController.getParent, resController.getParent)
   override def performSideEffect(): Unit = {
     inputController.performSideEffect()
   }
@@ -43,9 +42,7 @@ object AnalysisInput extends InputResultPairViewInterface{
    */
   override def getArguments(): Option[InputResultPairViewInterface.Argument] = ???
 
-  override def getRoot: Parent = splitPane
 
-  override def getParent: Parent = splitPane
 
   override def clearInput(): Unit = inputController.clearInput()
 

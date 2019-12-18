@@ -35,7 +35,7 @@ class GeometricCommonMethods(meth : GearStructureCharacteristic) extends Geometr
     val k = structure.storage.k.toFloat
     @scala.annotation.tailrec
     def calc(p : Int): Boolean ={
-      if (p == 25) {
+      if (p == 50) {
         false
       } else{
         val res : Float = ( z.toFloat / k.toFloat * (1 + p * k)).toFloat

@@ -1,5 +1,6 @@
 package planar_structure.mechanism
 
+import planar_structure.mechanism.common_mechanisms.MECHANISM_FULL_CLASSIFIER
 import planar_structure.mechanism.types.{CarrierPosition, CodeGenerator, MechanismType}
 
 trait MechanismStructure{
@@ -20,6 +21,7 @@ trait MechanismStructure{
 abstract class Mechanism extends MechanismStructure {
   //Method objects
   //Characteristic objects
+  //val fullClassifier : MECHANISM_FULL_CLASSIFIER
   val methods : GeometricMethod
   val gearStructureCharacteristic : GearStructureCharacteristic
   override def getStorage : GearStructureStore = gearStructureCharacteristic.storage

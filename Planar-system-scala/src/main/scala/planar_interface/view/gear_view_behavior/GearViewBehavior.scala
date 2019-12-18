@@ -42,7 +42,7 @@ object KinematicForwardBehavior extends GearViewBehavior with Observer{
     /*currentGearViewController.gearGroupListView.gearGroupList.setDisable(block)*/
   }
   override def getParent: Parent = {
-    inputResultPairView.getRoot
+    inputResultPairView.getRoot.asInstanceOf[Parent]
   }
 
   /**

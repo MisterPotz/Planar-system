@@ -7,7 +7,7 @@ import planar_structure.mechanism.mech2kh.concrete_mechanisms._
 import planar_structure.mechanism.process.argument.AdditionalWheelParams
 
 
-case class WheelInfo(z: Short,ca : Float = Constants.CA , ha: Float = Constants.HA, x: Float = Constants.X,
+case class WheelInfo(z: Int,ca : Float = Constants.CA , ha: Float = Constants.HA, x: Float = Constants.X,
                      m : Float = Constants.M,
                      alpha: Float = Constants.ALPHA,
                      beta: Float = Constants.BETA)
