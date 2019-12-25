@@ -125,7 +125,8 @@ case class CommonMechanism(
                             U: (Float, Float),
                             KPD: (Float, Float),
                             TYPE: PlanarMechanismType,
-                            CLASSIFIER: MECHANISM_FULL_CLASSIFIER
+                            CLASSIFIER: MECHANISM_FULL_CLASSIFIER,
+                            allowedSatelliteAmount : Int = 9
                           )
 
 
@@ -148,12 +149,12 @@ object CommonMechanismCharacteristics {
                           )
 
   val COMMON_MECHANISMS = Array(
-    CommonMechanism((3, 9), (0.97f, 0.99f), _2K_H, A_AH_B),
-    CommonMechanism((1.13f, 1.5f), (0.99f, 0.996f), _2K_H, A_HB_A),
-    CommonMechanism((-2, -8), (0.96f, 0.985f), _2K_H, A_AB_H),
+    //CommonMechanism((3, 9), (0.97f, 0.99f), _2K_H, A_AH_B),
+    //CommonMechanism((1.13f, 1.5f), (0.99f, 0.996f), _2K_H, A_HB_A),
+    //CommonMechanism((-2, -8), (0.96f, 0.985f), _2K_H, A_AB_H),
     CommonMechanism((7, 16), (0.97f, 0.99f), _2K_H, B_AH_B),
-    CommonMechanism((8, 30), (0.75f, 0.8f), _2K_H, C_HB_E),
-    CommonMechanism((25, 300), (0.4f, 0.9f), _2K_H, C_HB_E)
+    CommonMechanism((8, 300), (0.75f, 0.8f), _2K_H, C_HB_E)//,
+    //CommonMechanism((25, 300), (0.4f, 0.9f), _2K_H, C_HB_E, allowedSatelliteAmount = 1)
   )
 
   def pickSchemeByU(u: Double): Option[MECHANISM_FULL_CLASSIFIER] = {
@@ -163,6 +164,15 @@ object CommonMechanismCharacteristics {
       } else
         false
     }).map(comm => comm.CLASSIFIER)
+  }
+
+  def getMaxSatelliteAmount(u : Double) : Option[Int] = {
+    COMMON_MECHANISMS.find(comm => {
+      if (((comm.U._1) <= u && (comm.U._2) >= u) || (comm.U._2 <= u && comm.U._1 >= u)) {
+        true
+      } else
+        false
+    }).map(comm => comm.allowedSatelliteAmount)
   }
 
 }

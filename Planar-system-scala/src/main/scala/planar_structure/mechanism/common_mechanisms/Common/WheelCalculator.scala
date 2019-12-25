@@ -54,7 +54,7 @@ trait WheelCalculator extends GearObjectedConversions {
   }
 
   def findAwt(shift_sum: Double, z_sum: Int, alpha_t: Double) = {
-    ((2 * (shift_sum) * math.tan(alpha_t) / (z_sum).toFloat) + inv(alpha_t)).invToRad
+    ((2 * math.abs(shift_sum) * math.tan(alpha_t) / (z_sum).toFloat) + inv(alpha_t)).invToRad
   }
 
   def sign: Double
@@ -267,7 +267,6 @@ trait WheelCalculator extends GearObjectedConversions {
     val aw1 = aw(z_sum1(z.toList), totalShift1(x), betas(0), m(0))
     val aw2 = aw(z_sum2(z.toList), totalShift2(x), betas(1), m(1))
     if (math.abs(aw1 / aw2 - 1) <= accuracy) {
-      print(s"accuracy of alignment: ${math.abs(aw1 / aw2 - 1)}")
       true
     } else false
   }
@@ -281,7 +280,6 @@ trait WheelCalculator extends GearObjectedConversions {
   def accurateAlignmentPercent(mechanism: Mechanism): Double = {
     val aw1 = awMech(mechanism, 0)
     val aw2 = awMech(mechanism, 1)
-    println(s"alignment check: ${aw1} -- ${aw2}")
     math.abs(aw1 / aw2 - 1) * 100
   }
 

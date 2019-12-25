@@ -189,7 +189,6 @@ object CylindricGearTransmissionsCalculation {
     val KHV = getKHV(matrow2, accuracyGrade.toInt, vel, bevel)
     val KH = KHV * KHAlph * KHBet
     val DSigH = SigH.fullFindDSigH(matrow1, matrow2, n1, n2, vel, if (inner) beta else 0)
-    println(s"${CylindricGearTransmissionsCalculation.getClass.getName}: KH: ${KH}")
     450 * math.abs(u + getSign(inner) * 1) * math.pow((KH * T1 * getKW()) / (psiBA * u * satellites * DSigH * DSigH), 1 / 3.toFloat)
   }
 

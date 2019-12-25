@@ -15,6 +15,11 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
 
   case class Compensations(m: Double, x: Double = 0, beta: Double = 0)
 
+  def lessenTheAmount[A](array: List[A], maxSize: Int): List[A] = {
+    //сначала поймем сколько нужно грохнуть
+    array.slice(0, maxSize).toList
+  }
+
   def mainScript(mechanismArgs: CommonMechanismCharacteristics.MechanismArgs): SynthesizedMechanisms = {
     val u = mechanismArgs.wheelNumberArgs.targetU
     val accuracy = mechanismArgs.wheelNumberArgs.accuracy
@@ -22,8 +27,13 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
     val torque_output = mechanismArgs.torqueOutput
     val frequency_input = mechanismArgs.frequencyInput
     //нашли тупые варики
-    val dumb_variants = wheelCalculator.findInitialVariants(u, accuracy, satellites, gear_accuracy = 50)
-    val filtered_dumb = wheelCalculator.neutralizeExtraVariants(dumb_variants)
+    val dumb_variants = wheelCalculator.findInitialVariants(u, accuracy, satellites, gear_accuracy = 100)
+    //после получения вариков нужно их сначала отфильтровать на наличие одинаковых вариков, а потом нужно проредить их, чтобы
+    //размер не превышал какую-то величину
+    val filtered_dumb = lessenTheAmount(wheelCalculator.neutralizeExtraVariants(dumb_variants)
+      .sortBy(variant => {
+        math.max(wheelCalculator.z_sum1(variant), wheelCalculator.z_sum2(variant))
+      }), 700)
     //определяем материалы колес и для первой и для второй ступеней, помним что первая - для мелкого, вторая - для большего
     val materials1 = StandardParameters.getMaterialsByProcessMode(5 /*mechanismArgs.processModes(0)*/)(0)
     val materials2 = materials1
@@ -42,15 +52,6 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
       } else false
     }).sortBy(mechanism => {
       getMaxDOfMech(mechanism)
-    })
-    println(s"size ${sorted_by_maxd}")
-    val accuracy_sorted = sorted_by_maxd.map(mech => {
-      wheelCalculator.accurateAlignmentPercent(mech)
-    })
-    val accuracy_U = sorted_by_maxd.map(mech => {
-      val check = wheelCalculator.uCheckPercent(mech, u)
-      println(s"u accuracy check : $check")
-      check
     })
     val additionalInfoList = sorted_by_maxd.map(mech => {
       val _resU = mech.calculator.findU(mech)
@@ -232,10 +233,20 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
     (inv(alpha_w) - inv(alpha_t)) / 2 / math.tan(alpha_t) * z_sum
   }
 
+  object ShiftIterator {
+    def checkNotLast(shift: Double): Boolean = {
+      if (StandardParameters.findNearestWithRound(if (shift < 0) {
+        StandardParameters.XS_N
+      } else StandardParameters.XS, shift) == shift) true else false
+    }
+  }
+
   //итератор для удобного прохождения по доступным смещениям
   class ShiftIterator(totalShift: Double, inner: Boolean) extends Iterator[(Double, Double)] {
-    var curr_first_shift: Double = if (totalShift < 0) StandardParameters.XS_N(0)
-    else StandardParameters.XS(0) //StandardParameters.findNearestWithRound(StandardParameters.XS, totalShift)
+    var curr_first_shift: Double =
+      if (totalShift < 0)
+        StandardParameters.XS_N(0)
+      else StandardParameters.XS(0) //StandardParameters.findNearestWithRound(StandardParameters.XS, totalShift)
     var counter = if (!inner) 0 else {
       val shift = StandardParameters.findNearestWithRound(
         if (totalShift < 0) {
@@ -318,7 +329,8 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
           old_meaning = new_meaning
           saved_module = new_module
         }
-      } while (new_meaning <= old_meaning)
+        if (new_meaning == init_meaning) return saved_module
+      } while (new_meaning < old_meaning && new_meaning != old_meaning)
       saved_module
     }
 
@@ -358,6 +370,7 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
     var calpha1 = calculateAlpha1(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
     if (calpha1 > 1) calpha1 = math.cos(25.toRadians)
     var cbeta1 = calculateBeta1(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
+    if (cbeta1 >= 1) cbeta1 = 1
     var calpha2 = calculateAlpha2(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
     if (calpha2 > 1) calpha2 = math.cos(25.toRadians)
     //тепербь надо проверить что угол лежит в допустимых пределах
@@ -483,12 +496,8 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
     val beta2 = gears(3).holder.beta
     val m1 = gears(0).holder.m
     val m2 = gears(3).holder.m
-    val inner1 = gears(0).holder.isInstanceOf[InternalWheelHolder]
-    val innerr1 = false
-    val inner2 = gears(3).holder.isInstanceOf[InternalWheelHolder];
-    val innerr2 = true
     //сортируем по максимальному диаметру механизма
     wheelCalculator.findMaxDiameter(mechanism.getGears.map(_.holder.z), mechanism.getGears.map(_.holder.x),
-      List(z_sum1, z_sum2), List(x_sum1, x_sum2), List(beta1, beta2), List(m1, m2), List(inner1, inner2), List(inner1, inner2))
+      List(z_sum1, z_sum2), List(x_sum1, x_sum2), List(beta1, beta2), List(m1, m2), wheelCalculator.getInners, wheelCalculator.getTargetRights)
   }
 }
