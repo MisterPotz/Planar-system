@@ -40,4 +40,17 @@ trait GearObjectedConversions{
     //нахождение инволюты по углу
     def radToInv: Float = (math.tan(i) - i).toFloat
   }
+
+  implicit class InvToRad2(i : Double) {
+    self =>
+    //подключение к классу Float дополнительных полезных функций
+    //нахождение угла по инволюте обратной функцией инволюты по методу Ченга
+    //TODO ограничить допустимый угол для использования функции ченга
+    def invToRad: Double = (math.pow(3f * i, 1f / 3f) - (2 * i) / 5.0f + (9f / 175.0f) * math.pow(3f, 2f / 3.0f) *
+      math.pow(i, 5f / 3.0f) - (2f / 175.0f) * math.pow(3, 1 / 3.0f) * math.pow(i, 7f / 3.0f) - (144f / 67375.0f) * math.pow(i, 3.0f) +
+      (3258f / 3128125.0f) * math.pow(3, 2f / 3.0f) * math.pow(i, 11f / 3.0f) - (49711f / 153278125.0f) * math.pow(3, 1f/ 3.0f) *
+      math.pow(i, 13f / 3.0f)).toFloat
+    //нахождение инволюты по углу
+    def radToInv: Double = (math.tan(i) - i).toFloat
+  }
 }

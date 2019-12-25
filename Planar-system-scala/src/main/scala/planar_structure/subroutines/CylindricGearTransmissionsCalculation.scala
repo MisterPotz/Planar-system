@@ -30,13 +30,13 @@ object CylindricGearTransmissionsCalculation {
                        T1: Double, inner: Boolean = false): Double = {
     val K = getK(matrow1, matrow2)
     val sign = getSign(inner)
-    K * (u + sign * 1) * math.pow(T1 / u, 1 / 3.toFloat)
+    K * math.abs(u + sign * 1) * math.pow(T1 / u, 1 / 3.toFloat)
   }
 
   def getVelocity(matrow1: StandardParameters.MaterialTableRow, matrow2: StandardParameters.MaterialTableRow, u: Double,
                   T1: Double, n1: Double, inner: Boolean = false): Double = {
     val pre_aw = getPreliminaryAW(matrow1, matrow2, u, T1, inner)
-    (2 * math.Pi * pre_aw * n1) / (6e4 * (u + getSign(inner) * 1))
+    (2 * math.Pi * pre_aw * n1) / (6e4 * math.abs(u + getSign(inner) * 1))
   }
 
   /**
@@ -81,6 +81,10 @@ object CylindricGearTransmissionsCalculation {
     }
   }
 
+
+
+
+
   def getWidth(psiBA: Double, aw: Double, wheelType: Int): Double = {
     wheelType match {
       case 1 => psiBA * aw
@@ -123,7 +127,7 @@ object CylindricGearTransmissionsCalculation {
   }
 
   def getKHW(v: Double, matrow: StandardParameters.MaterialTableRow): Double = {
-    matrow.outsideHB.mid match {
+    math.min(matrow.outsideHB.mid match {
       case a if (a < 200 || (a > 200 && a < 250)) => PolyTools.calculate(List(0.19, 0.2, 0.22, 0.27, 0.32, 0.54), v)
       case a if (a > 250 && a < 300) => PolyTools.calculate(List(0.26, 0.28, 0.32, 0.39, 0.45, 0.67), v)
       case a if (a > 300 && a < 350) => PolyTools.calculate(List(0.35, 0.37, 0.41, 0.5, 0.58, 0.87), v)
@@ -132,7 +136,7 @@ object CylindricGearTransmissionsCalculation {
       case a if (a > 470 && a < 510) => PolyTools.calculate(List(0.63, 0.7, 0.78, 0.98, 1, 1), v)
       case a if (a > 510 && a < 600) => PolyTools.calculate(List(0.71, 0.9, 1, 1, 1, 1), v)
       case a if (a > 600) => PolyTools.calculate(List(0.8, 0.9, 1, 1, 1, 1), v)
-    }
+    }, 1)
   }
 
   def getKHBet(v: Double, psiBA: Double, schemeType: Int, matrow: StandardParameters.MaterialTableRow): Double = {
@@ -186,12 +190,21 @@ object CylindricGearTransmissionsCalculation {
     val KH = KHV * KHAlph * KHBet
     val DSigH = SigH.fullFindDSigH(matrow1, matrow2, n1, n2, vel, if (inner) beta else 0)
     println(s"${CylindricGearTransmissionsCalculation.getClass.getName}: KH: ${KH}")
-    450 * (u + getSign(inner) * 1) * math.pow((KH * T1 * getKW()) / (psiBA * u * satellites * DSigH * DSigH), 1 / 3.toFloat)
+    450 * math.abs(u + getSign(inner) * 1) * math.pow((KH * T1 * getKW()) / (psiBA * u * satellites * DSigH * DSigH), 1 / 3.toFloat)
+  }
+
+  def getDSigH(matrow1: StandardParameters.MaterialTableRow, matrow2: StandardParameters.MaterialTableRow, u: Double,
+               T1: Double, n1: Double, n2: Double, satellites: Int, inner: Boolean = false,
+               schemeType: Int = 1,
+               beta: Double = 0 ,
+               bevel: Boolean = false): Double = {
+    val vel = getVelocity(matrow1, matrow2, u, T1, n1)
+    SigH.fullFindDSigH(matrow1, matrow2, n1, n2, vel, if (inner) beta else 0)
   }
 
   def findM(aw: Double, z_summ: Int): Double = {
     val pre_m = 2 * aw / z_summ
-    StandardParameters.findNearest(StandardParameters.MS.map(_.toDouble), pre_m)
+    StandardParameters.findNearestWithRound(StandardParameters.MS, pre_m)
   }
 
   def findAWbyM(m: Double, z_summ: Int) : Double = {

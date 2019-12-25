@@ -6,18 +6,21 @@ import java.net.URL
 import javafx.fxml.FXML
 import javafx.geometry.Insets
 import javafx.scene.Parent
-import javafx.scene.control.{Accordion, Label, TitledPane}
+import javafx.scene.control.{Accordion, Label, ScrollPane, TitledPane}
 import javafx.scene.image.{Image, ImageView}
 import javafx.scene.layout.{GridPane, StackPane, VBox}
+import javax.swing.ScrollPaneConstants
 import planar_interface.view.mode_dependent_screen.kinematic_analysis.GearView.ViewFactory
 import planar_structure.mechanism.Mechanism
-import planar_structure.mechanism.common_mechanisms.MECHANISM_FULL_CLASSIFIER
-import planar_structure.mechanism.process.report.SynthesizedMechanisms
+import planar_structure.mechanism.common_mechanisms.Common.MECHANISM_FULL_CLASSIFIER
+import planar_structure.mechanism.process.report.{AdditionalInfoSynthesized, SynthesizedMechanisms}
 
 import scala.collection.mutable.ListBuffer
 
 
 class SynthesisResultViewController {
+  @FXML
+  var mechanismScrollPane: ScrollPane = _
   @FXML
   var variantsAmountLabel: Label = _
   @FXML
@@ -34,8 +37,11 @@ class SynthesisResultViewController {
 
 trait LocationTrait
 
-class SynthesisResultViewControllerW(controller: SynthesisResultViewController) extends LocationTrait {
+class SynthesisResultViewControllerW(controller: SynthesisResultViewController) extends LocationTrait with HelpDouble {
   setAll("Расчет ещё не проведен")
+  var paneControllers: List[TitledPaneViewControllerW] = null
+  val factory: TitledPaneViewControllerWFactory.type = TitledPaneViewControllerWFactory
+
   def setAll(s: String = "") = {
     setVariantsAmount(s)
     setMinimalSizeLabel(s)
@@ -58,7 +64,7 @@ class SynthesisResultViewControllerW(controller: SynthesisResultViewController) 
   def setSchemeImage(stream: InputStream): Unit = {
     val image = new ImageView(new Image(stream))
     image.setPreserveRatio(true)
-    image.setFitWidth(controller.resGridPane.getWidth * 0.75)
+    image.setFitWidth(controller.resGridPane.getWidth * 0.4)
     if (controller.schemeImage.getChildren.size() > 0) {
       //ontroller.schemeImage.getChildren(
       controller.schemeImage.getChildren.add(image)
@@ -88,58 +94,47 @@ class SynthesisResultViewControllerW(controller: SynthesisResultViewController) 
     }
   }
 
+  def setMechanismsListVisible(boolean: Boolean) : Unit = {
+    controller.mechanismScrollPane.setVisible(boolean)
+  }
+
   protected def setResults(check: SynthesizedMechanisms): Unit = {
-    val minimalSize: Int = check.minimalSize
+    setMechanismsListVisible(true)
+    val minimalSize: Double = check.minimalSize
     val mechsAmount: Int = check.mechanismAmount
+    val minimal = check.minimalSize
     val type_ : String = check.mechClassifier.stringClassificator
     val image_stream = check.mechClassifier.PICTURE_PATH
     val list_ = check.sorted_mechanisms
+    val additional = check.additionalInfo
+    val target = check.u_target
     while (controller.resultsAccordion.getPanes.size() > 0) {
       controller.resultsAccordion.getPanes.remove(0)
     }
     setMinimalSizeLabel(minimalSize.toString)
     setVariantsAmount(mechsAmount.toString)
-    setMechanisms(list_, check.mechClassifier.WHEEL_INDECES)
+    setMinimalSizeLabel(minimal.toStringFormatted)
+    setMechanisms(list_, check.mechClassifier.WHEEL_INDECES, additional,target)
     setSchemeType(type_)
     setSchemeVisibility(true)
     setSchemeImage(image_stream)
 
   }
 
-  def createOneMechanismsPane(index: Int, mech: Mechanism, wheelIndeces: List[String]): TitledPane = {
-    val pane = new TitledPane()
-    pane.setText(s"Набор $index")
-    val grid = new GridPane()
-    grid.setPadding(new Insets(5))
-    grid.setHgap(5)
-    grid.setVgap(1)
-    val gearsIndeces = wheelIndeces.zipWithIndex
-    grid.add(new Label("Z"), 1, 0)
-    grid.add(new Label("M"), 2, 0)
-    for (i <- gearsIndeces) {
-      grid.add(new Label(s"Колесо ${i._1}: "), 0, i._2 + 1)
-      grid.add(new Label(s"${mech.getGears(i._2).holder.z}"), 1, i._2 + 1)
-      grid.add(new Label(s"${mech.getGears(i._2).holder.m}"), 2, i._2 + 1)
-    }
-    val new_grid_origin = gearsIndeces.length
-    grid.addRow(new_grid_origin + 1, new Label("U"), new Label(
-      s"${
-        val ratio = mech.methods.getGearRatio.toString;
-        ratio.slice(0, ratio.indexOf(".") + 4)
-      }"))
-    //grid.add(new Label(s"Модуль первой ступени"), 0, new_grid_origin)
-    pane.setContent(grid)
-    pane
-  }
-
-  def setMechanisms(list: ListBuffer[Mechanism], wheelIndeces: List[String]): Unit = {
-    val panes: ListBuffer[TitledPane] = list.slice(130, 160).zipWithIndex.map(elem => {
-      createOneMechanismsPane(elem._2, elem._1, wheelIndeces)
-    }
-    )
-    panes.foreach(
-      controller.resultsAccordion.getPanes.add(_)
-    )
+  def setMechanisms(list: ListBuffer[Mechanism],
+                    wheelIndeces: List[String],
+                    additional : ListBuffer[AdditionalInfoSynthesized], targetU : Double): Unit = {
+    //контроллеры вкладок на конечной вь/хе
+    paneControllers = list.slice(0, 100).map(_ => factory
+      .createView().asInstanceOf[TitledPaneViewControllerW]).toList
+    paneControllers.zipWithIndex.foreach( paneController =>
+      paneController._1.setMechanism(paneController._2, list(paneController._2),
+        wheelIndeces,
+        additional(paneController._2), targetU))
+    paneControllers.foreach(c => controller.resultsAccordion.getPanes.add(c.parent))
+    controller.resultsAccordion.setPrefWidth(paneControllers(0).parent.getPrefWidth + 100)
+    /*controller.mechanismScrollPane.setPrefWidth(controller.resultsAccordion.getPrefWidth)*/
+   // controller.resGridPane.setPrefWidth(paneControllers(0).parent.getPrefWidth + 100)
   }
 
   def setFailure(reason: String): Unit = {

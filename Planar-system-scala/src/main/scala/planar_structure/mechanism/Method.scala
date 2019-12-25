@@ -30,6 +30,7 @@ abstract class GeometricMethod extends Method with U  {
   //и текущий набор сравнивается с другим, возвращается самый малый механизм
   def fullConditionCheck : FullConditionCheck
   def interferenceAll : Boolean
+  //def getAW : Double
 }
 
 /**

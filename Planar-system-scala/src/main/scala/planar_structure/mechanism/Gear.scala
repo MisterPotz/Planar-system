@@ -1,6 +1,7 @@
 package planar_structure.mechanism
 
 import planar_structure.help_traits.BeautifulDebugOutput
+import planar_structure.subroutines.StandardParameters.MaterialTableRow
 //уникальные характерситики зуба, которые могут менять в пределах передачи:
 //z, x, ha, ca - правильно?
 object GearCalculations{
@@ -101,12 +102,14 @@ object WheelHolder{
 }
 
 //-----------------------------------
-trait MaterialCharacteristic
+trait MaterialCharacteristic{
+  var materialTableRow : MaterialTableRow = null
+}
 trait GearWheel extends BeautifulDebugOutput{
   var holder: GearGeometricCharacteristic
   var material_holder: MaterialCharacteristic
 }
-class InternalWheel(_holder : GearGeometricCharacteristic = WheelHolder.internal, _material_holder : MaterialCharacteristic = null) extends GearWheel{
+class InternalWheel(_holder : GearGeometricCharacteristic = WheelHolder.internal, _material_holder : MaterialCharacteristic = new MaterialCharacteristic {}) extends GearWheel{
 
   //TODO type check for geargeometriccharacteristic
   override def toStringShort: String = holder.asInstanceOf[InternalWheelHolder].toString
@@ -115,7 +118,7 @@ class InternalWheel(_holder : GearGeometricCharacteristic = WheelHolder.internal
   override var holder: GearGeometricCharacteristic = _holder
   override var material_holder: MaterialCharacteristic = _material_holder
 }
-class ExternalWheel(_holder : GearGeometricCharacteristic = WheelHolder.external, _material_holder: MaterialCharacteristic = null)extends GearWheel{
+class ExternalWheel(_holder : GearGeometricCharacteristic = WheelHolder.external, _material_holder: MaterialCharacteristic = new MaterialCharacteristic {})extends GearWheel{
   override def toStringShort: String = holder.asInstanceOf[ExternalWheelHolder].toString
   override def toString: String = toStringShort
   override var holder: GearGeometricCharacteristic = _holder

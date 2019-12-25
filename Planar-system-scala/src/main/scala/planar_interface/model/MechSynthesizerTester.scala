@@ -2,7 +2,6 @@ package planar_interface.model
 
 import java.util.function.DoubleToLongFunction
 
-import planar_structure.mechanism.common_mechanisms.{B_AH_B, CommonMechanismCharacteristics, MECHANISM_FULL_CLASSIFIER}
 
 /**
  * делегировать задачу расчета передаточ

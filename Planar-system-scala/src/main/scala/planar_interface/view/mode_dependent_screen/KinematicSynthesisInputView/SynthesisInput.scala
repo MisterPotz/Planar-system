@@ -10,7 +10,7 @@ import planar_interface.view.mode_dependent_screen.InputResultPairViewInterface
 import planar_interface.view.mode_dependent_screen.kinematic_analysis.GearView.ViewFactory
 import planar_structure.mechanism.process.report.{FullConditionCheck, SynthesizedMechanisms}
 import planar_structure.mechanism.Mechanism
-import planar_structure.mechanism.common_mechanisms.CommonMechanismCharacteristics.{MechanismArgs, WheelNumberArgs}
+import planar_structure.mechanism.common_mechanisms.Common.CommonMechanismCharacteristics.{MechanismArgs, WheelNumberArgs}
 
 import scala.util.Try
 

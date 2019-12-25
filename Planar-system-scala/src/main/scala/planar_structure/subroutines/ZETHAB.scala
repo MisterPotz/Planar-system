@@ -85,7 +85,7 @@ object ZETHAB {
     var counter : Int = 0
     override def hasNext: Boolean = if (counter > 4) false else true
     //Варьируем число
-    override def next(): Int = counter match{
+    override def next(): Int = counter match {
       case 0 =>
         counter+=1
         initial_ZB

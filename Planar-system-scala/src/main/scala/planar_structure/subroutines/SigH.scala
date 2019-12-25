@@ -116,4 +116,6 @@ object SigH {
     val second = getDSigH(mat2, n2, nz2, v)
     chooseDSigH(first,second, beta)
   }
+
+  //def getASigH()
 }

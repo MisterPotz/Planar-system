@@ -21,11 +21,38 @@ object StandardParameters {
     }
   }
 
+  def findNearestWithRound(array: Array[Double], target: Double) : Double = {
+    def checkNearest(array: Array[Double], target : Double, index : Int) : Double = {
+      if (index+1 >= array.length)
+        array(index)
+      else
+      if (math.abs(array(index) - target) <= math.abs(array(index+1) - target )){
+        array(index)
+      }
+      else {
+        array(index+1)
+      }
+    }
+    val ind = array.findLast(_ <= target)
+    ind match {
+      case Some(value) => {
+        val index = array.indexOf(value)
+        checkNearest(array, target, index)
+      }
+      case None => array(0)
+    }
+  }
+
   /**
    * РЯД МОДУЛЕЙ ПО ГОСТ
    */
   val MS = Array(0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1, 1.25, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5,
     6, 7, 8)
+  /**
+   * РЯД СМЕЩЕНИЙ
+   */
+  val XS = Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7)
+  val XS_N = XS.map(_*(-1))
   /**
    * КОЭФФИЦИЕНТЫ ПРИВЕДЕНИЯ ПЕРЕМЕННОГО РЕЖИМА НАГРУЖЕНИЯ К ПОСТОЯННОМУ
    */
@@ -57,7 +84,7 @@ object StandardParameters {
    * 2 - средний равновероятный
    * 3 - средний нормальный
    * 4 - легкий
-   * 5- особо легкий
+   * 5 ¬- особо легкий
    * режим передачи отражает зависимость отношения (T_i / T_max) от (N_i / N_sum)
    * необходимо выбрать какой режим использовать для каждого зацепления (одинаковый)
    * можно переложить выбор пользователю

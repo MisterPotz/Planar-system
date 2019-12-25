@@ -1,10 +1,10 @@
 package planar_interface.view.event_types
 
 import planar_interface.Event
-import planar_structure.mechanism.process.report.{FullConditionCheck, KinematicSynthesisReport}
+import planar_structure.mechanism.process.report.{FullConditionCheck, KinematicAnalysisReport, KinematicSynthesisReport}
 
 sealed trait CalculatingResultObtained extends Event
 case object CalculatingFinished extends CalculatingResultObtained
-case class CalculatedKinematicForward(result : FullConditionCheck) extends CalculatingResultObtained
+case class CalculatedKinematicForward(result : KinematicAnalysisReport) extends CalculatingResultObtained
 case class CalculatedKinematicSynthesis(result : KinematicSynthesisReport) extends CalculatingResultObtained
 

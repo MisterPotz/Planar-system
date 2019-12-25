@@ -61,7 +61,7 @@ object SigF {
     val muf = StandardParameters.KFE(if (q == 6) 0 else 1)(mode)
     val nflim = 4e6
     val ynmax = 2.5
-    val yn = pow(nflim / (nk * muf), 1 / q)
+    val yn = pow(nflim / (nk * muf), 1 / q.toDouble)
     if (yn < 1) 1 else if (yn >= 1 && yn <= ynmax) yn else ynmax
   }
 
@@ -88,5 +88,9 @@ object SigF {
     val first = getDSigF(mat1, n1,nz1)
     val second = getDSigF(mat2, n2, nz2)
     math.min(first, second)
+  }
+
+  def getKm(beta : Double) : Double = {
+    if (beta == 0) 3.4e3 else 2.8e3
   }
 }

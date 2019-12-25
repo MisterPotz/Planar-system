@@ -1,20 +1,25 @@
 package planar_structure.mechanism.mech2kh
 
+import planar_structure.mechanism.common_mechanisms.Common.WheelCalculator
 import planar_structure.mechanism.common_mechanisms.Constants
 import planar_structure.mechanism.{Mechanism, MechanismFactory}
 import planar_structure.mechanism.types.{CarrierInput, CarrierNeutral, CarrierOutput, CarrierPosition, External1, ExternalExternal, ExternalInternal, Internal1, InternalExternal, InternalInternal, MechanismType}
 import planar_structure.mechanism.mech2kh.concrete_mechanisms._
 import planar_structure.mechanism.process.argument.AdditionalWheelParams
+import planar_structure.mechanism.process.report.{ Tension}
+import planar_structure.subroutines.StandardParameters.MaterialTableRow
 
 
 case class WheelInfo(z: Int,ca : Float = Constants.CA , ha: Float = Constants.HA, x: Float = Constants.X,
                      m : Float = Constants.M,
                      alpha: Float = Constants.ALPHA,
-                     beta: Float = Constants.BETA)
+                     beta: Float = Constants.BETA,
+                     materialTableRow: MaterialTableRow = null)
 
 abstract class Mechanism2KH extends  Mechanism
 //e.g. form of code: "ExternalExternal_CarrierInput"
 object Mechanism2KH extends MechanismFactory {
+  //надо бы вырезать это и задепрекейтить
   override def apply(code : String): Mechanism ={
     val carrier = code.split("_")(1) match {
       case "CarrierInput" => CarrierInput
@@ -54,6 +59,7 @@ object Mechanism2KH extends MechanismFactory {
       gears(i).holder.beta = additional(i).beta
       gears(i).holder.m = additional(i).m
       gears(i).holder.x = additional(i).x
+      gears(i).material_holder.materialTableRow = additional(i).materialTableRow
     }
     mechanism.gearStructureCharacteristic.storage.mutable.amount_of_satellites = k
     mechanism
@@ -76,5 +82,17 @@ object Mechanism2KH extends MechanismFactory {
       case Internal1 => new Mechanism2kh_I1(carrierPosition)
     }
     setupMech(new_mech, wheelParams, k)
+  }
+
+  def apply(mechanismType: MechanismType, carrierPosition: CarrierPosition, wheelParams: List[WheelInfo],
+        k: Byte, wheelCalculator: WheelCalculator,
+            allowedTension: Tension, realTension: Tension
+           ): Mechanism = {
+    val new_mech = apply(mechanismType, carrierPosition, wheelParams, k)
+    val mech = setupMech(new_mech, wheelParams, k)
+    mech.calculator = wheelCalculator
+    mech.allowedTension = allowedTension
+    mech.realTension = realTension
+    mech
   }
 }

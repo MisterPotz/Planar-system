@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="resGridPane" hgap="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" vgap="3.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.mode_dependent_screen.KinematicSynthesisInputView.SynthesisResultViewController">
+<GridPane fx:id="resGridPane" hgap="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="500.0" vgap="3.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planar_interface.view.mode_dependent_screen.KinematicSynthesisInputView.SynthesisResultViewController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="159.0" />
     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
@@ -38,19 +38,19 @@
          </GridPane.margin>
       </Label>
       <Label text="Число найденных вариантов" wrapText="true" GridPane.rowIndex="4" />
-      <Label fx:id="variantsAmountLabel" text="Нет результата" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-      <Label text="Минимальный габаритный размер" visible="false" wrapText="true" GridPane.rowIndex="6" />
-      <Label fx:id="minimalSizeLabel" text="Нет результата" visible="false" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <Label fx:id="variantsAmountLabel" text="Расчет еще не был проведен" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Label text="Минимальный габаритный размер" wrapText="true" GridPane.rowIndex="6" />
+      <Label fx:id="minimalSizeLabel" text="Расчет ещё не был проведен" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
       <Label text="Найденные механизмы:" wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="8" />
-      <ScrollPane GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER">
+      <ScrollPane fx:id="mechanismScrollPane" maxHeight="600.0" maxWidth="600.0" visible="false" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="9" GridPane.rowSpan="2147483647" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
          <content>
-            <Accordion fx:id="resultsAccordion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <Accordion fx:id="resultsAccordion" />
          </content>
       </ScrollPane>
       <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="5" />
       <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="7" />
       <Label text="Выбранный тип механизма" wrapText="true" GridPane.rowIndex="1" />
-      <Label fx:id="schemeTypeLabel" text="Нет результата" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label fx:id="schemeTypeLabel" text="Расчет ещё не был проведен" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <VBox fx:id="schemeImage" alignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
    </children>
    <padding>
