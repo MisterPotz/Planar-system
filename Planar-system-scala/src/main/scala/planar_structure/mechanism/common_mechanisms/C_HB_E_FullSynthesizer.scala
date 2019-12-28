@@ -46,6 +46,7 @@ object C_HB_E_FullSynthesizer extends FullSynthesizer(C_HB_E_WheelCalculator, C_
                                     StandardParameters.MaterialTableRow)], u: Double, accuracy: Double, satellites: Int,
                                   torque_output: Double, frequency_input: Double,
                                   save_buff: ListBuffer[Mechanism], cbeta2: Double): Unit = {
+
     oneMechanismScriptFull(gearNumbers, material_pairs, u, accuracy, satellites, torque_output, frequency_input, save_buff,
       cbeta2, wheelCalculator.getInners, wheelCalculator.getTargetRights)
   }
@@ -61,13 +62,13 @@ object C_HB_E_Test extends App {
     frequencyInput = 200
   ))*/
   for (i <- Range(40, 310, 10)){
-    val some = MechanismSynthesizer.findMechanisms(CommonMechanismCharacteristics.MechanismArgs(
+    val some = C_HB_E_FullSynthesizer.mainScript(CommonMechanismCharacteristics.MechanismArgs(
       wheelNumberArgs = WheelNumberArgs(i, 0.05, 3),
       torqueOutput = 300,
       frequencyInput = 200
     ))
     println(s"target u - ${i}: ${some.sorted_mechanisms.length}, satellites: ${some.sorted_mechanisms(0)
-      .gearStructureCharacteristic.storage.k}")
+      .gearStructureCharacteristic.storage.k}, accuracy aw: ${some.additionalInfo(0).alignmentAccuracy}")
   }
 
   /*val new_sime = some.sorted_mechanisms.filter(_.gearStructureCharacteristic.storage.gears.find(_.holder.beta != 0)

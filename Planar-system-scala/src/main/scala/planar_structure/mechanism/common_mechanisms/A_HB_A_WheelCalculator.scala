@@ -71,7 +71,7 @@ object A_HB_A_WheelCalculator extends WheelCalculator {
 
   override def totalShift2(x: List[Double]): Double = ???
 
-  override def getInners: List[Boolean] = List(true, false)
+  override def getInners: List[Boolean] = List(true, false, false)
 
   override def getTargetRights: List[Boolean] = List(false, false)
 }

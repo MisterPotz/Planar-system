@@ -1,4 +1,5 @@
 package planar_structure.mechanism.common_mechanisms
+
 import planar_structure.mechanism.common_mechanisms.A_AH_B_WheelCalculator.{assemblyCheck, canHaveSatellites, neighborhoodCheck, unaccurateAlignment}
 import planar_structure.mechanism.common_mechanisms.Common.WheelCalculator
 
@@ -24,6 +25,7 @@ object A_AB_H_WheelCalculator extends WheelCalculator {
   override def neighborhoodCheck(wheelNumbers: List[Int], satellites: Int): Boolean = {
     if ((wheelNumbers(0) + wheelNumbers(1)) * math.sin(math.Pi / satellites) > wheelNumbers(1) + 2) true else false
   }
+
   override def findInitialVariants(targetU: Double, accuracyU: Double, satellites: Int, gear_accuracy: Int): ListBuffer[List[Int]] = {
     val za = Range(17, 100, 1).filter(canHaveSatellites(_, satellites))
     val zb = Range(85, 230, 1).filter(canHaveSatellites(_, satellites))
@@ -37,7 +39,7 @@ object A_AB_H_WheelCalculator extends WheelCalculator {
           if (unaccurateAlignment(list, gear_accuracy)) {
             if (assemblyCheck(list, satellites)) {
               if (neighborhoodCheck(list, satellites)) {
-                if (uCheck(list,targetU, accuracyU))
+                if (uCheck(list, targetU, accuracyU))
                   final_list.addOne(list)
               }
             }
@@ -68,7 +70,7 @@ object A_AB_H_WheelCalculator extends WheelCalculator {
 
   override def totalShift2(x: List[Double]): Double = ???
 
-  override def getInners: List[Boolean] = List(false,true)
+  override def getInners: List[Boolean] = List(false, false, true)
 
   override def getTargetRights: List[Boolean] = List(true, true)
 }

@@ -123,7 +123,7 @@ object B_AH_B_WheelCalculator extends WheelCalculator {
 
   override def findFinalVariants(initial_variants: ListBuffer[Int]): ListBuffer[B_AH_B_WheelCalculator.WithShiftedWheels] = ???
 
-  override def getInners: List[Boolean] = List(false, true)
+  override def getInners: List[Boolean] = List(false, false, false, true)
 
   override def getTargetRights: List[Boolean] = List(true, true)
 }

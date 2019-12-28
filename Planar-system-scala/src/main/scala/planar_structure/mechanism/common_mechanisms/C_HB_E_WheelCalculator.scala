@@ -73,7 +73,7 @@ object C_HB_E_WheelCalculator extends WheelCalculator {
         }
       }
     }
-    list_final
+    list_final.filter(list => uCheck(list, targetU, accuracyU))
   }
 
   override def accurateAlignment(z: IndexedSeq[Int])(alpha_t: Double): List[ShiftedWheel] = null //TODO
@@ -94,7 +94,7 @@ object C_HB_E_WheelCalculator extends WheelCalculator {
 
   override def totalShift2(x: List[Double]): Double = x(3) - x(2)
 
-  override def getInners: List[Boolean] = List(true, true)
+  override def getInners: List[Boolean] = List(true, false, false, true)
 
   override def getTargetRights: List[Boolean] = List(false, true)
 }

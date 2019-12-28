@@ -16,17 +16,17 @@ trait WheelCalculator extends GearObjectedConversions {
 
   def carrierFrequency(inputFreq: Double, wheelList: List[Int], kpd: Double = 1): Double
 
-  protected def arange(start: Double, end: Double, step: Double): ListBuffer[Double] = {
+  def arange(start: Double, end: Double, step: Double): ListBuffer[Double] = {
     var curr = start
     val arrayBuf = ListBuffer.empty[Double]
-    while (curr <= end) {
+    while (math.abs(curr) <= math.abs(end)) {
       arrayBuf.addOne(curr)
       curr += step
     }
     arrayBuf
   }
 
-  protected def linspace(start: Double, end: Double, parts: Int): ListBuffer[Double] = {
+  def linspace(start: Double, end: Double, parts: Int): ListBuffer[Double] = {
     val step = (end - start) / parts.toFloat
     arange(start, end, step)
   }
@@ -54,7 +54,7 @@ trait WheelCalculator extends GearObjectedConversions {
   }
 
   def findAwt(shift_sum: Double, z_sum: Int, alpha_t: Double) = {
-    ((2 * math.abs(shift_sum) * math.tan(alpha_t) / (z_sum).toFloat) + inv(alpha_t)).invToRad
+    ((2 * (shift_sum) * math.tan(alpha_t) / (z_sum).toFloat) + inv(alpha_t)).invToRad
   }
 
   def sign: Double
@@ -67,9 +67,14 @@ trait WheelCalculator extends GearObjectedConversions {
     val u2 = findUdirWithShift(listBuffer(2), listBuffer(3), math.cos(betas(1)),
       math.cos(alphat2), math.cos(findAwt(totalShift2(shifts), z_sum2(listBuffer.toList), alphat2)))
     val u = findTargetU(u1 * u2 * sign)
-    if (math.abs(targetU) * (1 - accuracy) <= math.abs(u) && math.abs(targetU) * (1 + accuracy) >= math.abs(u)) {
-      true
-    } else false
+    println(s"\tu - $u\ttarget: $targetU")
+    val alphat1_ = alpha_t(ChangeableParameters.ALF, betas(0).toFloat)
+    val u1_ = findUdirWithShift(listBuffer(0), listBuffer(1), math.cos(betas(0)),
+      math.cos(alphat1), math.cos(findAwt(totalShift1(shifts), z_sum1(listBuffer.toList), alphat1)))
+    val alphat2_ = alpha_t(ChangeableParameters.ALF, betas(1).toFloat)
+    val u2_ = findUdirWithShift(listBuffer(2), listBuffer(3), math.cos(betas(1)),
+      math.cos(alphat2), math.cos(findAwt(totalShift2(shifts), z_sum2(listBuffer.toList), alphat2)))
+    checkPercent(u, targetU) <= accuracy * 100
   }
 
   def uCheckMeaning(listBuffer: List[Int], shifts: List[Double], betas: List[Double], targetU: Double, accuracy: Double): Double = {
@@ -84,33 +89,33 @@ trait WheelCalculator extends GearObjectedConversions {
 
   def uCheckPercent(mech: Mechanism, targetU: Double): Double = {
     val u = findU(mech)
-    math.abs(u / targetU - 1) * 100
+    checkPercent(u, targetU)
   }
+
   //TODO ну и какого фига здесь рядом похожие методы но они нифига не одинаковый резалт имеют?
   def uCheckPercent(listBuffer: List[Int], targetU: Double, accuracy: Double = 0.05): Double = {
     val u = findTargetU(findUdH(listBuffer))
-    math.abs(u / targetU - 1)
+    checkPercent(u, targetU)
   }
 
   //u check
   def uCheck(listBuffer: List[Int], targetU: Double, accuracy: Double = 0.05): Boolean = {
     val currentU = findTargetU(findUdH(listBuffer))
-    if (math.abs(targetU) * (1 - accuracy) <= math.abs(currentU) && math.abs(targetU) * (1 + accuracy) >= math.abs(currentU)) {
+    if (checkPercent(currentU, targetU) <= 0.05 * 100) {
       true
     } else false
   }
 
-  def checkPercent(real : Double, target : Double) : Double = {
-    math.abs(real / target - 1) * 100
+  def checkPercent(real: Double, target: Double): Double = {
+    math.abs(math.abs(real / target) - 1) * 100
   }
 
-  def findU(z : List[Int], x : List[Double], betas: List[Double], modules: List[Double]) : Double = {
+  def findU(z: List[Int], x: List[Double], betas: List[Double], modules: List[Double]): Double = {
     val alphat1 = alpha_t(ChangeableParameters.ALF, betas(0).toFloat)
     val u1 = findUdirWithShift(z(0), z(1), math.cos(betas(0)),
       math.cos(alphat1), math.cos(findAwt(totalShift1(x), z_sum1(z), alphat1)))
 
     val alphat2 = alpha_t(ChangeableParameters.ALF, betas(1).toFloat)
-    //TODO здесь какая-то хуйня - u2 получился дохрениллионным
     val u2 = findUdirWithShift(z(2), z(3), math.cos(betas(1)),
       math.cos(alphat2), math.cos(findAwt(totalShift2(x), z_sum2(z), alphat2)))
 
@@ -227,12 +232,12 @@ trait WheelCalculator extends GearObjectedConversions {
       if (target_is_right) {
         val aw_ = aw(z_sum, shift_sum, beta, m) //findDa(z(0),m, x(0),z_sum, shift_sum,beta,ha,c,false)
         val dsata = findDa(z(1), m, x(1), z_sum, shift_sum, beta, ha, c, false)
-        max_d1 = (aw_ + dsata)*2
+        max_d1 = (aw_ + dsata) * 2
       }
       else {
         val aw_ = aw(z_sum, shift_sum, beta, m) //findDa(z(0),m, x(0),z_sum, shift_sum,beta,ha,c,false)
         val dsata = findDa(z(0), m, x(0), z_sum, shift_sum, beta, ha, c, false)
-        max_d1 = (aw_ + dsata )* 2
+        max_d1 = (aw_ + dsata) * 2
       }
     }
     max_d1
@@ -295,7 +300,8 @@ trait WheelCalculator extends GearObjectedConversions {
   def findFinalVariants(initial_variants: ListBuffer[Int]): ListBuffer[WithShiftedWheels]
 
   import scala.collection.mutable.Set
-  def neutralizeExtraVariants(variants : ListBuffer[List[Int]]) : List[List[Int]] = {
+
+  def neutralizeExtraVariants(variants: ListBuffer[List[Int]]): List[List[Int]] = {
     val set = Set.empty[List[Int]]
     variants.foreach(variant => set.addOne(variant.toList))
     set.toList
@@ -303,57 +309,59 @@ trait WheelCalculator extends GearObjectedConversions {
 
   def pruningList(z: List[Int], x: List[Double],
                   betas: List[Double], ha: Double,
-                  alpha :  List[Double], inner : List[Boolean]) : List[Boolean] = {
-    val innerCorrected : List[Boolean] = z.zipWithIndex.map(z => {
+                  alpha: List[Double], inner: List[Boolean]): List[Boolean] = {
+    val innerCorrected: List[Boolean] = z.zipWithIndex.map(z => {
       z._2 match {
         case 0 => inner(0)
-        case a if (a == 1 || a ==2) => false
+        case a if (a == 1 || a == 2) => false
         case 3 => inner(1)
       }
     })
-    Range(0, z.length).map{i =>
-      if (innerCorrected(i)){
+    Range(0, z.length).map { i =>
+      if (innerCorrected(i)) {
         true
         //если какое-то колесо внутреннее, то будет ли действовать какое-то ограничение на это??
       } else
-        pruning(z(i), xt(x(i))(betas(i % 2).toFloat), ha,alpha_t(alpha(i % 2).toFloat, betas(i % 2).toFloat))
+        pruning(z(i), xt(x(i))(betas(i % 2).toFloat), ha, alpha_t(alpha(i % 2).toFloat, betas(i % 2).toFloat))
     }.toList
   } //TODO зависит от типа колеса и механизма
 
-  def getAnalysisReport(args : AnalysisArgs) : KinematicAnalysisReport = {
+  def getAnalysisReport(args: AnalysisArgs): KinematicAnalysisReport = {
     getAnalysisReport(args.z, args.x, args.betas,
-      args.modules,args.alpha ,args.satellites, getInners, getTargetRights)
+      args.modules, args.alpha, args.satellites, getInners, getTargetRights)
   }
 
-  def getInners : List[Boolean] //TODO
+  def getInners: List[Boolean] //TODO
 
-  def getTargetRights : List[Boolean]
+  def getTargetRights: List[Boolean]
 
-  def getAnalysisReport(z : List[Int], x : List[Double],
-                        betas: List[Double], modules: List[Double], alphas : List[Double],
-                        satellites : Int,
-                        inner : List[Boolean],//<-- зависимый от типа механизма параметр
-                        targetIsRight : List[Boolean] //<-- зависимый от типа механизма параметр
-                       ) : KinematicAnalysisReport = {
-    val u = findU(z,x,betas, modules)
-    val aw2 = aw(z_sum2(z),totalShift2(x),betas(2),modules(2))
-    val accAw2 = checkPercent(aw2, aw(z_sum1(z),totalShift1(x),betas(0),modules(0)))
-    val maxSize = findMaxDiameter(z,x,List(z_sum1(z),z_sum2(z)),List(totalShift1(x),totalShift2(x)),
-      List(betas(0), betas(2)),List(modules(0), modules(2)),inner,targetIsRight)
+  def getShortInners: List[Boolean] = List(getInners(0) || getInners(1), getInners(2) || getInners(3))
+
+  def getAnalysisReport(z: List[Int], x: List[Double],
+                        betas: List[Double], modules: List[Double], alphas: List[Double],
+                        satellites: Int,
+                        inner: List[Boolean], //<-- зависимый от типа механизма параметр
+                        targetIsRight: List[Boolean] //<-- зависимый от типа механизма параметр
+                       ): KinematicAnalysisReport = {
+    val u = findU(z, x, betas, modules)
+    val aw2 = aw(z_sum2(z), totalShift2(x), betas(2), modules(2))
+    val accAw2 = checkPercent(aw2, aw(z_sum1(z), totalShift1(x), betas(0), modules(0)))
+    val maxSize = findMaxDiameter(z, x, List(z_sum1(z), z_sum2(z)), List(totalShift1(x), totalShift2(x)),
+      List(betas(0), betas(2)), List(modules(0), modules(2)), getShortInners, targetIsRight)
     val neihborhoodCheck = neighborhoodCheck(z, satellites)
-    val assembly = assemblyCheck(z,satellites)
-    val pruningCheck = pruningList(z,x,betas, ha = ChangeableParameters.HA,alphas
+    val assembly = assemblyCheck(z, satellites)
+    val pruningCheck = pruningList(z, x, betas, ha = ChangeableParameters.HA, alphas
       , inner)
-    KinematicAnalysisReport(u, aw2, accAw2,maxSize,neihborhoodCheck,assembly,pruningCheck)
+    KinematicAnalysisReport(u, aw2, accAw2, maxSize, neihborhoodCheck, assembly, pruningCheck)
   }
 
 }
 
-object WheelCalc extends App{
+object WheelCalc extends App {
   val _1 = List(1, 2, 3, 4)
-  val _2 = List(1,2,3,4)
-  val _3 = List(3,4,1,2)
-  val all = ListBuffer(_1,_2,_3)
+  val _2 = List(1, 2, 3, 4)
+  val _3 = List(3, 4, 1, 2)
+  val all = ListBuffer(_1, _2, _3)
   val calca = new WheelCalculator {
     override def carrierFrequency(inputFreq: Double, wheelList: List[Int], kpd: Double): Double = ???
 
@@ -391,4 +399,46 @@ object WheelCalc extends App{
   }
   val ans = calca.neutralizeExtraVariants(all)
   println(ans)
+}
+
+
+object WheelCalculatorTest extends App {
+  val testingRange = Range(0, 100)
+  val target = 40
+  val wheelCalculator = new WheelCalculator {
+    override def carrierFrequency(inputFreq: Double, wheelList: List[Int], kpd: Double): Double = ???
+
+    override def U_direct_H(targetU: Float): Float = ???
+
+    override def findTargetU(u_directH: Double): Double = ???
+
+    override def sign: Double = ???
+
+    override def assemblyCheck(wheelNumbers: List[Int], satellites: Int): Boolean = ???
+
+    override def unaccurateAlignment(wheelNumbers: List[Int], gears_accuracy: Int): Boolean = ???
+
+    override def neighborhoodCheck(wheelNumbers: List[Int], satellites: Int): Boolean = ???
+
+    override def findInitialVariants(targetU: Double, accuracyU: Double, satellites: Int, gear_accuracy: Int): ListBuffer[List[Int]] = ???
+
+    override def accurateAlignment(z: IndexedSeq[Int])(alpha_t_ : Double): List[ShiftedWheel] = ???
+
+    override def z_sum1(z: List[Int]): Int = ???
+
+    override def totalShift1(x: List[Double]): Double = ???
+
+    override def z_sum2(z: List[Int]): Int = ???
+
+    override def totalShift2(x: List[Double]): Double = ???
+
+    override def findFinalVariants(initial_variants: ListBuffer[Int]): ListBuffer[WithShiftedWheels] = ???
+
+    override def getInners: List[Boolean] = ???
+
+    override def getTargetRights: List[Boolean] = ???
+  }
+  testingRange.foreach(u => {
+    println(s"u $u is ${wheelCalculator.checkPercent(u, target)} for target $target")
+  })
 }
