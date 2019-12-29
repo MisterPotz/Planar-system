@@ -122,6 +122,9 @@ class InputController extends GearParamsInput {
 
   def calculate(cb: (KinematicAnalysisReport) => Unit): Unit = {
     collectArguments
+    //создали
+    mechanism = mechanismExtractor()
+
     val z = argumentServer.z.toList.sortBy(_._1).map(_._2)
     val m = argumentServer.m.toList.sortBy(_._1).map(_._2)
     val x = argumentServer.x.toList.sortBy(_._1).map(_._2)

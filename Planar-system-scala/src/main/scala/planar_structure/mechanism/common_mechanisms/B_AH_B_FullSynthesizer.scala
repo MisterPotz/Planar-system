@@ -59,7 +59,7 @@ object B_AH_B_FullSynthesizer extends FullSynthesizer(B_AH_B_WheelCalculator, B_
                                   frequency_input: Double, save_buff: ListBuffer[Mechanism],
                                   cbeta2: Double): Unit = {
     oneMechanismScriptFull(gearNumbers,material_pairs,u, accuracy,satellites,torque_output,
-      frequency_input,save_buff,cbeta2,List(false,true),List(true,true))
+      frequency_input,save_buff,cbeta2,wheelCalculator.getInners ,List(true,true))
   }
 }
 

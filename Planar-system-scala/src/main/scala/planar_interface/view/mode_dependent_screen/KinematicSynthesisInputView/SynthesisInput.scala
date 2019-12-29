@@ -14,11 +14,12 @@ import planar_structure.mechanism.common_mechanisms.Common.CommonMechanismCharac
 
 import scala.util.Try
 
-class SynthesisInput extends InputResultPairViewInterface{
+class SynthesisInput extends InputResultPairViewInterface {
   override protected var observable: Observable = MechanismControllerConcrete
-  var inputController : InputController = new InputController
-  var resController : ResController = new ResController
+  var inputController: InputController = new InputController
+  var resController: ResController = new ResController
   setContentView(inputController.getParent, resController.getParent)
+
   override def performSideEffect(): Unit = {
     inputController.performSideEffect()
   }
@@ -30,11 +31,13 @@ class SynthesisInput extends InputResultPairViewInterface{
   override def setResult(result: Option[InputResultPairViewInterface.Result]): Unit = {
     println("Setting result")
   }
-  def calculate() : Unit = {
-    inputController.calculate(resController.setResult _ )(resController.setFailure _ )
+
+  def calculate(): Unit = {
+    inputController.calculate(resController.setResult _)(resController.setFailure _)
   }
+
   //outer callback
-  def calculateCB(callback: () => Unit) : Unit = {
+  def calculateCB(callback: () => Unit): Unit = {
     calculate()
     callback()
   }
@@ -54,47 +57,48 @@ class SynthesisInput extends InputResultPairViewInterface{
  * saves arguments from child views and gives the possibility to extract them and
  * pass to the outer scope
  */
-trait ArgumentsAggregatorInterface{
+trait ArgumentsAggregatorInterface {
   /**
    *
    * @return if an adequate input is given, collects and returns it
    *         otherwise side effect is performed - user is given a signal
    *         that the input is malformed
    */
-  def extractArguments() : Option[InputResultPairViewInterface]
+  def extractArguments(): Option[InputResultPairViewInterface]
 
 }
 
 /**
  * view can be changed basing on some argument
  */
-trait ChangeableView{
+trait ChangeableView {
   def changeView()
 }
 
 
-class InputController extends GearParamsInput{
-  protected val currentGearViewControllerFactory : KSIVC_Factory = new KSIVC_Factory()
-  protected var controller : KinematicSynthesisInputViewController =
+class InputController extends GearParamsInput {
+  protected val currentGearViewControllerFactory: KSIVC_Factory = new KSIVC_Factory()
+  protected var controller: KinematicSynthesisInputViewController =
     currentGearViewControllerFactory.createView().asInstanceOf[KinematicSynthesisInputViewController]
-  val rootScrollPane : ScrollPane = new ScrollPane()
+  val rootScrollPane: ScrollPane = new ScrollPane()
   val root = controller.getParent
   rootScrollPane.setContent(root)
 
-  def calculate(cb : (SynthesizedMechanisms) => Unit )(onFailure : (String) => Unit) : Unit = {
+  def calculate(cb: (SynthesizedMechanisms) => Unit)(onFailure: (String) => Unit): Unit = {
     println("Calculated reports: here")
-    (try{
-        Left(MechanismSynthesizer.findMechanisms(
-          MechanismArgs(WheelNumberArgs(controller.getU,controller.getAccuracyU, controller.getK),controller.getT,
-            controller.getFreq)))
-    }catch{
-        case a : IllegalArgumentException => Right(a.getMessage)
+    (try {
+      Left(MechanismSynthesizer.findMechanisms(
+        MechanismArgs(WheelNumberArgs(controller.getU, controller.getAccuracyU, controller.getK), controller.getT,
+          controller.getFreq)))
+    } catch {
+      case a: IllegalArgumentException => Right(a.getMessage)
     }) match {
       case Left(synthesized) => cb(synthesized)
       case Right(a) => onFailure(a)
     }
   }
-  override def getParent : Parent = rootScrollPane
+
+  override def getParent: Parent = rootScrollPane
 
   override def clearInput(): Unit = controller.clearInput()
 
@@ -107,16 +111,28 @@ class InputController extends GearParamsInput{
   }
 }
 
-class ResController{
-  protected val currentGearViewControllerFactory : ViewFactory[_] =
+class ResController {
+  protected val currentGearViewControllerFactory: ViewFactory[_] =
     new SynthesisResultViewControllerWFactory
-  protected var controller : SynthesisResultViewControllerW =
+  protected var controller: SynthesisResultViewControllerW =
     currentGearViewControllerFactory.createView().asInstanceOf[SynthesisResultViewControllerW]
-  protected var rootScrollPane : ScrollPane = new ScrollPane()
-  rootScrollPane.setContent(controller.getParent)
-  def getParent : Node = rootScrollPane
-  def setResult(res  : SynthesizedMechanisms) : Unit = {
+  protected var rootScrollPane: ScrollPane = new ScrollPane()
+  updateView()
+
+  def getParent: Node = rootScrollPane
+
+  def setResult(res: SynthesizedMechanisms): Unit = {
     controller.obtainResults(res)
   }
-  def setFailure(reason : String) : Unit = controller.setFailure(reason)
+
+  def clearResult(): Unit = {
+    controller.clear()
+    updateView()
+  }
+
+  def updateView(): Unit = {
+    rootScrollPane.setContent(controller.getParent)
+  }
+
+  def setFailure(reason: String): Unit = controller.setFailure(reason)
 }

@@ -4,7 +4,7 @@ import planar_structure.mechanism.Mechanism
 import planar_structure.mechanism.common_mechanisms.Common.WheelCalculator
 import planar_structure.mechanism.mech2kh.{Mechanism2KH, WheelInfo}
 import planar_structure.mechanism.process.report.SynthesizedMechanisms
-import planar_structure.mechanism.types.{CarrierOutput, ExternalInternal}
+import planar_structure.mechanism.types.{CarrierOutput, CarrierPosition, ExternalInternal, MechanismType}
 import planar_structure.subroutines.ChangeableParameters
 
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
@@ -126,4 +126,7 @@ object B_AH_B_WheelCalculator extends WheelCalculator {
   override def getInners: List[Boolean] = List(false, false, false, true)
 
   override def getTargetRights: List[Boolean] = List(true, true)
+
+  override val mechanismType: MechanismType = ExternalInternal
+  override val carrierPosition: CarrierPosition = CarrierOutput
 }

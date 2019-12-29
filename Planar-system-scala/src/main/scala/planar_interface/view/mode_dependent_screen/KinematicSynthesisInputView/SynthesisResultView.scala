@@ -37,7 +37,7 @@ class SynthesisResultViewController {
 
 trait LocationTrait
 
-class SynthesisResultViewControllerW(controller: SynthesisResultViewController) extends LocationTrait with HelpDouble {
+class SynthesisResultViewControllerW(var controller: SynthesisResultViewController) extends LocationTrait with HelpDouble {
   setAll("Расчет ещё не проведен")
   var paneControllers: List[TitledPaneViewControllerW] = null
   val factory: TitledPaneViewControllerWFactory.type = TitledPaneViewControllerWFactory
@@ -47,6 +47,11 @@ class SynthesisResultViewControllerW(controller: SynthesisResultViewController) 
     setMinimalSizeLabel(s)
     setSchemeType(s)
     setSchemeVisibility(false)
+  }
+
+  def clear() : Unit = {
+    val factory = new SynthesisResultViewControllerWFactory()
+    controller = factory.controller.asInstanceOf[SynthesisResultViewController]
   }
 
   def setSchemeVisibility(boolean: Boolean): Unit = {

@@ -26,13 +26,12 @@ class KinematicAlignmentActor(val nextLayerRouter : Router) extends Actor{
   var debug_Flag : Boolean = false
   def checkAlignment(mechanism: Mechanism) : Unit ={
     //если механизм пройдет пройдет проверку на соосность, отправляем следующему слою
-    if (mechanism.methods.alignmentCondition){
+    /*if (mechanism.methods.alignmentCondition){
       if (!debug_Flag){
         println("alignment has passed")
         debug_Flag = true
-      }
+      }*/
       nextLayerRouter.route(mechanism, self)
-    }
   }
   /*def filter4(w1: AdditionalWheelParams, w2: AdditionalWheelParams ,
               w3: AdditionalWheelParams,w4: AdditionalWheelParams, commonParams: CommonParams): Unit = {

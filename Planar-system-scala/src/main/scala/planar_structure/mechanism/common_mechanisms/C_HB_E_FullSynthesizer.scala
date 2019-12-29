@@ -61,15 +61,16 @@ object C_HB_E_Test extends App {
     torqueOutput = 300,
     frequencyInput = 200
   ))*/
-  for (i <- Range(40, 310, 10)){
+  for (i <- Range(280, 290, 10)){
     val some = C_HB_E_FullSynthesizer.mainScript(CommonMechanismCharacteristics.MechanismArgs(
       wheelNumberArgs = WheelNumberArgs(i, 0.05, 3),
       torqueOutput = 300,
       frequencyInput = 200
     ))
     println(s"target u - ${i}: ${some.sorted_mechanisms.length}, satellites: ${some.sorted_mechanisms(0)
-      .gearStructureCharacteristic.storage.k}, accuracy aw: ${some.additionalInfo(0).alignmentAccuracy}")
+      .gearStructureCharacteristic.storage.k}, accuracy aw: ${some.additionalInfo(0).alignmentAccuracy}, max size: ${some.additionalInfo(0).maximumSize}")
   }
+
 
   /*val new_sime = some.sorted_mechanisms.filter(_.gearStructureCharacteristic.storage.gears.find(_.holder.beta != 0)
   match { case Some(_) => true;

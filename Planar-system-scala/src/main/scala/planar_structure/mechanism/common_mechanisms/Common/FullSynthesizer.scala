@@ -29,10 +29,10 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
     val torque_output = mechanismArgs.torqueOutput
     val frequency_input = mechanismArgs.frequencyInput
     //нашли тупые варики
-    val dumb_variants = wheelCalculator.findInitialVariants(u, accuracy, satellites, gear_accuracy = 50)
+    val dumb_variants = wheelCalculator.findInitialVariants(u, accuracy, satellites, gear_accuracy = 100)
     //после получения вариков нужно их сначала отфильтровать на наличие одинаковых вариков, а потом нужно проредить их, чтобы
     //размер не превышал какую-то величину
-    val filtered_dumb = lessenTheAmount(wheelCalculator.neutralizeExtraVariants(dumb_variants), 5000)
+    val filtered_dumb = lessenTheAmount(wheelCalculator.neutralizeExtraVariants(dumb_variants), 3000)
     /*.sortBy(variant => {
       math.max(wheelCalculator.z_sum1(variant), wheelCalculator.z_sum2(variant))
     }), 1200)*/
@@ -44,6 +44,7 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
     val mechanismsToSendBack = ListBuffer.empty[Mechanism]
     //теперь для каждого варика проходим весь цикл
     for (combination <- filtered_dumb.zipWithIndex) {
+      println(s"Mechanism to analyze  : ${combination._2}")
       oneMechanismScript(combination._1, ListBuffer(materials1, materials2), u, accuracy, satellites, torque_output, frequency_input,
         mechanismsToSendBack)
     }
@@ -97,61 +98,125 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
                              innerList_ : List[Boolean],
                              innerIsRightList: List[Boolean]
                             ): Unit = {
-    val innerList = innerList_
-    val t1 = getTorqueOn(0, gearNumbers, torque_output)
-    val u1 = gearNumbers(1) / gearNumbers(0).toFloat
-    val t2 = getTorqueOn(3, gearNumbers, torque_output)
-    val n1 = getRelationalFreqOn(0, gearNumbers, frequency_input)
-    val n2 = getRelationalFreqOn(1, gearNumbers, frequency_input)
-    val n3 = getRelationalFreqOn(2, gearNumbers, frequency_input)
-    val n4 = getRelationalFreqOn(3, gearNumbers, frequency_input)
-    val u2 = gearNumbers(3) / gearNumbers(2).toFloat
-    val pre_aw1 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, innerIsRightList(0))
-    val pre_aw2 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, innerIsRightList(1))
-    //println(s"pre_aw1: $pre_aw1, pre_aw2: $pre_aw2")
+    gearNumbers.length match {
+      case 4 =>
+        val innerList = innerList_
+        val t1 = getTorqueOn(0, gearNumbers, torque_output)
+        val u1 = gearNumbers(1) / gearNumbers(0).toFloat
+        val t2 = getTorqueOn(3, gearNumbers, torque_output)
+        val n1 = getRelationalFreqOn(0, gearNumbers, frequency_input)
+        val n2 = getRelationalFreqOn(1, gearNumbers, frequency_input)
+        val n3 = if (gearNumbers.length == 4) getRelationalFreqOn(2, gearNumbers, frequency_input) else n2
+        val n4 = if (gearNumbers.length == 4) getRelationalFreqOn(3, gearNumbers, frequency_input)
+        else getRelationalFreqOn(2, gearNumbers, frequency_input)
+        val u2 = if (gearNumbers.length == 4) gearNumbers(3) / gearNumbers(2).toFloat else gearNumbers(2) / gearNumbers(1).toFloat
+        val pre_aw1 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, innerIsRightList(0))
+        val pre_aw2 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, innerIsRightList(1))
+        //println(s"pre_aw1: $pre_aw1, pre_aw2: $pre_aw2")
 
-    def z_summ1: Int = wheelCalculator.z_sum1(gearNumbers)
+        def z_summ1: Int = wheelCalculator.z_sum1(gearNumbers)
 
-    def z_summ2: Int = wheelCalculator.z_sum2(gearNumbers)
+        def z_summ2: Int = wheelCalculator.z_sum2(gearNumbers)
 
-    val aw1 = CylindricGearTransmissionsCalculation.getAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, n1, n2, satellites, innerIsRightList(0))
-    val aw2 = CylindricGearTransmissionsCalculation.getAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, n3, n4, satellites, innerIsRightList(1))
-    val dsigh1 = CylindricGearTransmissionsCalculation.getDSigH(material_pairs(0)._1, material_pairs(0)._2, u1, t1, n1, n2, satellites, innerIsRightList(0))
-    val dsigh2 = CylindricGearTransmissionsCalculation.getDSigH(material_pairs(1)._1, material_pairs(1)._2, u2, t2, n3, n4, satellites, innerIsRightList(1))
-    val dsigh = math.min(dsigh1, dsigh2)
-    val dsigf1 = SigF.getDSigF(material_pairs(0)._1, n1, 1)
-    val dsigf2 = SigF.getDSigF(material_pairs(1)._2, n4, 1)
-    val dsigf = math.min(dsigf1, dsigf2)
-    val maxed_aw = math.max(aw1, aw2)
-    //получаем целевое расстояние между ступенями, теперь нужно вычислить модуль
-    //println(s"aw1: $aw1, aw2: $aw2")
-    var m1 = CylindricGearTransmissionsCalculation.findM(maxed_aw, z_summ1)
-    var m2 = CylindricGearTransmissionsCalculation.findM(maxed_aw, z_summ2)
-    //нашли новое значение самого большого межосевого расстояния (зочем?)
-    val findAWByM = CylindricGearTransmissionsCalculation.findAWbyM _
-    val aw1_corr = findAWByM(m1, z_summ1)
-    val aw2_corr = findAWByM(m2, z_summ2)
-    val compensated_m = compensateM(gearNumbers, List(m1, m2), List(aw1_corr, aw2_corr), List(z_summ1, z_summ2))
-    m1 = compensated_m._1
-    m2 = compensated_m._2
-    //после нахождения скомпенсированных модулей можно усреднить новые значения межосевых расстояний,
-    // чтобы смещения были лучше распределены, это уже целевое межосевое расстояние
-    val aw_corr = (findAWByM(compensated_m._1, z_summ1) + findAWByM(compensated_m._2, z_summ2)) / 2
-    //после нахождения приближенных модулей и целевого межосевого расстояния,  надо рассчитать смещения
-    val shiftsBetas: ListBuffer[ShiftsBetas] = compensateXBetAlpha(gearNumbers, List(m1, m2),
-      aw_corr, List(z_summ1, z_summ2), cbeta2, math.abs(wheelCalculator.U_direct_H(u.toFloat)),
-      u, accuracy, innerList)
-    //после того как нашли шифнутые бетки, проверяем что они намутились и записываем если да
-    shiftsBetas.foreach(value =>
-      save_buff.addOne(Mechanism2KH(ExternalInternal, CarrierOutput, List(
-        WheelInfo(z = gearNumbers(0), m = m1.toFloat, x = value.shifts(0).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._1),
-        WheelInfo(z = gearNumbers(1), m = m1.toFloat, x = value.shifts(1).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._2),
-        WheelInfo(z = gearNumbers(2), m = m2.toFloat, x = value.shifts(2).toFloat, beta = value.betas(1).toFloat, materialTableRow = material_pairs(1)._1),
-        WheelInfo(z = gearNumbers(3), m = m2.toFloat, x = value.shifts(3).toFloat, beta = value.betas(1).toFloat, materialTableRow = material_pairs(1)._2)
-      ),
-        satellites.toByte, wheelCalculator, allowedTension = Tension(sigma_h = dsigh, dsigf),
-        realTension = Tension(sigma_h = dsigh, dsigf)))
-    )
+        val aw1 = CylindricGearTransmissionsCalculation.getAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, n1, n2, satellites, innerIsRightList(0))
+        val aw2 = CylindricGearTransmissionsCalculation.getAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, n3, n4, satellites, innerIsRightList(1))
+        val dsigh1 = CylindricGearTransmissionsCalculation.getDSigH(material_pairs(0)._1, material_pairs(0)._2, u1, t1, n1, n2, satellites, innerIsRightList(0))
+        val dsigh2 = CylindricGearTransmissionsCalculation.getDSigH(material_pairs(1)._1, material_pairs(1)._2, u2, t2, n3, n4, satellites, innerIsRightList(1))
+        val dsigh = math.min(dsigh1, dsigh2)
+        val dsigf1 = SigF.getDSigF(material_pairs(0)._1, n1, 1)
+        val dsigf2 = SigF.getDSigF(material_pairs(1)._2, n4, 1)
+        val dsigf = math.min(dsigf1, dsigf2)
+        val maxed_aw = math.max(aw1, aw2)
+        //получаем целевое расстояние между ступенями, теперь нужно вычислить модуль
+        //println(s"aw1: $aw1, aw2: $aw2")
+        var m1 = CylindricGearTransmissionsCalculation.findM(maxed_aw, z_summ1)
+        var m2 = CylindricGearTransmissionsCalculation.findM(maxed_aw, z_summ2)
+        //нашли новое значение самого большого межосевого расстояния (зочем?)
+        val findAWByM = CylindricGearTransmissionsCalculation.findAWbyM _
+        val aw1_corr = findAWByM(m1, z_summ1)
+        val aw2_corr = findAWByM(m2, z_summ2)
+        val compensated_m = compensateM(gearNumbers, List(m1, m2), List(aw1_corr, aw2_corr), List(z_summ1, z_summ2))
+        m1 = compensated_m._1
+        m2 = compensated_m._2
+        //после нахождения скомпенсированных модулей можно усреднить новые значения межосевых расстояний,
+        // чтобы смещения были лучше распределены, это уже целевое межосевое расстояние
+        val aw_corr = math.max(findAWByM(compensated_m._1, z_summ1), findAWByM(compensated_m._2, z_summ2)) //(findAWByM(compensated_m._1, z_summ1) + findAWByM(compensated_m._2, z_summ2)) / 2
+        //после нахождения приближенных модулей и целевого межосевого расстояния,  надо рассчитать смещения
+        val shiftsBetas: ListBuffer[ShiftsBetas] = compensateXBetAlpha(gearNumbers, List(m1, m2),
+          aw_corr, List(z_summ1, z_summ2), cbeta2, math.abs(wheelCalculator.U_direct_H(u.toFloat)),
+          u, accuracy, innerList)
+        //после того как нашли шифнутые бетки, проверяем что они намутились и записываем если да
+        shiftsBetas.foreach(value =>
+          //TODO вот здесь трабла
+          save_buff.addOne(Mechanism2KH(wheelCalculator.mechanismType, wheelCalculator.carrierPosition, List(
+            WheelInfo(z = gearNumbers(0), m = m1.toFloat, x = value.shifts(0).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._1),
+            WheelInfo(z = gearNumbers(1), m = m1.toFloat, x = value.shifts(1).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._2),
+            WheelInfo(z = gearNumbers(2), m = m2.toFloat, x = value.shifts(2).toFloat, beta = value.betas(1).toFloat, materialTableRow = material_pairs(1)._1),
+            WheelInfo(z = gearNumbers(3), m = m2.toFloat, x = value.shifts(3).toFloat, beta = value.betas(1).toFloat, materialTableRow = material_pairs(1)._2)
+          ),
+            satellites.toByte, wheelCalculator, allowedTension = Tension(sigma_h = dsigh, dsigf),
+            realTension = Tension(sigma_h = dsigh, dsigf)))
+        )
+
+      case 3 =>
+        val innerList = innerList_
+        val t1 = getTorqueOn(0, gearNumbers, torque_output)
+        val u1 = gearNumbers(1) / gearNumbers(0).toFloat
+        val t2 = getTorqueOn(2, gearNumbers, torque_output)
+        val n1 = getRelationalFreqOn(0, gearNumbers, frequency_input)
+        val n2 = getRelationalFreqOn(1, gearNumbers, frequency_input)
+        val n3 = n2
+        val n4 = getRelationalFreqOn(2, gearNumbers, frequency_input)
+        val u2 = gearNumbers(2) / gearNumbers(1).toFloat
+        val pre_aw1 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, innerIsRightList(0))
+        val pre_aw2 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, innerIsRightList(1))
+
+        def z_summ1: Int = wheelCalculator.z_sum1(gearNumbers)
+
+        def z_summ2: Int = wheelCalculator.z_sum2(gearNumbers)
+
+        val aw1 = CylindricGearTransmissionsCalculation.getAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, n1, n2, satellites, innerIsRightList(0))
+        val aw2 = CylindricGearTransmissionsCalculation.getAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, n3, n4, satellites, innerIsRightList(1))
+        val dsigh1 = CylindricGearTransmissionsCalculation.getDSigH(material_pairs(0)._1, material_pairs(0)._2, u1, t1, n1, n2, satellites, innerIsRightList(0))
+        val dsigh2 = CylindricGearTransmissionsCalculation.getDSigH(material_pairs(1)._1, material_pairs(1)._2, u2, t2, n3, n4, satellites, innerIsRightList(1))
+        val dsigh = math.min(dsigh1, dsigh2)
+        val dsigf1 = SigF.getDSigF(material_pairs(0)._1, n1, 1)
+        val dsigf2 = SigF.getDSigF(material_pairs(1)._2, n4, 1)
+        val dsigf = math.min(dsigf1, dsigf2)
+        val maxed_aw = math.max(aw1, aw2)
+        //получаем целевое расстояние между ступенями, теперь нужно вычислить модуль
+        //println(s"aw1: $aw1, aw2: $aw2")
+        var m1 = CylindricGearTransmissionsCalculation.findM(maxed_aw, z_summ1)
+        var m2 = CylindricGearTransmissionsCalculation.findM(maxed_aw, z_summ2)
+        //нашли новое значение самого большого межосевого расстояния (зочем?)
+        val findAWByM = CylindricGearTransmissionsCalculation.findAWbyM _
+        /*val aw1_corr = findAWByM(m1, z_summ1)
+        val aw2_corr = findAWByM(m2, z_summ2)*/
+        //val compensated_m = compensateM(gearNumbers, List(m1, m2), List(aw1_corr, aw2_corr), List(z_summ1, z_summ2))
+        //m1 = compensated_m._1
+        //m2 = compensated_m._2
+        //при однорядном механизме не нужна компенсация по модулю тк модули одинаковые
+        val m = math.max(m1, m2)
+        //после нахождения скомпенсированных модулей можно усреднить новые значения межосевых расстояний,
+        // чтобы смещения были лучше распределены, это уже целевое межосевое расстояние
+        val aw_corr = math.max(findAWByM(m, z_summ1), findAWByM(m, z_summ2)) //(findAWByM(compensated_m._1, z_summ1) + findAWByM(compensated_m._2, z_summ2)) / 2
+        //после нахождения приближенных модулей и целевого межосевого расстояния,  надо рассчитать смещения
+        val shiftsBetas: ListBuffer[ShiftsBetas] = compensateXBetAlpha(gearNumbers, List(m),
+          aw_corr, List(z_summ1, z_summ2), cbeta2, math.abs(wheelCalculator.U_direct_H(u.toFloat)),
+          u, accuracy, innerList)
+        //после того как нашли шифнутые бетки, проверяем что они намутились и записываем если да
+        shiftsBetas.foreach(value =>
+          save_buff.addOne(Mechanism2KH(wheelCalculator.mechanismType, wheelCalculator.carrierPosition, List(
+            WheelInfo(z = gearNumbers(0), m = m1.toFloat, x = value.shifts(0).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._1),
+            WheelInfo(z = gearNumbers(1), m = m1.toFloat, x = value.shifts(1).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._2),
+            WheelInfo(z = gearNumbers(2), m = m2.toFloat, x = value.shifts(2).toFloat, beta = value.betas(1).toFloat, materialTableRow = material_pairs(1)._1) //,
+            //WheelInfo(z = gearNumbers(3), m = m2.toFloat, x = value.shifts(3).toFloat, beta = value.betas(1).toFloat, materialTableRow = material_pairs(1)._2)
+          ),
+            satellites.toByte, wheelCalculator, allowedTension = Tension(sigma_h = dsigh, dsigf),
+            realTension = Tension(sigma_h = dsigh, dsigf)))
+        )
+    }
+
     //TODO нужно ограничить выдаваемое число элементов,
     // можно проредить ряды до какого-то адекватногог количества (удалить допустим каждое значение с неким периодом
   }
@@ -197,35 +262,69 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
   def calculateAlpha1(wheelNumbers: List[Int], z_sum: List[Int],
                       calpha: Double, cbeta2: Double, m: List[Double],
                       dirU: Double, aw: Double): Double = {
-    val m_1 = m(0)
-    val m_2 = m(1)
-    val U_dir = dirU
-    val a_w = aw
-    val cosbeta_2 = cbeta2
-    val z_1 = wheelNumbers(0)
-    val z_2 = wheelNumbers(1)
-    val z_3 = wheelNumbers(2)
-    val z_4 = wheelNumbers(3)
-    val z_sum1 = z_sum(0)
-    val z_sum2 = z_sum(1)
-    val cosalpha = cos(ChangeableParameters.ALF)
-    cosalpha * (4 * U_dir * pow(a_w, 2) * cosbeta_2 * z_1 * z_3 +
-      2 * U_dir * a_w * cosbeta_2 * m_1 * z_1 * z_3 * z_sum1 + 2 * U_dir * a_w * cosbeta_2 * m_2 * z_1 * z_3 * z_sum2
-      - 2 * U_dir * a_w * m_2 * z_1 * z_3 * z_sum2 + U_dir * cosbeta_2 * m_1 * m_2 * z_1 * z_3 * z_sum1 * z_sum2
-      - U_dir * m_1 * m_2 * z_1 * z_3 * z_sum1 * z_sum2 - 4 * pow(a_w, 2) * cosbeta_2 * z_1 * z_3 - 2 * a_w * cosbeta_2 * m_1 * z_2 * z_3 * z_sum1
-      - 2 * a_w * cosbeta_2 * m_2 * z_1 * z_4 * z_sum2 + 2 * a_w * m_2 * z_1 * z_3 * z_sum2 - cosbeta_2 * m_1 * m_2 * z_2 * z_4 * z_sum1 * z_sum2
-      + m_1 * m_2 * z_2 * z_3 * z_sum1 * z_sum2) / (2 * a_w * z_1 * (2 * U_dir * a_w * cosbeta_2 * z_3 + U_dir * cosbeta_2 * m_2 * z_3 * z_sum2
-      - U_dir * m_2 * z_3 * z_sum2 - 2 * a_w * cosbeta_2 * z_3 - cosbeta_2 * m_2 * z_4 * z_sum2 + m_2 * z_3 * z_sum2))
+    wheelNumbers.length match {
+      case 4 =>
+        val m_1 = m(0)
+        val m_2 = m(1)
+        val U_dir = dirU
+        val a_w = aw
+        val cosbeta_2 = cbeta2
+        val z_1 = wheelNumbers(0)
+        val z_2 = wheelNumbers(1)
+        val z_3 = wheelNumbers(2)
+        val z_4 = wheelNumbers(3)
+        val z_sum1 = z_sum(0)
+        val z_sum2 = z_sum(1)
+        val cosalpha = cos(ChangeableParameters.ALF)
+        cosalpha * (4 * U_dir * pow(a_w, 2) * cosbeta_2 * z_1 * z_3 +
+          2 * U_dir * a_w * cosbeta_2 * m_1 * z_1 * z_3 * z_sum1 + 2 * U_dir * a_w * cosbeta_2 * m_2 * z_1 * z_3 * z_sum2
+          - 2 * U_dir * a_w * m_2 * z_1 * z_3 * z_sum2 + U_dir * cosbeta_2 * m_1 * m_2 * z_1 * z_3 * z_sum1 * z_sum2
+          - U_dir * m_1 * m_2 * z_1 * z_3 * z_sum1 * z_sum2 - 4 * pow(a_w, 2) * cosbeta_2 * z_1 * z_3 - 2 * a_w * cosbeta_2 * m_1 * z_2 * z_3 * z_sum1
+          - 2 * a_w * cosbeta_2 * m_2 * z_1 * z_4 * z_sum2 + 2 * a_w * m_2 * z_1 * z_3 * z_sum2 - cosbeta_2 * m_1 * m_2 * z_2 * z_4 * z_sum1 * z_sum2
+          + m_1 * m_2 * z_2 * z_3 * z_sum1 * z_sum2) / (2 * a_w * z_1 * (2 * U_dir * a_w * cosbeta_2 * z_3 + U_dir * cosbeta_2 * m_2 * z_3 * z_sum2
+          - U_dir * m_2 * z_3 * z_sum2 - 2 * a_w * cosbeta_2 * z_3 - cosbeta_2 * m_2 * z_4 * z_sum2 + m_2 * z_3 * z_sum2))
+      case 3 =>
+        val m_1 = m(0)
+        val m_2 = m_1
+        val U_dir = dirU
+        val a_w = aw
+        val cosbeta_2 = cbeta2
+        val z_1 = wheelNumbers(0)
+        val z_2 = wheelNumbers(1)
+        val z_3 = z_2
+        val z_4 = wheelNumbers(2)
+        val z_sum1 = z_sum(0)
+        val z_sum2 = z_sum(1)
+        val cosalpha = cos(ChangeableParameters.ALF)
+        cosalpha * (4 * U_dir * pow(a_w, 2) * cosbeta_2 * z_1 * z_3 +
+          2 * U_dir * a_w * cosbeta_2 * m_1 * z_1 * z_3 * z_sum1 + 2 * U_dir * a_w * cosbeta_2 * m_2 * z_1 * z_3 * z_sum2
+          - 2 * U_dir * a_w * m_2 * z_1 * z_3 * z_sum2 + U_dir * cosbeta_2 * m_1 * m_2 * z_1 * z_3 * z_sum1 * z_sum2
+          - U_dir * m_1 * m_2 * z_1 * z_3 * z_sum1 * z_sum2 - 4 * pow(a_w, 2) * cosbeta_2 * z_1 * z_3 - 2 * a_w * cosbeta_2 * m_1 * z_2 * z_3 * z_sum1
+          - 2 * a_w * cosbeta_2 * m_2 * z_1 * z_4 * z_sum2 + 2 * a_w * m_2 * z_1 * z_3 * z_sum2 - cosbeta_2 * m_1 * m_2 * z_2 * z_4 * z_sum1 * z_sum2
+          + m_1 * m_2 * z_2 * z_3 * z_sum1 * z_sum2) / (2 * a_w * z_1 * (2 * U_dir * a_w * cosbeta_2 * z_3 + U_dir * cosbeta_2 * m_2 * z_3 * z_sum2
+          - U_dir * m_2 * z_3 * z_sum2 - 2 * a_w * cosbeta_2 * z_3 - cosbeta_2 * m_2 * z_4 * z_sum2 + m_2 * z_3 * z_sum2))
+    }
   }
 
   def calculateAlpha2(wheelNumbers: List[Int], z_sum: List[Int], calpha: Double,
                       cbeta2: Double, m: List[Double], dirU: Double, aw: Double): Double = {
-    val m_2 = m(1)
-    val a_w = aw
-    val cosbeta_2 = cbeta2
-    val z_sum2 = z_sum(1)
-    val cosalpha = cos(ChangeableParameters.ALF)
-    cosalpha * m_2 * z_sum2 / (2 * a_w * cosbeta_2)
+    wheelNumbers.length match {
+      case 4 =>
+        val m_2 = m(1)
+        val a_w = aw
+        val cosbeta_2 = cbeta2
+        val z_sum2 = z_sum(1)
+        val cosalpha = cos(ChangeableParameters.ALF)
+        cosalpha * m_2 * z_sum2 / (2 * a_w * cosbeta_2)
+      case 3 =>
+        val m_2 = m(0)
+        val a_w = aw
+        val cosbeta_2 = cbeta2
+        val z_sum2 = z_sum(1)
+        val cosalpha = cos(ChangeableParameters.ALF)
+        cosalpha * m_2 * z_sum2 / (2 * a_w * cosbeta_2)
+    }
+
   }
 
   final def inv(angle: Double): Double = {
@@ -246,7 +345,7 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
 
   //size of innerlist must be two
   class ShiftBuilder(totalShift: Double, innerList: List[Boolean]) {
-    if (innerList.size != 2) throw new IllegalArgumentException("Can't have innerList with not two elems")
+    if (!(innerList.size == 2 || innerList.size == 1)) throw new IllegalArgumentException("Can't have innerList with not two elems")
     val innerShiftPercentage = 1.0
     val hasInner = innerList.foldLeft(false)(_ || _)
 
@@ -378,121 +477,253 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
       (modules(0), m_maxed)
   }
 
+  import scala.util.control.Breaks._
+
   def compensateXBetAlpha(wheelNumbers: List[Int], modules: List[Double],
                           aw: Double, z_summ: List[Int], cbeta2_ : Double, dirU: Double, targetU: Double
                           , accuracyU: Double, inner: List[Boolean], accuracyAw: Double = 0.0005):
   ListBuffer[this.ShiftsBetas] = {
-    if (inner.size != 4) throw new IllegalArgumentException("not full inner list")
-    val beta2List = Range(7, 25).map(_.toRadians)
+    if (!(inner.size == 4 || inner.size == 3)) throw new IllegalArgumentException("not full inner list")
+
     var to_ret: ListBuffer[ShiftsBetas] = ListBuffer.empty[ShiftsBetas]
-    beta2List.foreach(beta2 => {
-      val cbeta2 = math.cos(beta2)
-      //сначала нужно определить по точному решению предположительные углы зацеплений и косозуб
-      var calpha1 = calculateAlpha1(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
-      if (calpha1 > 1) calpha1 = math.cos(25.toRadians)
-      var cbeta1 = calculateBeta1(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
-      if (cbeta1 >= 1) cbeta1 = 1
-      var calpha2 = calculateAlpha2(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
-      if (calpha2 > 1) calpha2 = math.cos(25.toRadians)
-      //тепербь надо проверить что угол лежит в допустимых пределах
-      var beta1 = (math.acos(cbeta1))
-      val degreed_beta1 = beta1.toDegrees
-      //val beta2 = (math.acos(cbeta2))
-      //проверяем бету первого колеса
-      if (degreed_beta1 != 0) {
-        if (degreed_beta1 < 7) {
-          if (degreed_beta1 < 7 / 2.0) {
-            cbeta1 = 1
-            beta1 = 0
-          } else {
-            beta1 = 7.toRadians
-            cbeta1 = math.cos(beta1)
-          }
-        }
-        else if (degreed_beta1 > 25) {
-          cbeta1 = math.cos(math.toRadians(25))
-          beta1 = (math.acos(cbeta1))
-        }
-      }
-      var alpha1 = math.acos(calpha1)
-      var alpha2 = math.acos(calpha2)
-      //проверка углов зайеплений уже сложнее, так как надо сначала находить результирующее смещение
-      //TODO здесь какое то сумасшедшее значение выходит
-      var shift1 = calculateOverallShift(alpha1, wheelCalculator.alpha_t(ChangeableParameters.ALF, beta1.toFloat), z_summ(0))
-      /*if (math.abs(shift1) > 2) {
-        if (shift1 < 0) {
-          shift1 = -2
-        }
-        else shift1 = 2
-      }*/
-      val firstShiftIterator = new ShiftBuilder(shift1, wheelCalculator.getInners.slice(0, 2))
-      val firstShiftList = firstShiftIterator.buildShiftList()
-      var firstCounter = 0
+    wheelNumbers.length match {
+      case 4 =>
+        val beta2List = Range(7, 25).appended(0).map(_.toRadians.toDouble).toList
 
-      var shift2 = calculateOverallShift(alpha2, wheelCalculator.alpha_t(ChangeableParameters.ALF, beta2.toFloat), z_summ(1))
-      /*if (math.abs(shift2) > 2) {
-        if (shift2 < 0) shift2 = -2
-        else shift2 = 2
-      }*/
-      println(s"shift1: ${shift1}, beta1: ${beta1.toDegrees}. shift2: ${shift2} ")
+        @scala.annotation.tailrec
+        def find(xs: List[Double]): Unit = {
+          if (xs.isEmpty) {()}
+          else {
+            println(s"current beta size: ${xs.length}")
+            val beta2 = xs.head
+            val cbeta2 = math.cos(beta2)
+            //сначала нужно определить по точному решению предположительные углы зацеплений и косозуб
+            var calpha1 = calculateAlpha1(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
+            if (calpha1 > 1) calpha1 = math.cos(25.toRadians)
+            var cbeta1 = calculateBeta1(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
+            if (cbeta1 >= 1) cbeta1 = 1
+            var calpha2 = calculateAlpha2(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
+            if (calpha2 > 1) calpha2 = math.cos(25.toRadians)
+            //тепербь надо проверить что угол лежит в допустимых пределах
+            var beta1 = (math.acos(cbeta1))
+            val degreed_beta1 = beta1.toDegrees
+            //val beta2 = (math.acos(cbeta2))
+            //проверяем бету первого колеса
+            if (degreed_beta1 != 0) {
+              if (degreed_beta1 < 7) {
+                if (degreed_beta1 < 7 / 2.0) {
+                  cbeta1 = 1
+                  beta1 = 0
+                } else {
+                  beta1 = 7.toRadians
+                  cbeta1 = math.cos(beta1)
+                }
+              }
+              else if (degreed_beta1 > 25) {
+                cbeta1 = math.cos(math.toRadians(25))
+                beta1 = (math.acos(cbeta1))
+              }
+            }
+            var alpha1 = math.acos(calpha1)
+            var alpha2 = math.acos(calpha2)
+            //проверка углов зайеплений уже сложнее, так как надо сначала находить результирующее смещение
+            //TODO здесь какое то сумасшедшее значение выходит
+            var shift1 = calculateOverallShift(alpha1, wheelCalculator.alpha_t(ChangeableParameters.ALF, beta1.toFloat), z_summ(0))
+            /*if (math.abs(shift1) > 2) {
+              if (shift1 < 0) {
+                shift1 = -2
+              }
+              else shift1 = 2
+            }*/
+            val firstShiftIterator = new ShiftBuilder(shift1, wheelCalculator.getInners.slice(0, 2))
+            val firstShiftList = firstShiftIterator.buildShiftList()
 
-      var secondShiftIterator = new ShiftBuilder(shift2, wheelCalculator.getInners.slice(2, 4))
-      val secondShiftList = secondShiftIterator.buildShiftList()
-      var secondCounter = 0
+            var shift2 = calculateOverallShift(alpha2, wheelCalculator.alpha_t(ChangeableParameters.ALF, beta2.toFloat), z_summ(1))
+            /*if (math.abs(shift2) > 2) {
+              if (shift2 < 0) shift2 = -2
+              else shift2 = 2
+            }*/
+            //println(s"shift1: ${shift1}, beta1: ${beta1.toDegrees}. shift2: ${shift2} ")
 
-      //нужно пересчитать новые значения передаточного отношения и соседства и определить их погрешность
-      //если все херово то пересчитываем пока не закончатся варики в итераторе
-      var successfulVarFound = false
-      var currShift1 = (0.0, 0.0)
-      var currShift2 = (0.0, 0.0)
-      var z1_shift = 0.0
-      val x1_min = wheelCalculator.xmin(wheelNumbers(0), beta1, alpha_t_ = wheelCalculator.alpha_t(beta = beta1.toFloat))
-      var z2_shift = 0.0
-      val x2_min = wheelCalculator.xmin(wheelNumbers(1), beta1, alpha_t_ = wheelCalculator.alpha_t(beta = beta1.toFloat))
-      var z3_shift = 0.0
-      val x3_min = wheelCalculator.xmin(wheelNumbers(2), beta2, alpha_t_ = wheelCalculator.alpha_t(beta = beta2.toFloat))
-      var z4_shift = 0.0
-      val x4_min = 0 //колесо внутреннее - подрезание минимальное это ноль
-      var shifts: List[Double] = null
-      var betas: List[Double] = null
-      //TODO lol онздесь заходит в бесконечный цикл потому что hasnext не меняется
-      while (firstCounter < firstShiftList.length && !successfulVarFound) {
-        currShift1 = firstShiftList(firstCounter)
-        firstCounter += 1
-        //TODO вот здесь логика садится, так как итератор второй не следит за отчетом при внутреннем колесе
-        secondCounter = 0
-        while (secondCounter < secondShiftList.length && !successfulVarFound) {
-          //println(s"1 : ${firstShiftIterator.counter}\t2 : ${secondShiftIterator.counter}")
-          //получили смещения
-          currShift2 = secondShiftList(secondCounter)
-          secondCounter += 1
-          //проверка на подрезание
-          z1_shift = currShift1._1
-          z2_shift = currShift1._2
-          z3_shift = currShift2._1
-          z4_shift = currShift2._2
+            var secondShiftIterator = new ShiftBuilder(shift2, wheelCalculator.getInners.slice(2, 4))
+            val secondShiftList = secondShiftIterator.buildShiftList()
 
-          //условия отсутствия подрезания
-          if (z1_shift >= x1_min)
-            if (z2_shift >= x2_min)
-              if (z3_shift >= x3_min)
-                if (z4_shift >= x4_min) {
-                  shifts = List(z1_shift, z2_shift, z3_shift, z4_shift)
-                  betas = List(beta1, beta2)
-                  //точность передаточного отношения с учетом смещений
-                  if (wheelCalculator.uCheck(wheelNumbers, shifts, betas,
-                    targetU, accuracyU)) {
-                    println(s"\tz1_shift: ${z1_shift}, z2_shift: ${z2_shift},z3_shift: ${z3_shift}, z4_shift: ${z4_shift}")
-                    if (wheelCalculator.accurateAlignment(wheelNumbers,
-                      shifts, List(beta1, beta2), modules, accuracyAw)) {
-                      to_ret.addOne(ShiftsBetas(shifts, betas))
-                      //if (to_ret.length >= 8) successfulVarFound = true
-                    }
+            //нужно пересчитать новые значения передаточного отношения и соседства и определить их погрешность
+            //если все херово то пересчитываем пока не закончатся варики в итераторе
+            var successfulVarFound = false
+            var currShift1 = (0.0, 0.0)
+            var currShift2 = (0.0, 0.0)
+            var z1_shift = 0.0
+            val x1_min = wheelCalculator.xmin(wheelNumbers(0), beta1, alpha_t_ = wheelCalculator.alpha_t(beta = beta1.toFloat))
+            var z2_shift = 0.0
+            val x2_min = wheelCalculator.xmin(wheelNumbers(1), beta1, alpha_t_ = wheelCalculator.alpha_t(beta = beta1.toFloat))
+            var z3_shift = 0.0
+            val x3_min = wheelCalculator.xmin(wheelNumbers(2), beta2, alpha_t_ = wheelCalculator.alpha_t(beta = beta2.toFloat))
+            var z4_shift = 0.0
+            val x4_min = 0 //колесо внутреннее - подрезание минимальное это ноль
+            var shifts: List[Double] = null
+            var betas: List[Double] = null
+            //TODO lol онздесь заходит в бесконечный цикл потому что hasnext не меняется
+            breakable {
+              for (firstCounter <- 0 until firstShiftList.length) {
+                currShift1 = firstShiftList(firstCounter)
+                //TODO вот здесь логика садится, так как итератор второй не следит за отчетом при внутреннем колесе
+                breakable {
+                  for (secondCounter <- 0 until secondShiftList.length) {
+                    //println(s"1 : ${firstShiftIterator.counter}\t2 : ${secondShiftIterator.counter}")
+                    //получили смещения
+                    currShift2 = secondShiftList(secondCounter)
+                    //проверка на подрезание
+                    z1_shift = currShift1._1
+                    z2_shift = currShift1._2
+                    z3_shift = currShift2._1
+                    z4_shift = currShift2._2
+
+                    //условия отсутствия подрезания
+                    if (z1_shift >= x1_min)
+                      if (z2_shift >= x2_min)
+                        if (z3_shift >= x3_min)
+                          if (z4_shift >= x4_min) {
+                            shifts = List(z1_shift, z2_shift, z3_shift, z4_shift)
+                            betas = List(beta1, beta2)
+                            //точность передаточного отношения с учетом смещений
+                            if (wheelCalculator.uCheck(wheelNumbers, shifts, betas,
+                              targetU, accuracyU)) {
+                              //println(s"\tz1_shift: ${z1_shift}, z2_shift: ${z2_shift},z3_shift: ${z3_shift}, z4_shift: ${z4_shift}")
+                              if (wheelCalculator.accurateAlignment(wheelNumbers,
+                                shifts, List(beta1, beta2), modules, accuracyAw)) {
+                                to_ret.addOne(ShiftsBetas(shifts, betas))
+                                //if (to_ret.length >= 8) successfulVarFound = true
+                              }
+                            }
+                          }
                   }
                 }
+              }
+            }
+            find(xs.tail)
+          }
         }
-      }
-    })
+        println(s"current beta size: ${beta2List.length}")
+        find(beta2List)
+      case 3 =>
+        val beta2List = Range(0, 1).map(_.toRadians.toDouble).toList
+
+        @scala.annotation.tailrec
+        def find(xs: List[Double]): Unit = {
+          if (xs.isEmpty) ()
+          else {
+            val beta2 = xs.head
+            val cbeta2 = math.cos(beta2)
+            //сначала нужно определить по точному решению предположительные углы зацеплений и косозуб
+            var calpha1 = calculateAlpha1(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
+            if (calpha1 > 1) calpha1 = math.cos(25.toRadians)
+            var cbeta1 = cbeta2
+            if (cbeta1 >= 1) cbeta1 = 1
+            var calpha2 = calculateAlpha2(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
+            if (calpha2 > 1) calpha2 = math.cos(25.toRadians)
+            //тепербь надо проверить что угол лежит в допустимых пределах
+            var beta1 = (math.acos(cbeta1))
+            val degreed_beta1 = beta1.toDegrees
+            //val beta2 = (math.acos(cbeta2))
+            //проверяем бету первого колеса
+            if (degreed_beta1 != 0) {
+              if (degreed_beta1 < 7) {
+                if (degreed_beta1 < 7 / 2.0) {
+                  cbeta1 = 1
+                  beta1 = 0
+                } else {
+                  beta1 = 7.toRadians
+                  cbeta1 = math.cos(beta1)
+                }
+              }
+              else if (degreed_beta1 > 25) {
+                cbeta1 = math.cos(math.toRadians(25))
+                beta1 = (math.acos(cbeta1))
+              }
+            }
+            var alpha1 = math.acos(calpha1)
+            var alpha2 = math.acos(calpha2)
+            //проверка углов зайеплений уже сложнее, так как надо сначала находить результирующее смещение
+            var shift1 = calculateOverallShift(alpha1, wheelCalculator.alpha_t(ChangeableParameters.ALF, beta1.toFloat), z_summ(0))
+            /*if (math.abs(shift1) > 2) {
+              if (shift1 < 0) {
+                shift1 = -2
+              }
+              else shift1 = 2
+            }*/
+            val firstShiftIterator = new ShiftBuilder(shift1, wheelCalculator.getInners.slice(0, 2))
+            //TODO здесь стоит заглушка на нулевые смещения, относится с осторожностью
+            val firstShiftList = List((0.0, 0.0)) //firstShiftIterator.buildShiftList()
+            var firstCounter = 0
+
+            var shift2 = calculateOverallShift(alpha2, wheelCalculator.alpha_t(ChangeableParameters.ALF, beta2.toFloat), z_summ(1))
+            /*if (math.abs(shift2) > 2) {
+              if (shift2 < 0) shift2 = -2
+              else shift2 = 2
+            }*/
+            println(s"shift1: ${shift1}, beta1: ${beta1.toDegrees}. shift2: ${shift2} ")
+
+            var secondShiftIterator = new ShiftBuilder(shift2, wheelCalculator.getInners.slice(2, 4))
+            val secondShiftList = List((0.0, 0.0)) //secondShiftIterator.buildShiftList()
+            var secondCounter = 0
+
+            //нужно пересчитать новые значения передаточного отношения и соседства и определить их погрешность
+            //если все херово то пересчитываем пока не закончатся варики в итераторе
+            var successfulVarFound = false
+            var currShift1 = (0.0, 0.0)
+            var currShift2 = (0.0, 0.0)
+            var z1_shift = 0.0
+            val x1_min = wheelCalculator.xmin(wheelNumbers(0), beta1, alpha_t_ = wheelCalculator.alpha_t(beta = beta1.toFloat))
+            var z2_shift = 0.0
+            val x2_min = wheelCalculator.xmin(wheelNumbers(1), beta1, alpha_t_ = wheelCalculator.alpha_t(beta = beta1.toFloat))
+            var z3_shift = 0.0
+            val x3_min = 0.0
+            var shifts: List[Double] = null
+            var betas: List[Double] = null
+            //TODO lol онздесь заходит в бесконечный цикл потому что hasnext не меняется
+            while (firstCounter < firstShiftList.length && !successfulVarFound) {
+              currShift1 = firstShiftList(firstCounter)
+              firstCounter += 1
+              //TODO вот здесь логика садится, так как итератор второй не следит за отчетом при внутреннем колесе
+              secondCounter = 0
+              while (secondCounter < secondShiftList.length && !successfulVarFound) {
+                //println(s"1 : ${firstShiftIterator.counter}\t2 : ${secondShiftIterator.counter}")
+                //получили смещения
+                currShift2 = secondShiftList(secondCounter)
+                secondCounter += 1
+                //проверка на подрезание
+                z1_shift = currShift1._1
+                z2_shift = currShift1._2 + currShift2._1
+                z3_shift = currShift2._2
+
+                //условия отсутствия подрезания
+                if (z1_shift >= x1_min)
+                  if (z2_shift >= x2_min)
+                    if (z3_shift >= x3_min) {
+                      shifts = List(z1_shift, z2_shift, z3_shift)
+                      betas = List(beta1, beta2)
+                      //точность передаточного отношения с учетом смещений
+                      if (wheelCalculator.uCheck(wheelNumbers, shifts, betas,
+                        targetU, accuracyU)) {
+                        println(s"\tz1_shift: ${z1_shift}, z2_shift: ${z2_shift},z3_shift: ${z3_shift}")
+                        if (wheelCalculator.accurateAlignment(wheelNumbers,
+                          shifts, List(beta1), modules, accuracyAw)) {
+                          to_ret.addOne(ShiftsBetas(shifts, betas))
+                          //if (to_ret.length >= 8) successfulVarFound = true
+                        }
+                      }
+                    }
+              }
+            }
+            find(xs.tail)
+          }
+        }
+
+        find(beta2List)
+    }
+
+
     if (to_ret.isEmpty) {
       return ListBuffer.empty
     }
@@ -505,121 +736,6 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
     ListBuffer(u_good, alignment_good)
   }
 
-  /*def compensateXBetAlpha(wheelNumbers: List[Int], modules: List[Double],
-                          aw: Double, z_summ: List[Int], cbeta2: Double, dirU: Double, targetU: Double
-                          , accuracyU: Double, inner: List[Boolean], accuracyAw: Double = 0.0005):
-  ListBuffer[this.ShiftsBetas] = {
-    //сначала нужно определить по точному решению предположительные углы зацеплений и косозуб
-    var calpha1 = calculateAlpha1(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
-    if (calpha1 > 1) calpha1 = math.cos(25.toRadians)
-    var cbeta1 = calculateBeta1(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
-    if (cbeta1 >= 1) cbeta1 = 1
-    var calpha2 = calculateAlpha2(wheelNumbers, z_summ, math.cos(ChangeableParameters.ALF), cbeta2, modules, dirU, aw)
-    if (calpha2 > 1) calpha2 = math.cos(25.toRadians)
-    //тепербь надо проверить что угол лежит в допустимых пределах
-    var beta1 = (math.acos(cbeta1))
-    val degreed_beta1 = beta1.toDegrees
-    val beta2 = (math.acos(cbeta2))
-    //проверяем бету первого колеса
-    if (degreed_beta1 != 0) {
-      if (degreed_beta1 < 7) {
-        cbeta1 = 1
-        beta1 = 0
-      }
-      else if (degreed_beta1 > 25) {
-        cbeta1 = math.cos(math.toRadians(25))
-        beta1 = (math.acos(cbeta1))
-      }
-    }
-    var alpha1 = math.acos(calpha1)
-    var alpha2 = math.acos(calpha2)
-    //проверка углов зайеплений уже сложнее, так как надо сначала находить результирующее смещение
-    //TODO здесь какое то сумасшедшее значение выходит
-    var shift1 = calculateOverallShift(alpha1, ChangeableParameters.ALF, z_summ(0))
-    /*if (math.abs(shift1) > 2) {
-      if (shift1 < 0) {
-        shift1 = -2
-      }
-      else shift1 = 2
-    }*/
-
-    val firstShiftIterator = new ShiftIteratorSimple(shift1, inner(0))
-
-    var shift2 = calculateOverallShift(alpha2, (ChangeableParameters.ALF), z_summ(1))
-    /*if (math.abs(shift2) > 2) {
-      if (shift2 < 0) shift2 = -2
-      else shift2 = 2
-    }*/
-
-    var secondShiftIterator = new ShiftIteratorSimple(shift2, inner(1))
-
-    //нужно пересчитать новые значения передаточного отношения и соседства и определить их погрешность
-    //если все херово то пересчитываем пока не закончатся варики в итераторе
-    var successfulVarFound = false
-    var currShift1 = (0.0, 0.0)
-    var currShift2 = (0.0, 0.0)
-    var z1_shift = 0.0
-    val x1_min = wheelCalculator.xmin(wheelNumbers(0), beta1, alpha_t_ = wheelCalculator.alpha_t(beta = beta1.toFloat))
-    var z2_shift = 0.0
-    val x2_min = wheelCalculator.xmin(wheelNumbers(1), beta1, alpha_t_ = wheelCalculator.alpha_t(beta = beta1.toFloat))
-    var z3_shift = 0.0
-    val x3_min = wheelCalculator.xmin(wheelNumbers(2), beta2, alpha_t_ = wheelCalculator.alpha_t(beta = beta2.toFloat))
-    var z4_shift = 0.0
-    val x4_min = 0 //колесо внутреннее - подрезание минимальное это ноль
-    var to_ret: ListBuffer[ShiftsBetas] = ListBuffer.empty[ShiftsBetas]
-    var currentValuesLeft = firstShiftIterator.maxTries - firstShiftIterator.tryCounter
-    var shifts: List[Double] = null
-    var betas: List[Double] = null
-    var innerLoopCounter = 0
-    //TODO lol онздесь заходит в бесконечный цикл потому что hasnext не меняется
-    while (firstShiftIterator.hasNext && !successfulVarFound && currentValuesLeft > 0) {
-      currentValuesLeft -= 1
-      secondShiftIterator = new ShiftIteratorSimple(shift2, true)
-      currShift1 = firstShiftIterator.next()
-      //TODO вот здесь логика садится, так как итератор второй не следит за отчетом при внутреннем колесе
-      innerLoopCounter = 0
-      while (secondShiftIterator.hasNext && !successfulVarFound && innerLoopCounter < 15) {
-        innerLoopCounter += 1
-        //println(s"1 : ${firstShiftIterator.counter}\t2 : ${secondShiftIterator.counter}")
-        //получили смещения
-        currShift2 = secondShiftIterator.next()
-        //проверка на подрезание
-        z1_shift = currShift1._1
-        z2_shift = currShift1._2
-        z3_shift = currShift2._1
-        z4_shift = currShift2._2
-
-        //условия отсутствия подрезания
-        if (z1_shift >= x1_min)
-          if (z2_shift >= x2_min)
-            if (z3_shift >= x3_min)
-              if (z4_shift >= x4_min) {
-                shifts = List(z1_shift, z2_shift, z3_shift, z4_shift)
-                betas = List(beta1, beta2)
-                //точность передаточного отношения с учетом смещений
-                if (wheelCalculator.uCheck(wheelNumbers, shifts, betas,
-                  targetU, accuracyU)) {
-                  if (wheelCalculator.accurateAlignment(wheelNumbers,
-                    shifts, List(beta1, beta2), modules, accuracyAw)) {
-                    to_ret.addOne(ShiftsBetas(shifts, betas))
-                    //if (to_ret.length >= 8) successfulVarFound = true
-                  }
-                }
-              }
-      }
-    }
-    if (to_ret.isEmpty) {
-      return ListBuffer.empty
-    }
-    val u_good = to_ret.minBy(betas => {
-      wheelCalculator.uCheckMeaning(wheelNumbers, betas.shifts, betas.betas, targetU, accuracyU)
-    })
-    val alignment_good = to_ret.minBy(betas => {
-      wheelCalculator.accurateAlignmentPercent(wheelNumbers, betas.shifts, betas.betas, modules)
-    })
-    ListBuffer(u_good, alignment_good)
-  }*/
-
   /**
    * только для двухрядных механизмов
    *
@@ -628,18 +744,34 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
    */
   def getMaxDOfMech(mechanism: Mechanism): Double = {
     val gears = mechanism.getGears
-    val z = gears.map(_.holder.z)
-    val x = gears.map(_.holder.x)
-    val z_sum1 = wheelCalculator.z_sum1(z)
-    val z_sum2 = wheelCalculator.z_sum2(z)
-    val x_sum1 = wheelCalculator.totalShift1(x.map(_.toDouble))
-    val x_sum2 = wheelCalculator.totalShift2(x.map(_.toDouble))
-    val beta1 = gears(0).holder.beta
-    val beta2 = gears(3).holder.beta
-    val m1 = gears(0).holder.m
-    val m2 = gears(3).holder.m
-    //сортируем по максимальному диаметру механизма
-    wheelCalculator.findMaxDiameter(mechanism.getGears.map(_.holder.z), mechanism.getGears.map(_.holder.x),
-      List(z_sum1, z_sum2), List(x_sum1, x_sum2), List(beta1, beta2), List(m1, m2), wheelCalculator.getInners, wheelCalculator.getTargetRights)
+    gears.length match {
+      case 4 =>
+        val z = gears.map(_.holder.z)
+        val x = gears.map(_.holder.x)
+        val z_sum1 = wheelCalculator.z_sum1(z)
+        val z_sum2 = wheelCalculator.z_sum2(z)
+        val x_sum1 = wheelCalculator.totalShift1(x.map(_.toDouble))
+        val x_sum2 = wheelCalculator.totalShift2(x.map(_.toDouble))
+        val beta1 = gears(0).holder.beta
+        val beta2 = gears(3).holder.beta
+        val m1 = gears(0).holder.m
+        val m2 = gears(2).holder.m
+        //сортируем по максимальному диаметру механизма
+        wheelCalculator.findMaxDiameter(mechanism.getGears.map(_.holder.z), mechanism.getGears.map(_.holder.x),
+          List(z_sum1, z_sum2), List(x_sum1, x_sum2), List(beta1, beta2), List(m1, m2), wheelCalculator.getShortInners, wheelCalculator.getTargetRights)
+      case 3 =>
+        val z = gears.map(_.holder.z)
+        val x = gears.map(_.holder.x)
+        val z_sum1 = wheelCalculator.z_sum1(z)
+        val z_sum2 = wheelCalculator.z_sum2(z)
+        val x_sum1 = wheelCalculator.totalShift1(x.map(_.toDouble))
+        val x_sum2 = wheelCalculator.totalShift2(x.map(_.toDouble))
+        val beta1 = gears(0).holder.beta
+        val m1 = gears(0).holder.m
+        //сортируем по максимальному диаметру механизма
+        wheelCalculator.findMaxDiameter(mechanism.getGears.map(_.holder.z), mechanism.getGears.map(_.holder.x),
+          List(z_sum1, z_sum2), List(x_sum1, x_sum2), List(beta1), List(m1), wheelCalculator.getShortInners, wheelCalculator.getTargetRights)
+
+    }
   }
 }

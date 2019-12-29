@@ -152,9 +152,15 @@ class KinematicForwardViewController(val kinematicForwardView : KinematicForward
     setNoInterference(results(ConditionTypes.NO_INTERFERENCE))
   }
 
+
+
   override def getNode: Node = kinematicForwardView.resultPane
 
   override def showLoading(boolean: Boolean): Unit = if (boolean) setAll("Результат вычисляется") else setAll("Результат получен")
+
+  override def clearResults(): Unit = {
+    setAll("Расчет ещё не проведен")
+  }
 }
 
 

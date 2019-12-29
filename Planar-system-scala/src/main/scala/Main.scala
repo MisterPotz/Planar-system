@@ -17,9 +17,9 @@ object Main extends App {
   gears(2).holder.z = 20
   gears(3).holder.z = 100
   mech.getStorage.k = 3
-  println(s"Gear ratio: ${mech.methods.getGearRatio}\nAlignment: ${mech.methods.alignmentCondition}")
-  println(s"Neighborhood: ${mech.methods.neighborhoodCondition}\nAssembly: ${mech.methods.assemblyCondition}")
-  println(s"Pruning: ${mech.methods.noPruningOnAll}\nInterference: ${mech.methods.interferenceCondition(1)}")
+  //println(s"Gear ratio: ${mech.methods.getGearRatio}\nAlignment: ${mech.methods.alignmentCondition}")
+  //println(s"Neighborhood: ${mech.methods.neighborhoodCondition}\nAssembly: ${mech.methods.assemblyCondition}")
+  //println(s"Pruning: ${mech.methods.noPruningOnAll}\nInterference: ${mech.methods.interferenceCondition(1)}")
   println(s"Satellites amount: ${mech.getStorage.k}")
 
 }

@@ -11,6 +11,7 @@ trait AbstractResultViewControllerFactory {
 trait AbstractResultViewController extends Observer {
   def getNode : Node
   def showLoading(boolean: Boolean)
+  def clearResults() : Unit
  // def tellNoCalculations(boolean: Boolean)
 }
 

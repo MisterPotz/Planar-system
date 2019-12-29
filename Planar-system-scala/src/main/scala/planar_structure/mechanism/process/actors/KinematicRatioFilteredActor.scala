@@ -21,10 +21,10 @@ class KinematicRatioFilteredActor(val storageActor: ActorRef) extends Actor{
     case a:  Mechanism => checkLeftConditions(a)
   }
   def checkLeftConditions(mechanism: Mechanism) : Unit = {
-    if (mechanism.methods.assemblyCondition && mechanism.methods.neighborhoodCondition
+    /*if (mechanism.methods.assemblyCondition && mechanism.methods.neighborhoodCondition
       && mechanism.methods.noPruningOnAll && mechanism.methods.interferenceAll) {
       storageActor ! KinematicSynthesisStorageActor.Write(mechanism)
-    }
+    }*/
   }
   /*def filter4(w1: AdditionalWheelParams, w2: AdditionalWheelParams ,
               w3: AdditionalWheelParams,w4: AdditionalWheelParams, commonParams: CommonParams): Unit = {

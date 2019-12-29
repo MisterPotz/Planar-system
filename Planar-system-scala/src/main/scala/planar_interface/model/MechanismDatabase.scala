@@ -76,7 +76,7 @@ class MechanismDatabase(val defaultFactory : MechanismFactory = Mechanism2KH) ex
     currentMode match {
       case ProcessType.KINEMATIC_ANALYSIS_FORWARD =>
         //getting result, this is a fast operation so we don't do threading
-        val res = mechanism.methods.fullConditionCheck
+        //val res = mechanism.methods.fullConditionCheck
         //notifying everyone that we have processed the request
         //notifyObservers(CalculatedKinematicForward(res))
       case ProcessType.KINEMATIC_SYNTHESIS =>

@@ -63,15 +63,16 @@ object A_AH_B extends A_CLASSIFIER {
   override val PICTURE_PATH: InputStream = classOf[MECHANISM_FULL_CLASSIFIER].getResourceAsStream(PICTURE_ROOT + "aahb.jpg")
   override val stringClassificator = getClassificatorString("aahb")
   override val wheelCalculator: WheelCalculator = A_AH_B_WheelCalculator
+  override val fullSynthesizer: FullSynthesizer = A_AH_B_FullSynthesizer
 }
 
 object A_AB_H extends A_CLASSIFIER {
   override def U_direct_H(targetU: Float): Float = targetU
 
-  override val PICTURE_PATH: InputStream = classOf[MECHANISM_FULL_CLASSIFIER].getResourceAsStream(PICTURE_ROOT + "aaaabh.jpg")
+  override val PICTURE_PATH: InputStream = classOf[MECHANISM_FULL_CLASSIFIER].getResourceAsStream(PICTURE_ROOT + "aabh.jpg")
   override val stringClassificator = getClassificatorString("aabh")
   override val wheelCalculator: WheelCalculator = A_AB_H_WheelCalculator
-
+  override val fullSynthesizer: FullSynthesizer = A_AB_H_FullSynthesizer
 }
 
 object A_HB_A extends A_CLASSIFIER {
@@ -80,6 +81,7 @@ object A_HB_A extends A_CLASSIFIER {
   override val PICTURE_PATH: InputStream = classOf[MECHANISM_FULL_CLASSIFIER].getResourceAsStream(PICTURE_ROOT + "ahba.jpg")
   override val stringClassificator = getClassificatorString("ahba")
   override val wheelCalculator: WheelCalculator = A_HB_A_WheelCalculator
+  override val fullSynthesizer: FullSynthesizer = A_HB_A_FullSynthesizer
 
 }
 
@@ -149,9 +151,9 @@ object CommonMechanismCharacteristics {
                           )
 
   val COMMON_MECHANISMS = Array(
-    //CommonMechanism((3, 9), (0.97f, 0.99f), _2K_H, A_AH_B),
-    //CommonMechanism((1.13f, 1.5f), (0.99f, 0.996f), _2K_H, A_HB_A),
-    //CommonMechanism((-2, -8), (0.96f, 0.985f), _2K_H, A_AB_H),
+    CommonMechanism((3, 9), (0.97f, 0.99f), _2K_H, A_AH_B),
+    CommonMechanism((1.13f, 1.5f), (0.99f, 0.996f), _2K_H, A_HB_A),
+    CommonMechanism((-2, -8), (0.96f, 0.985f), _2K_H, A_AB_H),
     CommonMechanism((7, 16), (0.97f, 0.99f), _2K_H, B_AH_B),
     CommonMechanism((8, 300), (0.75f, 0.8f), _2K_H, C_HB_E)//,
     //CommonMechanism((25, 300), (0.4f, 0.9f), _2K_H, C_HB_E, allowedSatelliteAmount = 1)

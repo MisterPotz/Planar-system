@@ -1,6 +1,7 @@
 package planar_structure.mechanism.common_mechanisms
 
 import planar_structure.mechanism.common_mechanisms.Common.WheelCalculator
+import planar_structure.mechanism.types.{CarrierInput, CarrierPosition, InternalInternal, MechanismType}
 import planar_structure.subroutines.PolyTools
 
 import scala.collection.mutable.ListBuffer
@@ -44,12 +45,12 @@ object C_HB_E_WheelCalculator extends WheelCalculator {
 
     def poly_fit_ie_min(u: Double): (Double) = PolyTools.calculate(List(-1.345e-09, 7.364e-07, -9.345e-05, 1.007), u)
 
-    val directU = U_direct_H(targetU.toFloat)
-    val if_max = poly_fit_if_max(targetU) + poly_fit_if_min(targetU) * 0.1
-    val if_min = poly_fit_if_min(targetU) - poly_fit_if_min(targetU) * 0.1
-    val ie_max = poly_fit_ie_max(targetU) + poly_fit_ie_min(targetU) * 0.1
-    val ie_min = poly_fit_ie_min(targetU) - poly_fit_ie_min(targetU) * 0.1
-    val if_ = linspace(if_min, if_max, 15)
+    val directU = math.abs(U_direct_H(targetU.toFloat))
+    val if_max = poly_fit_if_max(targetU) + poly_fit_if_min(targetU) * 0.2 //были результаты и при 0.1
+    val if_min = poly_fit_if_min(targetU) - poly_fit_if_min(targetU) * 0.2
+    val ie_max = poly_fit_ie_max(targetU) + poly_fit_ie_min(targetU) * 0.2
+    val ie_min = poly_fit_ie_min(targetU) - poly_fit_ie_min(targetU) * 0.2
+    val if_ = linspace(if_min, if_max, 20)
     val if_ie = if_.map(f => (f, directU * f)).filter(fe => fe._2 >= ie_min && fe._2 <= ie_max)
     val zb = arange(50, 290, 1).filter(some => canHaveSatellites(some.toInt, satellites)).map(_.toInt)
     val zg = arange(15, 230, 1).map(_.toInt)
@@ -97,4 +98,7 @@ object C_HB_E_WheelCalculator extends WheelCalculator {
   override def getInners: List[Boolean] = List(true, false, false, true)
 
   override def getTargetRights: List[Boolean] = List(false, true)
+
+  override val mechanismType: MechanismType = InternalInternal
+  override val carrierPosition: CarrierPosition = CarrierInput
 }

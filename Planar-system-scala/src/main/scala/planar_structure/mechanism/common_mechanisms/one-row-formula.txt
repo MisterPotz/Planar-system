@@ -1,0 +1,48 @@
+'[{cosbeta_1: m_1*(2*U_dir*a_w*z_1*z_2*z_sum1 + 2*U_dir*a_w*z_1*z_2*z_sum2 +
+2*U_dir*m_1*z_1*z_2*z_sum1*z_sum2 - 2*a_w*z_1*z_2*z_sum1 - 2*a_w*z_1*z_2*z_sum2 - m_1*z_1*z_3*z_sum1*z_sum2
+- m_1*z_2**2*z_sum1*z_sum2 + sqrt(4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1**2 - 8*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 +
+4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum2**2 - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum1**2 + 16*U_dir*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 -
+8*U_dir*a_w**2*z_1**2*z_2**2*z_sum2**2 - 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 + 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2 +
+4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2 - 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2 + 4*U_dir*m_1**2*z_1**2*z_2**2*z_sum1**2*z_sum2**2 -
+4*U_dir*m_1**2*z_1**2*z_2*z_3*z_sum1**2*z_sum2**2 - 4*U_dir*m_1**2*z_1*z_2**3*z_sum1**2*z_sum2**2 + 4*U_dir*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2
++ 4*a_w**2*z_1**2*z_2**2*z_sum1**2 - 8*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 + 4*a_w**2*z_1**2*z_2**2*z_sum2**2 +
+4*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 - 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2 - 4*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2
++ 4*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2 + m_1**2*z_1**2*z_3**2*z_sum1**2*z_sum2**2 - 2*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2
++ m_1**2*z_2**4*z_sum1**2*z_sum2**2))/(2*(4*U_dir*a_w**2*z_1*z_2 + 2*U_dir*a_w*m_1*z_1*z_2*z_sum1 + 2*U_dir*a_w*m_1*z_1*z_2*z_sum2
++ U_dir*m_1**2*z_1*z_2*z_sum1*z_sum2 - 4*a_w**2*z_1*z_2 - 2*a_w*m_1*z_1*z_3*z_sum2 - 2*a_w*m_1*z_2**2*z_sum1 - m_1**2*z_2*z_3*z_sum1*z_sum2)),
+ cosalpha_w2: cosalpha*(2*U_dir*a_w*z_1*z_2*z_sum1 + 2*U_dir*a_w*z_1*z_2*z_sum2 + 2*U_dir*m_1*z_1*z_2*z_sum1*z_sum2
+ - 2*a_w*z_1*z_2*z_sum1 - 2*a_w*z_1*z_2*z_sum2 - m_1*z_1*z_3*z_sum1*z_sum2 - m_1*z_2**2*z_sum1*z_sum2 - sqrt(4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1**2
+  - 8*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 + 4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum2**2 - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum1**2
+  + 16*U_dir*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum2**2 - 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2
+  + 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2 + 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2 - 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2
+  + 4*U_dir*m_1**2*z_1**2*z_2**2*z_sum1**2*z_sum2**2 - 4*U_dir*m_1**2*z_1**2*z_2*z_3*z_sum1**2*z_sum2**2 - 4*U_dir*m_1**2*z_1*z_2**3*z_sum1**2*z_sum2**2 + 4*U_dir*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2
+  + 4*a_w**2*z_1**2*z_2**2*z_sum1**2 - 8*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 + 4*a_w**2*z_1**2*z_2**2*z_sum2**2 + 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 - 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2 - 4*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2
+  + 4*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2 + m_1**2*z_1**2*z_3**2*z_sum1**2*z_sum2**2 - 2*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2 + m_1**2*z_2**4*z_sum1**2*z_sum2**2))/(4*a_w*z_1*z_2*z_sum1*(U_dir - 1)),
+  cosalpha_w1: cosalpha*(2*U_dir*a_w*z_1*z_2*z_sum1
+  + 2*U_dir*a_w*z_1*z_2*z_sum2 + 2*U_dir*m_1*z_1*z_2*z_sum1*z_sum2 - 2*a_w*z_1*z_2*z_sum1 - 2*a_w*z_1*z_2*z_sum2 - m_1*z_1*z_3*z_sum1*z_sum2 - m_1*z_2**2*z_sum1*z_sum2 - sqrt(4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1**2 - 8*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2
+   + 4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum2**2 - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum1**2 + 16*U_dir*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum2**2 - 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 + 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2
+   + 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2 - 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2 + 4*U_dir*m_1**2*z_1**2*z_2**2*z_sum1**2*z_sum2**2 - 4*U_dir*m_1**2*z_1**2*z_2*z_3*z_sum1**2*z_sum2**2 - 4*U_dir*m_1**2*z_1*z_2**3*z_sum1**2*z_sum2**2 + 4*U_dir*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2
+    + 4*a_w**2*z_1**2*z_2**2*z_sum1**2 - 8*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 + 4*a_w**2*z_1**2*z_2**2*z_sum2**2 + 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 - 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2 - 4*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2 + 4*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2
+    + m_1**2*z_1**2*z_3**2*z_sum1**2*z_sum2**2 - 2*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2 + m_1**2*z_2**4*z_sum1**2*z_sum2**2))/(4*a_w*z_1*z_2*z_sum2*(U_dir - 1))},
+    {cosbeta_1: m_1*(2*U_dir*a_w*z_1*z_2*z_sum1 + 2*U_dir*a_w*z_1*z_2*z_sum2 + 2*U_dir*m_1*z_1*z_2*z_sum1*z_sum2 - 2*a_w*z_1*z_2*z_sum1 - 2*a_w*z_1*z_2*z_sum2 - m_1*z_1*z_3*z_sum1*z_sum2 - m_1*z_2**2*z_sum1*z_sum2
+    - sqrt(4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1**2 - 8*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 + 4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum2**2 - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum1**2
+    + 16*U_dir*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum2**2 - 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 + 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2
+    + 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2 - 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2 + 4*U_dir*m_1**2*z_1**2*z_2**2*z_sum1**2*z_sum2**2 - 4*U_dir*m_1**2*z_1**2*z_2*z_3*z_sum1**2*z_sum2**2
+    - 4*U_dir*m_1**2*z_1*z_2**3*z_sum1**2*z_sum2**2 + 4*U_dir*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2 + 4*a_w**2*z_1**2*z_2**2*z_sum1**2 - 8*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2
+    + 4*a_w**2*z_1**2*z_2**2*z_sum2**2 + 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 - 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2 - 4*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2 + 4*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2
+     + m_1**2*z_1**2*z_3**2*z_sum1**2*z_sum2**2 - 2*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2 + m_1**2*z_2**4*z_sum1**2*z_sum2**2))/(2*(4*U_dir*a_w**2*z_1*z_2 + 2*U_dir*a_w*m_1*z_1*z_2*z_sum1
+      + 2*U_dir*a_w*m_1*z_1*z_2*z_sum2 + U_dir*m_1**2*z_1*z_2*z_sum1*z_sum2 - 4*a_w**2*z_1*z_2 - 2*a_w*m_1*z_1*z_3*z_sum2 - 2*a_w*m_1*z_2**2*z_sum1 - m_1**2*z_2*z_3*z_sum1*z_sum2)),
+       cosalpha_w2: cosalpha*(2*U_dir*a_w*z_1*z_2*z_sum1 + 2*U_dir*a_w*z_1*z_2*z_sum2 + 2*U_dir*m_1*z_1*z_2*z_sum1*z_sum2 - 2*a_w*z_1*z_2*z_sum1 - 2*a_w*z_1*z_2*z_sum2
+        - m_1*z_1*z_3*z_sum1*z_sum2 - m_1*z_2**2*z_sum1*z_sum2 + sqrt(4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1**2 - 8*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 + 4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum2**2
+         - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum1**2 + 16*U_dir*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum2**2 - 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 + 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2
+         + 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2 - 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2 + 4*U_dir*m_1**2*z_1**2*z_2**2*z_sum1**2*z_sum2**2 - 4*U_dir*m_1**2*z_1**2*z_2*z_3*z_sum1**2*z_sum2**2
+         - 4*U_dir*m_1**2*z_1*z_2**3*z_sum1**2*z_sum2**2 + 4*U_dir*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2 + 4*a_w**2*z_1**2*z_2**2*z_sum1**2
+          - 8*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 + 4*a_w**2*z_1**2*z_2**2*z_sum2**2 + 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 - 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2 - 4*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2
+          + 4*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2 + m_1**2*z_1**2*z_3**2*z_sum1**2*z_sum2**2 - 2*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2 + m_1**2*z_2**4*z_sum1**2*z_sum2**2))/(4*a_w*z_1*z_2*z_sum1*(U_dir - 1)),
+          cosalpha_w1: cosalpha*(2*U_dir*a_w*z_1*z_2*z_sum1 + 2*U_dir*a_w*z_1*z_2*z_sum2 + 2*U_dir*m_1*z_1*z_2*z_sum1*z_sum2 - 2*a_w*z_1*z_2*z_sum1 - 2*a_w*z_1*z_2*z_sum2 - m_1*z_1*z_3*z_sum1*z_sum2
+          - m_1*z_2**2*z_sum1*z_sum2 + sqrt(4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1**2 - 8*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 + 4*U_dir**2*a_w**2*z_1**2*z_2**2*z_sum2**2 - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum1**2
+           + 16*U_dir*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 - 8*U_dir*a_w**2*z_1**2*z_2**2*z_sum2**2 - 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 + 4*U_dir*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2
+           + 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2 - 4*U_dir*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2 + 4*U_dir*m_1**2*z_1**2*z_2**2*z_sum1**2*z_sum2**2 - 4*U_dir*m_1**2*z_1**2*z_2*z_3*z_sum1**2*z_sum2**2
+           - 4*U_dir*m_1**2*z_1*z_2**3*z_sum1**2*z_sum2**2 + 4*U_dir*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2 + 4*a_w**2*z_1**2*z_2**2*z_sum1**2 - 8*a_w**2*z_1**2*z_2**2*z_sum1*z_sum2 + 4*a_w**2*z_1**2*z_2**2*z_sum2**2
+           + 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1**2*z_sum2 - 4*a_w*m_1*z_1**2*z_2*z_3*z_sum1*z_sum2**2 - 4*a_w*m_1*z_1*z_2**3*z_sum1**2*z_sum2 + 4*a_w*m_1*z_1*z_2**3*z_sum1*z_sum2**2 + m_1**2*z_1**2*z_3**2*z_sum1**2*z_sum2**2
+           - 2*m_1**2*z_1*z_2**2*z_3*z_sum1**2*z_sum2**2 + m_1**2*z_2**4*z_sum1**2*z_sum2**2))/(4*a_w*z_1*z_2*z_sum2*(U_dir - 1))}]'
