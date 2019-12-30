@@ -3,7 +3,7 @@ package planar_structure.mechanism.mech2kh
 import planar_structure.mechanism.common_mechanisms.Common.WheelCalculator
 import planar_structure.mechanism.common_mechanisms.Constants
 import planar_structure.mechanism.{Mechanism, MechanismFactory}
-import planar_structure.mechanism.types.{CarrierInput, CarrierNeutral, CarrierOutput, CarrierPosition, External1, ExternalExternal, ExternalInternal, Internal1, InternalExternal, InternalInternal, MechanismType}
+import planar_structure.mechanism.types.{CarrierInput, CarrierNeutral, CarrierOutput, CarrierPosition, External1, ExternalExternal, ExternalInternal, InternalInternal, MechanismType}
 import planar_structure.mechanism.mech2kh.concrete_mechanisms._
 import planar_structure.mechanism.process.argument.AdditionalWheelParams
 import planar_structure.mechanism.process.report.{ Tension}
@@ -32,12 +32,8 @@ object Mechanism2KH extends MechanismFactory {
       case "ExternalInternal" => new Mechanism2kh_EI(carrier)
       //-------------------------------
       case "InternalInternal" => new Mechanism2kh_II(carrier)
-      //-----------------------------------
-      case "InternalExternal" => new Mechanism2kh_IE(carrier)
       //--------------------------------
       case "External1" => new Mechanism2kh_E1(carrier)
-      //----------------------
-      case "Internal1" => new Mechanism2kh_I1(carrier)
     }
   }
 
@@ -74,12 +70,9 @@ object Mechanism2KH extends MechanismFactory {
       case ExternalInternal => new Mechanism2kh_EI(carrierPosition)
       //-------------------------------
       case InternalInternal => new Mechanism2kh_II(carrierPosition)
-      //-----------------------------------
-      case InternalExternal => new Mechanism2kh_IE(carrierPosition)
       //--------------------------------
       case External1 => new Mechanism2kh_E1(carrierPosition)
-      //----------------------
-      case Internal1 => new Mechanism2kh_I1(carrierPosition)
+
     }
     setupMech(new_mech, wheelParams, k)
   }

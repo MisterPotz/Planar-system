@@ -82,10 +82,7 @@ object CylindricGearTransmissionsCalculation {
   }
 
 
-
-
-
-  def getWidth(psiBA: Double, aw: Double, wheelType: Int): Double = {
+  def getWidth(psiBA: Double, aw: Double, wheelType: Int = 1): Double = {
     wheelType match {
       case 1 => psiBA * aw
       case 0 => psiBA * aw + 3
@@ -178,7 +175,7 @@ object CylindricGearTransmissionsCalculation {
   def getAW(matrow1: StandardParameters.MaterialTableRow, matrow2: StandardParameters.MaterialTableRow, u: Double,
             T1: Double, n1: Double, n2: Double, satellites: Int, inner: Boolean = false,
             schemeType: Int = 1,
-            beta: Double = 0 ,
+            beta: Double = 0,
             bevel: Boolean = false): Double = {
     //n1 -  на центральном
     val vel = getVelocity(matrow1, matrow2, u, T1, n1)
@@ -195,7 +192,7 @@ object CylindricGearTransmissionsCalculation {
   def getDSigH(matrow1: StandardParameters.MaterialTableRow, matrow2: StandardParameters.MaterialTableRow, u: Double,
                T1: Double, n1: Double, n2: Double, satellites: Int, inner: Boolean = false,
                schemeType: Int = 1,
-               beta: Double = 0 ,
+               beta: Double = 0,
                bevel: Boolean = false): Double = {
     val vel = getVelocity(matrow1, matrow2, u, T1, n1)
     SigH.fullFindDSigH(matrow1, matrow2, n1, n2, vel, if (inner) beta else 0)
@@ -206,8 +203,35 @@ object CylindricGearTransmissionsCalculation {
     StandardParameters.findNearestWithRound(StandardParameters.MS, pre_m)
   }
 
-  def findAWbyM(m: Double, z_summ: Int) : Double = {
+  def findAWbyM(m: Double, z_summ: Int): Double = {
     z_summ * m / 2.toDouble
+  }
+
+  def getKM(beta: Double): Double = {
+    if (beta > 0)
+      2.8e3
+    else
+      3.4e3
+  }
+
+  def findMinM(materialTableRow: StandardParameters.MaterialTableRow,
+               matrow2: StandardParameters.MaterialTableRow,
+               torque: Double,
+               aw: Double,
+               dsigf: Double,
+               u: Double,
+               beta: Double,
+               v: Double,
+               inner: Boolean,
+               wheelType: Int = 1,//колесл = 1, шестерня = 0
+               schemeType: Int = 4
+              ): Double = {
+    val psiBA = getPsiBA(materialTableRow, matrow2)
+    val b2 = getWidth(psiBA, aw, wheelType)
+    val kf = SigF.getKF(materialTableRow, matrow2, beta, psiBA, schemeType, v)
+    val km = getKM(beta)
+    val sign = if (inner) -1 else 1
+    km * kf * torque * (u + sign * 1) / (aw * b2 * dsigf)
   }
 }
 

@@ -5,11 +5,11 @@ trait CodeGenerator {
     def toMechanismType : MechanismType = {
       string match {
         case "ExternalInternal" => ExternalInternal
-        case "InternalExternal" => InternalExternal
+       // case "InternalExternal" => InternalExternal
         case "ExternalExternal" => ExternalExternal
-        case "InternalInternal" => InternalExternal
+       // case "InternalInternal" => InternalExternal
         case "External1" => External1
-        case "Internal1" => Internal1
+        //case "Internal1" => Internal1
       }
     }
     def toCarrierType : CarrierPosition = {

@@ -1,11 +1,11 @@
 package planar_structure.mechanism
 
-import planar_structure.mechanism.common_mechanisms.Common.{MECHANISM_FULL_CLASSIFIER, WheelCalculator}
+import planar_structure.mechanism.common_mechanisms.Common.{MECHANISM_FULL_CLASSIFIER, PartialWheelCalculator, WheelCalculator}
 import planar_structure.mechanism.process.report.Tension
 import planar_structure.mechanism.types.{CarrierPosition, CodeGenerator, MechanismType}
 
 trait MechanismStructure {
-  var calculator: WheelCalculator = null
+  var calculator: PartialWheelCalculator = null
   var allowedTension: Tension = null
   var realTension: Tension = null
 
@@ -36,7 +36,7 @@ abstract class Mechanism extends MechanismStructure {
   //Method objects
   //Characteristic objects
   //val fullClassifier : MECHANISM_FULL_CLASSIFIER
-  val methods: GeometricMethod
+  //val methods: GeometricMethod
   val gearStructureCharacteristic: GearStructureCharacteristic
 
   override def getStorage: GearStructureStore = gearStructureCharacteristic.storage

@@ -63,6 +63,15 @@ class KinematicForwardViewController(val kinematicForwardView : KinematicForward
     setNeighborhood(s)
     setNoInterference(s)
     setNoPruning(s)
+
+    setGearRatio(s)
+    //setNoInterference(check.interferenceAll.toString)
+    setNoPruning(s)
+    setNeighborhood(s)
+    setAssembly(s)
+    setAw2(s)
+    setAw2Acc(s)
+    setMaxSize(s)
   }
 
   def setGearRatio(some : String): Unit = {

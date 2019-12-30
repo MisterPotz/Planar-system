@@ -23,7 +23,7 @@ case object ExternalInternal extends MechanismType{
   override def groupsAmount: Byte = 2
   override def wheelsInGroup: Array[Byte] = Array(2,2)
 }
-case object InternalExternal extends MechanismType{
+/*case object InternalExternal extends MechanismType{
   override def toCode: String = "InternalExternal"
   override lazy val description: String = ResourceBundle.getBundle(descriptionFileName).getString("mech_ie")
 
@@ -32,7 +32,7 @@ case object InternalExternal extends MechanismType{
   override def wheelsInGroup: Array[Byte] = Array(2,2)
 
 
-}
+}*/
 case object ExternalExternal extends MechanismType{
   override def toCode: String = "ExternalExternal"
   override lazy val description: String = ResourceBundle.getBundle(descriptionFileName).getString("mech_ee")
@@ -55,10 +55,10 @@ case object External1 extends MechanismType{ //простейший тип пл�
   override def wheelsAmount: Byte = 3
   override def wheelsInGroup: Array[Byte] = Array(3)
 }
-case object Internal1 extends MechanismType{ //такой же простой только наоборот
+/*case object Internal1 extends MechanismType{ //такой же простой только наоборот
   override def toCode: String = "Internal1"
   override lazy val description: String = ResourceBundle.getBundle(descriptionFileName).getString("mech_i1")
   override def groupsAmount: Byte = 1
   override def wheelsAmount: Byte = 3
   override def wheelsInGroup: Array[Byte] = Array(3)
-}
+}*/

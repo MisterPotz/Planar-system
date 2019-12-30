@@ -2,7 +2,7 @@ package planar_structure.mechanism.mech2kh.static_methods
 
 import java.util.concurrent.ForkJoinPool
 
-import planar_structure.mechanism.types.{External1, ExternalExternal, ExternalInternal, Internal1, InternalExternal, InternalInternal, MechanismType}
+import planar_structure.mechanism.types.{External1, ExternalExternal, ExternalInternal,  InternalInternal, MechanismType}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.parallel.immutable.ParVector
@@ -30,10 +30,8 @@ trait MechanismTypeDependentCalculations {
   }
   def z_last(z_list: List[Short], mechanismType : MechanismType) : Short = {
     mechanismType match {
-      case Internal1 => z3_Internal1(z_list)
       case ExternalExternal => z4_ExternalExternal(z_list)
       case ExternalInternal => z4_ExternalInternal(z_list)
-      case InternalExternal => z4_InternalExternal(z_list)
       case InternalInternal => z4_InternalInternal(z_list)
       case External1 => z3_External1(z_list)
     }
@@ -59,10 +57,8 @@ trait MechanismTypeDependentCalculations {
   }
   def alignment(z_list: List[Short], mechanismType : MechanismType) : Boolean = {
     mechanismType match {
-      case Internal1 => alignment_Internal1(z_list)
       case ExternalExternal => alignment_ExternalExternal(z_list)
       case ExternalInternal => alignment_ExternalInternal(z_list)
-      case InternalExternal => alignment_InternalExternal(z_list)
       case InternalInternal => alignment_InternalInternal(z_list)
       case External1 => alignment_External1(z_list)
     }

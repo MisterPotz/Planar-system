@@ -10,6 +10,13 @@ trait A_WheelCalculator extends WheelCalculator {
   override val mechanismType: MechanismType = External1
   override def sign: Double = -1
 
+  override def findUdH(listBuffer: List[Int]) : Double = {
+    listBuffer.length match {
+      case 4 => sign * listBuffer(1) / listBuffer(0).toFloat * listBuffer(3) / listBuffer(2).toFloat
+      case 3 => sign * listBuffer(2) / listBuffer(0)
+    }
+  }
+
   override def assemblyCheck(wheelNumbers: List[Int], satellites: Int): Boolean = {
     if (canHaveSatellites(wheelNumbers(0), satellites) && canHaveSatellites(wheelNumbers(2), satellites)) true else false
   }
@@ -36,7 +43,7 @@ trait A_WheelCalculator extends WheelCalculator {
           if (unaccurateAlignment(list, 1)) {
             if (assemblyCheck(list, satellites)) {
               if (neighborhoodCheck(list, satellites)) {
-                if (uCheck(list, targetU, accuracyU))
+                if (uCheckBooleanRaw(list, targetU, accuracyU))
                   final_list.addOne(list)
               }
             }
@@ -47,8 +54,6 @@ trait A_WheelCalculator extends WheelCalculator {
     final_list
   }
 
-  override def accurateAlignment(z: IndexedSeq[Int])(alpha_t_ : Double): List[ShiftedWheel] = ???
-
   override def z_sum1(z: List[Int]): Int = z(0) + z(1)
 
   override def totalShift1(x: List[Double]): Double = x(0)+x(1)
@@ -56,8 +61,6 @@ trait A_WheelCalculator extends WheelCalculator {
   override def z_sum2(z: List[Int]): Int = z(2)-z(1)
 
   override def totalShift2(x: List[Double]): Double = x(2)-x(1)
-
-  override def findFinalVariants(initial_variants: ListBuffer[Int]): ListBuffer[WithShiftedWheels] = ???
 
   override def getInners: List[Boolean] = List(false,false,true)
 

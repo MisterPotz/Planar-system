@@ -10,7 +10,7 @@ import planar_structure.subroutines.{ChangeableParameters, CylindricGearTransmis
 
 import scala.collection.mutable.ListBuffer
 
-abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi: MECHANISM_FULL_CLASSIFIER) {
+abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi: MECHANISM_FULL_CLASSIFIER) extends NumPy {
 
   case class ShiftsBetas(shifts: List[Double], betas: List[Double])
 
@@ -29,7 +29,7 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
     val torque_output = mechanismArgs.torqueOutput
     val frequency_input = mechanismArgs.frequencyInput
     //нашли тупые варики
-    val dumb_variants = wheelCalculator.findInitialVariants(u, accuracy, satellites, gear_accuracy = 100)
+    val dumb_variants = wheelCalculator.findInitialVariants(u, accuracy, satellites, gear_accuracy = 50)
     //после получения вариков нужно их сначала отфильтровать на наличие одинаковых вариков, а потом нужно проредить их, чтобы
     //размер не превышал какую-то величину
     val filtered_dumb = lessenTheAmount(wheelCalculator.neutralizeExtraVariants(dumb_variants), 3000)
@@ -54,8 +54,10 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
         true
       } else false
     }).sortBy(mechanism => {
-      //getMaxDOfMech(mechanism)
+      getMaxDOfMech(mechanism)
+/*
       mechanism.calculator.accurateAlignmentPercent(mechanism)
+*/
     })
     val additionalInfoList = sorted_by_maxd.map(mech => {
       val _resU = mech.calculator.findU(mech)
@@ -101,6 +103,7 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
     gearNumbers.length match {
       case 4 =>
         val innerList = innerList_
+        val innerListShort = wheelCalculator.getShortInners
         val t1 = getTorqueOn(0, gearNumbers, torque_output)
         val u1 = gearNumbers(1) / gearNumbers(0).toFloat
         val t2 = getTorqueOn(3, gearNumbers, torque_output)
@@ -110,9 +113,11 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
         val n4 = if (gearNumbers.length == 4) getRelationalFreqOn(3, gearNumbers, frequency_input)
         else getRelationalFreqOn(2, gearNumbers, frequency_input)
         val u2 = if (gearNumbers.length == 4) gearNumbers(3) / gearNumbers(2).toFloat else gearNumbers(2) / gearNumbers(1).toFloat
-        val pre_aw1 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, innerIsRightList(0))
-        val pre_aw2 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, innerIsRightList(1))
+      //  val pre_aw1 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, innerIsRightList(0))
+      //  val pre_aw2 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, innerIsRightList(1))
         //println(s"pre_aw1: $pre_aw1, pre_aw2: $pre_aw2")
+        val v1 = CylindricGearTransmissionsCalculation.getVelocity(material_pairs(0)._1, material_pairs(0)._2,u1,t1,n1,innerListShort(0))
+        val v2 = CylindricGearTransmissionsCalculation.getVelocity(material_pairs(0)._2, material_pairs(0)._2,u2,t2,n4,innerListShort(1))
 
         def z_summ1: Int = wheelCalculator.z_sum1(gearNumbers)
 
@@ -131,6 +136,26 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
         //println(s"aw1: $aw1, aw2: $aw2")
         var m1 = CylindricGearTransmissionsCalculation.findM(maxed_aw, z_summ1)
         var m2 = CylindricGearTransmissionsCalculation.findM(maxed_aw, z_summ2)
+        //TODO вот здесь надо сравить с минимальным модулем
+        val minM1 = CylindricGearTransmissionsCalculation.findMinM(material_pairs(0)._1,material_pairs(0)._2,t1,
+          aw1,dsigf,u1,0,v1,innerListShort(0))
+        val minM2 = CylindricGearTransmissionsCalculation.findMinM(material_pairs(1)._1,material_pairs(1)._2,t2,
+          aw2,dsigf,u2,0,v2,innerListShort(1))
+        m1 = {
+          val assumption = (m1 + minM1) * 0.2
+          if (assumption > 4.5){
+            StandardParameters.findNearestWithRound(StandardParameters.MS, 4)
+          } else if (assumption < m1) StandardParameters.findNearestWithRound(StandardParameters.MS, m1)
+          else StandardParameters.findNearestWithRound(StandardParameters.MS,assumption)
+        } //math.max(m1, minM1)
+        m2 ={
+          val assumption = (m2 + minM2) * 0.2
+          if (assumption > 4.5){
+            StandardParameters.findNearestWithRound(StandardParameters.MS, 4)
+          } else if (assumption < m2) StandardParameters.findNearestWithRound(StandardParameters.MS, m1)
+          else StandardParameters.findNearestWithRound(StandardParameters.MS,assumption)
+        }  //math.max(m2, minM2)
+        println(s"Firstly arranged minimal modules: m1: ${m1} m2:${m2}")
         //нашли новое значение самого большого межосевого расстояния (зочем?)
         val findAWByM = CylindricGearTransmissionsCalculation.findAWbyM _
         val aw1_corr = findAWByM(m1, z_summ1)
@@ -146,20 +171,23 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
           aw_corr, List(z_summ1, z_summ2), cbeta2, math.abs(wheelCalculator.U_direct_H(u.toFloat)),
           u, accuracy, innerList)
         //после того как нашли шифнутые бетки, проверяем что они намутились и записываем если да
-        shiftsBetas.foreach(value =>
+        shiftsBetas.foreach(value => {
           //TODO вот здесь трабла
-          save_buff.addOne(Mechanism2KH(wheelCalculator.mechanismType, wheelCalculator.carrierPosition, List(
+          val mechanism = Mechanism2KH(wheelCalculator.mechanismType, wheelCalculator.carrierPosition, List(
             WheelInfo(z = gearNumbers(0), m = m1.toFloat, x = value.shifts(0).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._1),
             WheelInfo(z = gearNumbers(1), m = m1.toFloat, x = value.shifts(1).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._2),
             WheelInfo(z = gearNumbers(2), m = m2.toFloat, x = value.shifts(2).toFloat, beta = value.betas(1).toFloat, materialTableRow = material_pairs(1)._1),
             WheelInfo(z = gearNumbers(3), m = m2.toFloat, x = value.shifts(3).toFloat, beta = value.betas(1).toFloat, materialTableRow = material_pairs(1)._2)
           ),
             satellites.toByte, wheelCalculator, allowedTension = Tension(sigma_h = dsigh, dsigf),
-            realTension = Tension(sigma_h = dsigh, dsigf)))
-        )
+            realTension = Tension(sigma_h = dsigh, dsigf))
+          mechanism.calculator = wheelCalculator
+          save_buff.addOne(mechanism)
+        })
 
       case 3 =>
         val innerList = innerList_
+        val innerListShort = wheelCalculator.getShortInners
         val t1 = getTorqueOn(0, gearNumbers, torque_output)
         val u1 = gearNumbers(1) / gearNumbers(0).toFloat
         val t2 = getTorqueOn(2, gearNumbers, torque_output)
@@ -168,9 +196,10 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
         val n3 = n2
         val n4 = getRelationalFreqOn(2, gearNumbers, frequency_input)
         val u2 = gearNumbers(2) / gearNumbers(1).toFloat
-        val pre_aw1 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, innerIsRightList(0))
-        val pre_aw2 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, innerIsRightList(1))
-
+        //val pre_aw1 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, innerIsRightList(0))
+        //val pre_aw2 = CylindricGearTransmissionsCalculation.getPreliminaryAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, innerIsRightList(1))
+        val v1 = CylindricGearTransmissionsCalculation.getVelocity(material_pairs(0)._1, material_pairs(0)._2,u1,t1,n1,innerListShort(0))
+        val v2 = CylindricGearTransmissionsCalculation.getVelocity(material_pairs(0)._2, material_pairs(0)._2,u2,t2,n4,innerListShort(1))
         def z_summ1: Int = wheelCalculator.z_sum1(gearNumbers)
 
         def z_summ2: Int = wheelCalculator.z_sum2(gearNumbers)
@@ -178,7 +207,7 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
         val aw1 = CylindricGearTransmissionsCalculation.getAW(material_pairs(0)._1, material_pairs(0)._2, u1, t1, n1, n2, satellites, innerIsRightList(0))
         val aw2 = CylindricGearTransmissionsCalculation.getAW(material_pairs(1)._1, material_pairs(1)._2, u2, t2, n3, n4, satellites, innerIsRightList(1))
         val dsigh1 = CylindricGearTransmissionsCalculation.getDSigH(material_pairs(0)._1, material_pairs(0)._2, u1, t1, n1, n2, satellites, innerIsRightList(0))
-        val dsigh2 = CylindricGearTransmissionsCalculation.getDSigH(material_pairs(1)._1, material_pairs(1)._2, u2, t2, n3, n4, satellites, innerIsRightList(1))
+        val dsigh2 = CylindricGearTransmissionsCalculation.getDSigH(material_pairs(0)._1, material_pairs(0)._2, u2, t2, n3, n4, satellites, innerIsRightList(1))
         val dsigh = math.min(dsigh1, dsigh2)
         val dsigf1 = SigF.getDSigF(material_pairs(0)._1, n1, 1)
         val dsigf2 = SigF.getDSigF(material_pairs(1)._2, n4, 1)
@@ -188,6 +217,24 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
         //println(s"aw1: $aw1, aw2: $aw2")
         var m1 = CylindricGearTransmissionsCalculation.findM(maxed_aw, z_summ1)
         var m2 = CylindricGearTransmissionsCalculation.findM(maxed_aw, z_summ2)
+        val minM1 = CylindricGearTransmissionsCalculation.findMinM(material_pairs(0)._1,material_pairs(0)._2,t1,
+          aw1,dsigf,u1,0,v1,innerListShort(0))
+        val minM2 = CylindricGearTransmissionsCalculation.findMinM(material_pairs(1)._1,material_pairs(1)._2,t2,
+          aw2,dsigf,u2,0,v2,innerListShort(1))
+        m1 = {
+          val assumption = (m1 + minM1) * 0.2
+          if (assumption > 4.5){
+            StandardParameters.findNearestWithRound(StandardParameters.MS, 4)
+          } else if (assumption < m1) StandardParameters.findNearestWithRound(StandardParameters.MS, m1)
+          else StandardParameters.findNearestWithRound(StandardParameters.MS,assumption)
+        } //math.max(m1, minM1)
+        m2 ={
+          val assumption = (m2 + minM2) * 0.2
+          if (assumption > 4.5){
+            StandardParameters.findNearestWithRound(StandardParameters.MS, 4)
+          } else if (assumption < m2) StandardParameters.findNearestWithRound(StandardParameters.MS, m1)
+          else StandardParameters.findNearestWithRound(StandardParameters.MS,assumption)
+        }  //math.max(m2, minM2)
         //нашли новое значение самого большого межосевого расстояния (зочем?)
         val findAWByM = CylindricGearTransmissionsCalculation.findAWbyM _
         /*val aw1_corr = findAWByM(m1, z_summ1)
@@ -205,16 +252,28 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
           aw_corr, List(z_summ1, z_summ2), cbeta2, math.abs(wheelCalculator.U_direct_H(u.toFloat)),
           u, accuracy, innerList)
         //после того как нашли шифнутые бетки, проверяем что они намутились и записываем если да
-        shiftsBetas.foreach(value =>
+        /*shiftsBetas.foreach(value =>
           save_buff.addOne(Mechanism2KH(wheelCalculator.mechanismType, wheelCalculator.carrierPosition, List(
-            WheelInfo(z = gearNumbers(0), m = m1.toFloat, x = value.shifts(0).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._1),
-            WheelInfo(z = gearNumbers(1), m = m1.toFloat, x = value.shifts(1).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._2),
-            WheelInfo(z = gearNumbers(2), m = m2.toFloat, x = value.shifts(2).toFloat, beta = value.betas(1).toFloat, materialTableRow = material_pairs(1)._1) //,
+            WheelInfo(z = gearNumbers(0), m = m.toFloat, x = value.shifts(0).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._1),
+            WheelInfo(z = gearNumbers(1), m = m.toFloat, x = value.shifts(1).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._2),
+            WheelInfo(z = gearNumbers(2), m = m.toFloat, x = value.shifts(2).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._1) //,
             //WheelInfo(z = gearNumbers(3), m = m2.toFloat, x = value.shifts(3).toFloat, beta = value.betas(1).toFloat, materialTableRow = material_pairs(1)._2)
           ),
             satellites.toByte, wheelCalculator, allowedTension = Tension(sigma_h = dsigh, dsigf),
             realTension = Tension(sigma_h = dsigh, dsigf)))
-        )
+        )*/
+        shiftsBetas.foreach(value => {
+          //TODO вот здесь трабла
+          val mechanism = Mechanism2KH(wheelCalculator.mechanismType, wheelCalculator.carrierPosition, List(
+            WheelInfo(z = gearNumbers(0), m = m.toFloat, x = value.shifts(0).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._1),
+            WheelInfo(z = gearNumbers(1), m = m.toFloat, x = value.shifts(1).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._2),
+            WheelInfo(z = gearNumbers(2), m = m.toFloat, x = value.shifts(2).toFloat, beta = value.betas(0).toFloat, materialTableRow = material_pairs(0)._1) //,
+          ),
+            satellites.toByte, wheelCalculator, allowedTension = Tension(sigma_h = dsigh, dsigf),
+            realTension = Tension(sigma_h = dsigh, dsigf))
+          mechanism.calculator = wheelCalculator
+          save_buff.addOne(mechanism)
+        })
     }
 
     //TODO нужно ограничить выдаваемое число элементов,
@@ -324,11 +383,6 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
         val cosalpha = cos(ChangeableParameters.ALF)
         cosalpha * m_2 * z_sum2 / (2 * a_w * cosbeta_2)
     }
-
-  }
-
-  final def inv(angle: Double): Double = {
-    math.tan(angle) - angle
   }
 
   def calculateOverallShift(alpha_w: Double, alpha_t: Double, z_sum: Int): Double = {
@@ -587,7 +641,7 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
                             shifts = List(z1_shift, z2_shift, z3_shift, z4_shift)
                             betas = List(beta1, beta2)
                             //точность передаточного отношения с учетом смещений
-                            if (wheelCalculator.uCheck(wheelNumbers, shifts, betas,
+                            if (wheelCalculator.uCheckBoolean(wheelNumbers, shifts, betas,
                               targetU, accuracyU)) {
                               //println(s"\tz1_shift: ${z1_shift}, z2_shift: ${z2_shift},z3_shift: ${z3_shift}, z4_shift: ${z4_shift}")
                               if (wheelCalculator.accurateAlignment(wheelNumbers,
@@ -704,7 +758,7 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
                       shifts = List(z1_shift, z2_shift, z3_shift)
                       betas = List(beta1, beta2)
                       //точность передаточного отношения с учетом смещений
-                      if (wheelCalculator.uCheck(wheelNumbers, shifts, betas,
+                      if (wheelCalculator.uCheckBoolean(wheelNumbers, shifts, betas,
                         targetU, accuracyU)) {
                         println(s"\tz1_shift: ${z1_shift}, z2_shift: ${z2_shift},z3_shift: ${z3_shift}")
                         if (wheelCalculator.accurateAlignment(wheelNumbers,
@@ -728,7 +782,7 @@ abstract class FullSynthesizer(val wheelCalculator: WheelCalculator, val classi:
       return ListBuffer.empty
     }
     val u_good = to_ret.minBy(betas => {
-      wheelCalculator.uCheckMeaning(wheelNumbers, betas.shifts, betas.betas, targetU, accuracyU)
+      wheelCalculator.uCheckPercent(wheelNumbers, betas.shifts, betas.betas, targetU)
     })
     val alignment_good = to_ret.minBy(betas => {
       wheelCalculator.accurateAlignmentPercent(wheelNumbers, betas.shifts, betas.betas, modules)

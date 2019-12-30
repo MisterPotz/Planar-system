@@ -1,7 +1,7 @@
 package planar_structure.mechanism.mech2kh
 
 import planar_structure.mechanism.{ExternalWheel, GearStructureCharacteristic, GearStructureCharacteristic2KH, GearWheel, GeometricMethod, InternalWheel, Mechanism, WheelHolder}
-import planar_structure.mechanism.types.{External1, Internal1, InternalInternal, _}
+import planar_structure.mechanism.types.{External1, InternalInternal, _}
 
 import scala.collection.mutable.ListBuffer
 
@@ -33,11 +33,11 @@ object GearStructure2KHCharacteristic{
         mechanismType_,
         carrierPosition
       )
-      case InternalExternal => new GearStructure2KH_4Wheels_Characteristic(
+     /* case InternalExternal => new GearStructure2KH_4Wheels_Characteristic(
         new InternalWheel() :: new ExternalWheel(WheelHolder.externalSatellite)
           :: new ExternalWheel(WheelHolder.externalSatellite) :: new  ExternalWheel() :: Nil,
         mechanismType_,
-        carrierPosition)
+        carrierPosition)*/
 
       case ExternalInternal => new GearStructure2KH_4Wheels_Characteristic(
         new ExternalWheel() :: new ExternalWheel(WheelHolder.externalSatellite)
@@ -56,10 +56,10 @@ object GearStructure2KHCharacteristic{
         mechanismType_,
         carrierPosition)
 
-      case Internal1 => new GearStructure2KH_3Wheels_Characteristic(
+      /*case Internal1 => new GearStructure2KH_3Wheels_Characteristic(
           new InternalWheel() :: new ExternalWheel(WheelHolder.externalSatellite)::  new  ExternalWheel() :: Nil,
           mechanismType_,
-          carrierPosition)
+          carrierPosition)*/
     }
   }
 }

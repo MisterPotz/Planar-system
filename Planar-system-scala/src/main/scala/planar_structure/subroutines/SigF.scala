@@ -83,14 +83,45 @@ object SigF {
     getSigFLim(matrow) * getYN(matrow, n, nz) * getYR(matrow) * getYA(matrow) / getSF(matrow)
   }
 
-  def fullFindDSigF(mat1 : StandardParameters.MaterialTableRow, mat2 : StandardParameters.MaterialTableRow, n1 : Double,
-                    n2 : Double, v : Double, nz1 : Int = 1, nz2 : Int = 1) = {
-    val first = getDSigF(mat1, n1,nz1)
+  def fullFindDSigF(mat1: StandardParameters.MaterialTableRow, mat2: StandardParameters.MaterialTableRow, n1: Double,
+                    n2: Double, v: Double, nz1: Int = 1, nz2: Int = 1) = {
+    val first = getDSigF(mat1, n1, nz1)
     val second = getDSigF(mat2, n2, nz2)
     math.min(first, second)
   }
 
-  def getKm(beta : Double) : Double = {
+  def getKm(beta: Double): Double = {
     if (beta == 0) 3.4e3 else 2.8e3
+  }
+
+  def getKFv(materialTableRow: StandardParameters.MaterialTableRow, gradeAccuracy: Double, beta: Double): Double = {
+    //TODO заглушечка
+    1.3
+  }
+
+  def getKFBet(psiBA: Double, schemeType: Int, matrow: StandardParameters.MaterialTableRow): Double = {
+    val khbet0 = CylindricGearTransmissionsCalculation.getKHBet0(psiBA, schemeType, matrow)
+    0.18 + 0.82 * khbet0
+  }
+
+  def getKFAlph(v: Double, matrow1: StandardParameters.MaterialTableRow,
+                matrow2: StandardParameters.MaterialTableRow,
+                accuracyGrade: Int,
+                bevel: Boolean = false): Double = {
+    CylindricGearTransmissionsCalculation.getKHAlph(v, matrow1, matrow2, accuracyGrade, bevel)
+
+  }
+
+  def getKF(materialTableRow: StandardParameters.MaterialTableRow,
+            matrow2: StandardParameters.MaterialTableRow,
+            beta: Double,
+            psiBA: Double, schemeType: Int,
+            v: Double): Double = {
+    val bevel = beta > 0
+    val accuracyGrade = CylindricGearTransmissionsCalculation.getAccuracyGrade(v, bevel).toInt
+    val kfv = getKFv(materialTableRow,accuracyGrade,beta)
+    val kfbet = getKFBet(psiBA, schemeType, materialTableRow)
+    val kfalph = getKFAlph(v, materialTableRow, matrow2, accuracyGrade, bevel)
+    kfv * kfbet * kfalph
   }
 }

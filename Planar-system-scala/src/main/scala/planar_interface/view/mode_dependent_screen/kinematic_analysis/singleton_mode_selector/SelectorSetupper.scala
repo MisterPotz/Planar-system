@@ -7,9 +7,8 @@ import javafx.collections.{FXCollections, ObservableList}
 import javafx.scene.control.{ComboBox, Label}
 import javafx.scene.layout.VBox
 import planar_interface.Observable
-import planar_interface.view.event_types.{CarrierPositionChanged, MechanismChangedEvent, MechanismConfigChanged}
-import planar_interface.view.mode_dependent_screen.kinematic_analysis.singleton_mode_selector.PairLabelCombo
-import planar_structure.mechanism.types.{CarrierInput, CarrierNeutral, CarrierOutput, CarrierPosition, External1, ExternalExternal, ExternalInternal, Internal1, InternalExternal, InternalInternal, MechanismType}
+import planar_interface.view.event_types.{ MechanismConfigChanged}
+import planar_structure.mechanism.types.{CarrierInput, CarrierNeutral, CarrierOutput, CarrierPosition, External1, ExternalExternal, ExternalInternal, InternalInternal, MechanismType}
 
 object SelectorSetupper extends Observable {
    val mechanismTypePair = PairLabelCombo(new Label(ResourceBundle.getBundle("MechanismNames").getString("select_mechanism_type")),
@@ -42,15 +41,13 @@ object SelectorSetupper extends Observable {
       ExternalExternal,
       ExternalInternal,
       InternalInternal,
-      InternalExternal,
-      External1,
-      Internal1)
+      External1)
     setupPairCombo(observable, mechanismTypePair.combo)
     mechanismTypePair.combo
   }
   def setupCarrier() : ComboBox[CarrierPosition] = {
     val observable : ObservableList[CarrierPosition] =FXCollections.observableArrayList(
-      CarrierInput, CarrierOutput, CarrierNeutral
+      CarrierOutput, CarrierInput , CarrierNeutral
       )
     setupPairCombo(observable,
       carrierPosPair.combo)

@@ -1,16 +1,18 @@
 package planar_structure.mechanism.common_mechanisms
 
 import planar_structure.mechanism.Mechanism
-import planar_structure.mechanism.common_mechanisms.Common.WheelCalculator
+import planar_structure.mechanism.common_mechanisms.Common.{CarrierDependent, WheelCalculator}
 import planar_structure.mechanism.mech2kh.{Mechanism2KH, WheelInfo}
 import planar_structure.mechanism.process.report.SynthesizedMechanisms
-import planar_structure.mechanism.types.{CarrierOutput, CarrierPosition, ExternalInternal, MechanismType}
+import planar_structure.mechanism.types.{CarrierNeutral, CarrierOutput, CarrierPosition, ExternalInternal, MechanismType}
 import planar_structure.subroutines.ChangeableParameters
 
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
 object B_AH_B_WheelCalculator extends WheelCalculator {
-  override def U_direct_H(targetU: Float): Float = {
+  override def carrierPosition: CarrierPosition = CarrierOutput
+
+  override def U_direct_H(targetU: Double): Double = {
     targetU - 1
   }
 
@@ -86,7 +88,7 @@ object B_AH_B_WheelCalculator extends WheelCalculator {
         if (assemblyCheck(z_s, satellites)) {
           if (neighborhoodCheck(z_s, satellites)) {
             if (unaccurateAlignment(z_s, gear_accuracy)) {
-              if (uCheck(z_s, targetU, accuracyU))
+              if (uCheckBooleanRaw(z_s, targetU, accuracyU))
                 acceptable_variants.addOne(z_s)
             }
           }
@@ -98,17 +100,19 @@ object B_AH_B_WheelCalculator extends WheelCalculator {
     findVariants(U = math.abs(targetU - 1), U_accuracy = accuracyU, gears_accuracy = gear_accuracy)
   }
 
-  override def accurateAlignment(z: IndexedSeq[Int])(alpha_t: Double): List[ShiftedWheel] = {
-    null //TODO
-  }
-
-
   override def findTargetU(u_directH: Double): Double = {
     1 - u_directH
   }
 
   override def carrierFrequency(inputFreq: Double, wheelList: List[Int], kpd: Double): Double = {
     inputFreq / (1 + wheelList(3) * wheelList(1) / wheelList(0).toFloat / wheelList(2).toFloat)
+  }
+
+  override def findUdH(listBuffer: List[Int]) : Double = {
+    listBuffer.length match {
+      case 4 => sign * listBuffer(1) / listBuffer(0).toFloat * listBuffer(3) / listBuffer(2).toFloat
+      case 3 => sign * listBuffer(2) / listBuffer(0)
+    }
   }
 
   override def sign: Double = -1
@@ -121,12 +125,15 @@ object B_AH_B_WheelCalculator extends WheelCalculator {
 
   override def z_sum2(z: List[Int]): Int = z(3) - z(2)
 
-  override def findFinalVariants(initial_variants: ListBuffer[Int]): ListBuffer[B_AH_B_WheelCalculator.WithShiftedWheels] = ???
-
   override def getInners: List[Boolean] = List(false, false, false, true)
 
   override def getTargetRights: List[Boolean] = List(true, true)
 
   override val mechanismType: MechanismType = ExternalInternal
-  override val carrierPosition: CarrierPosition = CarrierOutput
+
+  override val carrierDelegate: CarrierDependent = null
+
+  override def maxSupposedZSum(z: List[Int]): Double = z_sum1(z)
+
+  override def maxSupposedSatelliteGear(z: List[Int]): Double = z(1)
 }

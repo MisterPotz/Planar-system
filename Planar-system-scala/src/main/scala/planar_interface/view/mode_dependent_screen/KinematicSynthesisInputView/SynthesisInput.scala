@@ -122,7 +122,9 @@ class ResController {
   def getParent: Node = rootScrollPane
 
   def setResult(res: SynthesizedMechanisms): Unit = {
+    clearResult()
     controller.obtainResults(res)
+    controller.restoreWidth()
   }
 
   def clearResult(): Unit = {

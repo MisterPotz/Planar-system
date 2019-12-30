@@ -1,6 +1,6 @@
 package planar_structure.mechanism.mech2kh.static_methods
 
-import planar_structure.mechanism.types.{CarrierInput, CarrierNeutral, CarrierOutput, CarrierPosition, External1, ExternalExternal, ExternalInternal, Internal1, InternalExternal, InternalInternal, MechanismType}
+import planar_structure.mechanism.types.{CarrierInput, CarrierNeutral, CarrierOutput, CarrierPosition, External1, ExternalExternal, ExternalInternal, InternalInternal, MechanismType}
 
 trait CarrierDependentCalculationsInterface {
   def Uh4_1 (z_list : List[Short],mechanismType : MechanismType): Float =
@@ -21,9 +21,9 @@ trait CarrierDependentCalculationsInterface {
       case ExternalExternal => modifier = 1
       case ExternalInternal => modifier = -1
       case InternalInternal => modifier = 1
-      case InternalExternal => modifier = -1
+      //case InternalExternal => modifier = -1
       case External1 => modifier = -1
-      case Internal1 => modifier = -1
+      //case Internal1 => modifier = -1
     }
     z_list.length match {
       case 4 => {
@@ -60,9 +60,9 @@ object RatioEfficientCalculator{
       case ExternalExternal => modifier = 1
       case ExternalInternal => modifier = -1
       case InternalInternal => modifier = 1
-      case InternalExternal => modifier = -1
+     // case InternalExternal => modifier = -1
       case External1 => modifier = -1
-      case Internal1 => modifier = -1
+     // case Internal1 => modifier = -1
     }
     modifier * u1_raw * u2_raw
   }

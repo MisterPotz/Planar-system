@@ -38,9 +38,16 @@ class SynthesisResultViewController {
 trait LocationTrait
 
 class SynthesisResultViewControllerW(var controller: SynthesisResultViewController) extends LocationTrait with HelpDouble {
+  var image = new ImageView()
   setAll("Расчет ещё не проведен")
   var paneControllers: List[TitledPaneViewControllerW] = null
   val factory: TitledPaneViewControllerWFactory.type = TitledPaneViewControllerWFactory
+  var controllerFactory = new SynthesisResultViewControllerWFactory()
+
+  def createNewController() : Unit = {
+    controllerFactory = new SynthesisResultViewControllerWFactory()
+    controller = controllerFactory.controller.asInstanceOf[SynthesisResultViewController]
+  }
 
   def setAll(s: String = "") = {
     setVariantsAmount(s)
@@ -51,6 +58,7 @@ class SynthesisResultViewControllerW(var controller: SynthesisResultViewControll
 
   def clear() : Unit = {
     val factory = new SynthesisResultViewControllerWFactory()
+    factory.createView()
     controller = factory.controller.asInstanceOf[SynthesisResultViewController]
   }
 
@@ -67,9 +75,8 @@ class SynthesisResultViewControllerW(var controller: SynthesisResultViewControll
   }
 
   def setSchemeImage(stream: InputStream): Unit = {
-    val image = new ImageView(new Image(stream))
+    image = new ImageView(new Image(stream))
     image.setPreserveRatio(true)
-    image.setFitWidth(controller.resGridPane.getWidth * 0.4)
     if (controller.schemeImage.getChildren.size() > 0) {
       //ontroller.schemeImage.getChildren(
       controller.schemeImage.getChildren.add(image)
@@ -77,7 +84,10 @@ class SynthesisResultViewControllerW(var controller: SynthesisResultViewControll
       image.setVisible(true)
     } else
       controller.schemeImage.getChildren.add(image)
+  }
 
+  def restoreWidth() : Unit = {
+    image.setFitWidth(300)
   }
 
   //override protected var observable: Observable = _
@@ -104,6 +114,7 @@ class SynthesisResultViewControllerW(var controller: SynthesisResultViewControll
   }
 
   protected def setResults(check: SynthesizedMechanisms): Unit = {
+    //createNewController()
     setMechanismsListVisible(true)
     val minimalSize: Double = check.minimalSize
     val mechsAmount: Int = check.mechanismAmount

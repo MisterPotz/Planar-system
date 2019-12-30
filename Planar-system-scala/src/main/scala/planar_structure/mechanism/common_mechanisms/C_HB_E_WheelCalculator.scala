@@ -1,39 +1,26 @@
 package planar_structure.mechanism.common_mechanisms
 
-import planar_structure.mechanism.common_mechanisms.Common.WheelCalculator
+import planar_structure.mechanism.common_mechanisms.Common.{CarrierDependent, WheelCalculator}
 import planar_structure.mechanism.types.{CarrierInput, CarrierPosition, InternalInternal, MechanismType}
 import planar_structure.subroutines.PolyTools
 
 import scala.collection.mutable.ListBuffer
 
 object C_HB_E_WheelCalculator extends WheelCalculator {
-  override def U_direct_H(targetU: Float): Float = {
+  override def carrierPosition: CarrierPosition = CarrierInput
+
+
+  override def U_direct_H(targetU: Double): Double = {
     1 - 1 / targetU
   }
 
-  override def findUdH(listBuffer: List[Int]): Double = {
-    listBuffer(1) / listBuffer(0).toFloat * listBuffer(3) / listBuffer(2).toFloat
-  }
-
-  def findTargetU(u_directH: Double): Double = {
-    1 / (1 - 1 / u_directH)
-  }
-
-  override def assemblyCheck(wheelNumbers: List[Int], satellites: Int): Boolean = {
-    if (canHaveSatellites(wheelNumbers(0), satellites) && canHaveSatellites(wheelNumbers(3), satellites)) true else false
+  override def findTargetU(u_directH: Double): Double = {
+    if (u_directH < 0) println(s"LESS THAN ZERO: ${u_directH}")
+    1 / math.abs(1 - 1 / math.abs(u_directH))
   }
 
   override def unaccurateAlignment(wheelNumbers: List[Int], gears_accuracy: Int): Boolean = {
     if (math.abs(wheelNumbers(0) - wheelNumbers(1) + wheelNumbers(2) - wheelNumbers(3)) <= gears_accuracy) true else false
-  }
-
-  override def neighborhoodCheck(wheelNumbers: List[Int], satellites: Int): Boolean = {
-    if (satellites == 1) {
-      true
-    } else
-    //в классе механизмов с для соседства расстояние между соседними сателлитами должно быть больше диаметра сателлита
-    if ((wheelNumbers(0) - wheelNumbers(1)) * math.sin(math.Pi / satellites) > wheelNumbers(1) + 2) true
-    else false
   }
 
   override def findInitialVariants(targetU: Double, accuracyU: Double, satellites: Int, gear_accuracy: Int): ListBuffer[List[Int]] = {
@@ -61,10 +48,10 @@ object C_HB_E_WheelCalculator extends WheelCalculator {
         for (g <- zg) {
           if (g < b - 8) {
             val f = math.round(g * fe_._1).toInt
-            if (e - f > 8){
+            if (e - f > 8) {
               val list = List(e, f, g, b)
               if (unaccurateAlignment(list, gear_accuracy)) {
-                if (uCheck(list, targetU, accuracyU)) {
+                if (uCheckBooleanRaw(list, targetU, accuracyU)) {
                   if (neighborhoodCheck(list, satellites))
                     list_final.addOne(list)
                 }
@@ -74,12 +61,8 @@ object C_HB_E_WheelCalculator extends WheelCalculator {
         }
       }
     }
-    list_final.filter(list => uCheck(list, targetU, accuracyU))
+    list_final.filter(list => uCheckBooleanRaw(list, targetU, accuracyU))
   }
-
-  override def accurateAlignment(z: IndexedSeq[Int])(alpha_t: Double): List[ShiftedWheel] = null //TODO
-
-  override def findFinalVariants(initial_variants: ListBuffer[Int]): ListBuffer[WithShiftedWheels] = null //TODO
 
   override def carrierFrequency(inputFreq: Double, wheelList: List[Int], kpd: Double): Double = {
     inputFreq
@@ -100,5 +83,10 @@ object C_HB_E_WheelCalculator extends WheelCalculator {
   override def getTargetRights: List[Boolean] = List(false, true)
 
   override val mechanismType: MechanismType = InternalInternal
-  override val carrierPosition: CarrierPosition = CarrierInput
+
+  override def maxSupposedZSum(z: List[Int]): Double = z_sum1(z)
+
+  override def maxSupposedSatelliteGear(z: List[Int]): Double = z(1)
+
+  override val carrierDelegate: CarrierDependent = null
 }
